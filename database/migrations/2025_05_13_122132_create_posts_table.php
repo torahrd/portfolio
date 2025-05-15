@@ -22,8 +22,8 @@ return new class extends Migration
             $table->string('intarest_menu', 200)->nullable();
             $table->string('reference_link', 200)->nullable();
             $table->string('memo', 500)->nullable();
-            $table->integer('visit_status')->nullable();
-            $table->integer('private_status')->nullable();
+            $table->boolean('visit_status')->nullable();
+            $table->boolean('private_status')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
