@@ -15,8 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('following_id')->constrained('users');
             $table->foreignId('followed_id')->constrained('users');
-            $table->timestamps();
-            $table->softDeletes();
+            $table->timestamp('created_at')->useCurrent();
         });
     }
 
