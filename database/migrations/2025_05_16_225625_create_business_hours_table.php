@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('shops', function (Blueprint $table) {
+        Schema::create('business_hours', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 100);
-            $table->string('address', 200);
-            $table->string('reservation_url', 200)->nullable();
+            $table->foreignId('shop_id')->constrained();
+            $table->tinyInteger('day');
+            $table->time('open_time');
+            $table->time('close_time');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('shops');
+        Schema::dropIfExists('business_hours');
     }
 };
