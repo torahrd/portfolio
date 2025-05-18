@@ -6,7 +6,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use function Illuminate\Support\fake;
-use Illunate\Support\Carbon;
+use Illuminate\Support\Carbon;
 
 class PostSeeder extends Seeder
 {
