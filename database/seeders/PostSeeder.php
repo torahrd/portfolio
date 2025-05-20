@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use function Illuminate\Support\fake;
 use Illuminate\Support\Carbon;
+use Faker\Factory as Faker;
 
 class PostSeeder extends Seeder
 {
@@ -15,17 +16,20 @@ class PostSeeder extends Seeder
      */
     public function run(): void
     {
+        $faker = Faker::create();
+
         DB::table('posts')->insert([
             'user_id' => 1,
-            'review' => fake()->numberBetween(0, 5),
-            'visit_time' => fake()->dateTime($max = 'now'),
-            'budget' => fake()->numberBetween(500, 50000),
-            'repeat_menu' => fake()->sentence(rand(1, 3)),
-            'intarest_menu' => fake()->sentence(rand(1, 3)),
-            'reference_link' => fake()->url(),
-            'memo' => fake()->realText(500),
-            'visit_status' => fake()->boolean(),
-            'private_status' => fake()->boolean(),
+            'shop_id' => 1,
+            'review' => $faker->numberBetween(0, 5),
+            'visit_time' => $faker->dateTime($max = 'now'),
+            'budget' => $faker->numberBetween(500, 50000),
+            'repeat_menu' => $faker->sentence(rand(1, 3)),
+            'intarest_menu' => $faker->sentence(rand(1, 3)),
+            'reference_link' => $faker->url(),
+            'memo' => $faker->realText(500),
+            'visit_status' => $faker->boolean(),
+            'private_status' => $faker->boolean(),
             'created_at' => now(),
             'updated_at' => now(),
         ]);
