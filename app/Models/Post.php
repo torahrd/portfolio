@@ -5,6 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use App\Models\User;
+use App\Models\Comment;
+use App\Models\Image;
+use App\Models\MyList;
+use App\Models\Shop;
+
 class Post extends Model
 {
     use HasFactory;
@@ -29,9 +35,9 @@ class Post extends Model
         return $this->hasMany(Comment::class);
     }
 
-    public function my_lists()
+    public function MyLists()
     {
-        return $this->hasMany(My_list::class);
+        return $this->hasMany(MyList::class);
     }
 
     public function favorite_users()

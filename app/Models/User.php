@@ -8,6 +8,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+use App\Models\Post;
+use App\Models\Comment;
+use App\Models\MyList;
+
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -53,9 +57,9 @@ class User extends Authenticatable
         return $this->hasMany(Comment::class);
     }
 
-    public function my_lists()
+    public function myLists()
     {
-        return $this->hasMany(My_list::class);
+        return $this->hasMany(MyList::class);
     }
 
     public function favorite_posts()
@@ -65,11 +69,11 @@ class User extends Authenticatable
 
     public function followings()
     {
-        return $this->belongsToMany(User::class, 'followers', 'following_id', 'foloowed_id')->withTimestamps();
+        return $this->belongsToMany(User::class, 'followers', 'following_id', 'followed_id')->withTimestamps();
     }
 
     public function followed()
     {
-        return $this->belongsToMany(User::class, 'followers', 'followed_id', 'foloowing_id')->withTimestamps();
+        return $this->belongsToMany(User::class, 'followers', 'followed_id', 'following_id')->withTimestamps();
     }
 }
