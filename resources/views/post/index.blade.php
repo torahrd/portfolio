@@ -30,6 +30,11 @@
       <input type="checkbox" name="private_status" id="private">
     </div>
     <p>レビュー</p>
+    <div id="rating">
+      <span></span>
+      <span></span>
+      <span></span><span></span><span></span>
+    </div>
 
   </form>
 </body>
