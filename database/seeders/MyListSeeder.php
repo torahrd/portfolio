@@ -9,7 +9,7 @@ use function Illuminate\Support\fake;
 use Illuminate\Support\Carbon;
 use Faker\Factory as Faker;
 
-class My_listSeeder extends Seeder
+class MyListSeeder extends Seeder
 {
     /**
      * Run the database seeds.

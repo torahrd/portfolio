@@ -5,7 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class My_list extends Model
+use App\Models\User;
+use App\Models\Post;
+
+class MyList extends Model
 {
     use HasFactory;
 
