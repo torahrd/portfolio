@@ -30,7 +30,34 @@ class PostController extends Controller
     {
         $input = $request['post'];
         $input['user_id'] = Auth::user()->id;
+        // フォルダIDを取得して除外
+        $folderId = $input['folder_id'] ?? null;
+        unset($input['folder_id']);
         $post->fill($input)->save();
+        // フォルダの関連付け（単一フォルダ）
+        if ($folderId) {
+            // 自分のフォルダかチェック
+            $userFolderIds = auth()->user()->folders->pluck('id')->toArray();
+            if (in_array($folderId, $userFolderIds)) {
+                $post->folders()->attach($folderId);
+            }
+        }
         return redirect('/posts');
+    }
+
+    public function show(Post $post)
+    {
+        return view('post.show', compact('post'));
+    }
+
+    public function edit(Post $post, Shop $shop)
+    {
+        $user = Auth::user();
+
+        $folders = $user->folders;
+
+        $shops = $shop->get();
+
+        return view('post.edit', compact('folders', 'shops', 'post'));
     }
 }

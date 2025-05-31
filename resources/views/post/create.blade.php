@@ -26,7 +26,7 @@
       <input type="checkbox" name="post[visit_status]" id="visit" value=1>
       <input type="hidden" name="post[visit_status]" value=0>
     </div>
-    <select name="post[folder]" id="">
+    <select name="post[folder_id]" id="">
       <option value="" selected disabled>リストに追加</option>
       @foreach ($folders as $folder)
       <option value="{{ $folder->id }}">{{ $folder->name }}</option>
