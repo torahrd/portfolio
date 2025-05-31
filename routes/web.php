@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,7 +26,13 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::controller(PostController::class)->middleware(['auth'])->group(function () {
-    Route::get('/posts', 'index')->name('post');
+    Route::get('/posts', 'index')->name('posts.index');
+    Route::get('/posts/create', 'create')->name('posts.create');
+    Route::post('/posts', 'store')->name('posts.store');
+});
+
+Route::controller(UserController::class)->middleware(['auth'])->group(function () {
+    Route::get('/users', 'index')->name('user');
 });
 
 Route::middleware('auth')->group(function () {
