@@ -8,12 +8,25 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\Comment;
 use App\Models\Image;
-use App\Models\MyList;
+use App\Models\Folder;
 use App\Models\Shop;
 
 class Post extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'user_id',
+        'shop_id',
+        'visit_time',
+        'budget',
+        'repeat_menu',
+        'interest_menu',
+        'reference_link',
+        'memo',
+        'visit_status',
+        'private_status'
+    ];
 
     public function user()
     {
@@ -35,9 +48,9 @@ class Post extends Model
         return $this->hasMany(Comment::class);
     }
 
-    public function MyLists()
+    public function folders()
     {
-        return $this->hasMany(MyList::class);
+        return $this->belongsToMany(Folder::class);
     }
 
     public function favorite_users()

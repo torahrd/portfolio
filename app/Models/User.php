@@ -10,7 +10,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 use App\Models\Post;
 use App\Models\Comment;
-use App\Models\MyList;
+use App\Models\Folder;
 
 class User extends Authenticatable
 {
@@ -57,9 +57,9 @@ class User extends Authenticatable
         return $this->hasMany(Comment::class);
     }
 
-    public function myLists()
+    public function folders()
     {
-        return $this->hasMany(MyList::class);
+        return $this->hasMany(Folder::class);
     }
 
     public function favorite_posts()

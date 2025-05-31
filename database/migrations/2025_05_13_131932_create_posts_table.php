@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained();
             $table->foreignId('shop_id')->constrained();
-            $table->tinyInteger('review');
             $table->datetime('visit_time')->nullable();
             $table->integer('budget')->nullable();
             $table->string('repeat_menu', 200)->nullable();

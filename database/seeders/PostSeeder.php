@@ -21,7 +21,6 @@ class PostSeeder extends Seeder
         DB::table('posts')->insert([
             'user_id' => 1,
             'shop_id' => 1,
-            'review' => $faker->numberBetween(0, 5),
             'visit_time' => $faker->dateTime($max = 'now'),
             'budget' => $faker->numberBetween(500, 50000),
             'repeat_menu' => $faker->sentence(rand(1, 3)),
