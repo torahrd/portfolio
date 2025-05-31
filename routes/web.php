@@ -29,6 +29,10 @@ Route::controller(PostController::class)->middleware(['auth'])->group(function (
     Route::get('/posts', 'index')->name('posts.index');
     Route::get('/posts/create', 'create')->name('posts.create');
     Route::post('/posts', 'store')->name('posts.store');
+    Route::get('/posts/{post}', 'show')->name('posts.show');
+    Route::put('/posts/{post}', 'update')->name('posts.update');
+    Route::get('/posts/{post}/edit', 'edit')->name('posts.edit');
+    Route::delete('/posts/{post}', 'destroy')->name('posts.destroy'); //folder_postも削除する！
 });
 
 Route::controller(UserController::class)->middleware(['auth'])->group(function () {
