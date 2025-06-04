@@ -16,7 +16,7 @@
       <p>{{ $post->shop->address }}</p>
       <p>{{ $post->budget }}</p>
       <p>{{ $post->repeat_menue }}</p>
-      <p>{{ $post->intarest_menue }}</p>
+      <p>{{ $post->interest_menue }}</p>
       <p>{{ $post->memo }}</p>
     </div>
     @endforeach

@@ -24,7 +24,7 @@ class PostSeeder extends Seeder
             'visit_time' => $faker->dateTime($max = 'now'),
             'budget' => $faker->numberBetween(500, 50000),
             'repeat_menu' => $faker->sentence(rand(1, 3)),
-            'intarest_menu' => $faker->sentence(rand(1, 3)),
+            'interest_menu' => $faker->sentence(rand(1, 3)),
             'reference_link' => $faker->url(),
             'memo' => $faker->realText(500),
             'visit_status' => $faker->boolean(),

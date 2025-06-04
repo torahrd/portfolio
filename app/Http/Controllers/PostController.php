@@ -60,4 +60,18 @@ class PostController extends Controller
 
         return view('post.edit', compact('folders', 'shops', 'post'));
     }
+
+    public function update(Request $request, Post $post)
+    {
+        $input_post = $request['post'];
+        $post->fill($input_post)->save();
+
+        return redirect('/posts/' . $post->id);
+    }
+
+    public function destroy(Post $post)
+    {
+        $post->delete();
+        return redirect('/posts');
+    }
 }

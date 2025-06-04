@@ -46,7 +46,7 @@
 
       <div class="form-group">
         <label for="budget">予算</label>
-        <select name="post[budet]" id="budget">
+        <select name="post[budget]" id="budget">
           <option value="{{ $post->budet }}" selected disabled>{{ $post->budget }}</option>
           <option value="1000">〜¥1,000</option>
           <option value="2000">¥1,000〜¥2,000</option>

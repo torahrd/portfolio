@@ -60,8 +60,8 @@
       <textarea name="post[repeat_menu]" id="repeat_menu"></textarea>
     </div>
     <div>
-      <label for="intarest_menu">食べたいメニュー</label>
-      <textarea name="post[intarest_menu]" id="intarest_menu"></textarea>
+      <label for="interest_menu">食べたいメニュー</label>
+      <textarea name="post[interest_menu]" id="interest_menu"></textarea>
     </div>
     <div>
       <label for="link">リンク</label>
