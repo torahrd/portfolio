@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\CommentController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -32,11 +33,21 @@ Route::controller(PostController::class)->middleware(['auth'])->group(function (
     Route::get('/posts/{post}', 'show')->name('posts.show');
     Route::put('/posts/{post}', 'update')->name('posts.update');
     Route::get('/posts/{post}/edit', 'edit')->name('posts.edit');
-    Route::delete('/posts/{post}', 'destroy')->name('posts.destroy'); //folder_postも削除する！
+    Route::delete('/posts/{post}', 'destroy')->name('posts.destroy');
 });
 
 Route::controller(UserController::class)->middleware(['auth'])->group(function () {
     Route::get('/users', 'index')->name('user');
+});
+
+Route::controller(CommentController::class)->middleware(['auth'])->group(function () {
+    Route::get('/comments/{post}', 'index')->name('comments.index');
+    Route::get('/comments/{post}/create', 'create')->name('comments.create');
+    Route::post('/comments/{post}', 'sotore')->name('comments.store');
+    Route::get('/commnets/{post}/show', 'show')->name('comments.show');
+    Route::put('/comments/{post}', 'update')->name('comments.update');
+    Route::get('/comments/{post}/edit', 'edit')->name('comments.edit');
+    Route::delete('/comments/{post}', 'destroy')->name('comments.destroy');
 });
 
 Route::middleware('auth')->group(function () {
