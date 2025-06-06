@@ -18,7 +18,7 @@ return new class extends Migration
             $table->datetime('visit_time')->nullable();
             $table->integer('budget')->nullable();
             $table->string('repeat_menu', 200)->nullable();
-            $table->string('intarest_menu', 200)->nullable();
+            $table->string('interest_menu', 200)->nullable();
             $table->string('reference_link', 200)->nullable();
             $table->string('memo', 500)->nullable();
             $table->boolean('visit_status');

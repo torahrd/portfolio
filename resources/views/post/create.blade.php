@@ -8,7 +8,7 @@
 </head>
 
 <body>
-  <h1>title</h1>
+  <h1>Create</h1>
 
   <form action="/posts" method="post">
     @csrf
@@ -51,8 +51,8 @@
         <option value="5000">¥3,000〜¥5,000</option>
         <option value="10000">¥5,000〜¥10,000</option>
         <option value="30000">¥10,000〜¥30,000</option>
-        <option value="">¥30,000〜¥50,000</option>
-        <option value="">¥50,000〜</option>
+        <option value="50000">¥30,000〜¥50,000</option>
+        <option value="50001">¥50,000〜</option>
       </select>
     </div>
     <div>
@@ -60,8 +60,8 @@
       <textarea name="post[repeat_menu]" id="repeat_menu"></textarea>
     </div>
     <div>
-      <label for="intarest_menu">食べたいメニュー</label>
-      <textarea name="post[intarest_menu]" id="intarest_menu"></textarea>
+      <label for="interest_menu">食べたいメニュー</label>
+      <textarea name="post[interest_menu]" id="interest_menu"></textarea>
     </div>
     <div>
       <label for="link">リンク</label>

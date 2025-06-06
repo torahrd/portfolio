@@ -46,14 +46,17 @@
 
       <div class="form-group">
         <label for="budget">予算</label>
-        <input
-          type="number"
-          name="post[budget]"
-          id="budget"
-          class="form-control"
-          value="{{ $post->budget }}"
-          min="0"
-          step="100">
+        <select name="post[budget]" id="budget">
+          <option value="{{ $post->budet }}" selected disabled>{{ $post->budget }}</option>
+          <option value="1000">〜¥1,000</option>
+          <option value="2000">¥1,000〜¥2,000</option>
+          <option value="3000">¥2,000〜¥3,000</option>
+          <option value="5000">¥3,000〜¥5,000</option>
+          <option value="10000">¥5,000〜¥10,000</option>
+          <option value="30000">¥10,000〜¥30,000</option>
+          <option value="50000">¥30,000〜¥50,000</option>
+          <option value="50001">¥50,000〜</option>
+        </select>
       </div>
 
       <div class="form-group">
