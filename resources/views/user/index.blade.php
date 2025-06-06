@@ -8,6 +8,13 @@
 </head>
 
 <body>
+  <!-- {{-- セッションメッセージの表示 --}} -->
+  @if (session('success'))
+  <div class="alert alert-success">
+    {{ session('success') }}
+  </div>
+  @endif
+
   <div class="posts">
     @foreach($posts as $post)
     <div class="post">
