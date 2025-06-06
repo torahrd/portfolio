@@ -73,6 +73,7 @@
       <textarea name="post[memo]" id="memo" placeholder="メモ"></textarea>
     </div>
     <input type="submit" value="POST">
+    <a href="{{ route('posts.index') }}" class="btn btn-secondary">キャンセル</a>
 
   </form>
 </body>

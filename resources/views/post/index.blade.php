@@ -8,6 +8,10 @@
 </head>
 
 <body>
+  <form action="{{ route('posts.create') }}" method="get">
+    <button>投稿</button>
+  </form>
+
   <div class="posts">
     @foreach($posts as $post)
     <div class="post">
