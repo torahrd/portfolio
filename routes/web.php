@@ -48,8 +48,13 @@ Route::controller(CommentController::class)->middleware(['auth'])->group(functio
 });
 
 Route::controller(ShopController::class)->middleware(['auth'])->group(function () {
-    Route::get('/shops/search', 'search')->name('shops.search');
     Route::post('/shops', 'store')->name('shops.store');
+});
+
+Route::middleware(['throttle:60,1'])->group(function () {
+    Route::controller(ShopController::class)->middleware(['auth'])->group(function () {
+        Route::get('/shops/search', 'search')->name('shops.search');
+    });
 });
 
 Route::middleware('auth')->group(function () {

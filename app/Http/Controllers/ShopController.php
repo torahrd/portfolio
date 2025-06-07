@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Shop;
 use App\Http\Requests\ShopSearchRequest;
 use App\Http\Requests\ShopStoreRequest;
+use Illuminate\Support\Facades\Cache;
 
 class ShopController extends Controller
 {
@@ -21,13 +22,16 @@ class ShopController extends Controller
 
         // 2. バリデーション済みデータを取得
         $query = $request->validated()['query'];
+        $cacheKey = 'shop_search_' . md5($query);
 
         // 3. データベースから部分一致で検索
-        $shops = Shop::where('name', 'LIKE', "%{$query}%")
-            ->select('id', 'name', 'address')
-            ->orderBy('name')
-            ->limit(10)
-            ->get();
+        $shops = Cache::remember($cacheKey, 300, function () use ($query) {
+            return Shop::where('name', 'LIKE', "%{$query}%")
+                ->select('id', 'name', 'address')
+                ->orderBy('name')
+                ->limit(10)
+                ->get();
+        });
 
         // 4. 結果を返す
         return response()->json([

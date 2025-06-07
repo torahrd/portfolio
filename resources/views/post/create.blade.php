@@ -56,6 +56,11 @@
       text-align: center;
       color: #666;
     }
+
+    .search-result-item.selected {
+      background-color: #007bff;
+      color: white;
+    }
   </style>
 </head>
 
@@ -315,6 +320,32 @@
         $('#search-results').hide();
       }
     });
+
+    /**
+     * キーボードナビゲーション
+     */
+    $('#shop-search').on('keydown', function(e) {
+      const $items = $('.search-result-item');
+      let currentIndex = $items.index($('.search-result-item.selected'));
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        currentIndex = (currentIndex + 1) % $items.length;
+        selectResultItem(currentIndex);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        currentIndex = currentIndex <= 0 ? $items.length - 1 : currentIndex - 1;
+        selectResultItem(currentIndex);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        $('.search-result-item.selected').click();
+      }
+    });
+
+    function selectResultItem(index) {
+      $('.search-result-item').removeClass('selected');
+      $('.search-result-item').eq(index).addClass('selected');
+    }
   </script>
 </body>
 

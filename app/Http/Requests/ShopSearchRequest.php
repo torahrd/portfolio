@@ -20,7 +20,7 @@ class ShopSearchRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'query' => 'required|string|min:2|max:50'
+            'query' => 'required|string|min:2|max:50|regex:/^[\p{L}\p{N}\s\-]+$/u'
         ];
     }
 
@@ -32,7 +32,8 @@ class ShopSearchRequest extends FormRequest
         return [
             'query.required' => '検索キーワードを入力してください',
             'query.min' => '2文字以上入力してください',
-            'query.max' => '50文字以内で入力してください'
+            'query.max' => '50文字以内で入力してください',
+            'query.regex' => '使用できない文字が含まれています'
         ];
     }
 }

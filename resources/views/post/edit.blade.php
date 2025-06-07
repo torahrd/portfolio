@@ -47,15 +47,25 @@
       <div class="form-group">
         <label for="budget">予算</label>
         <select name="post[budget]" id="budget">
-          <option value="{{ $post->budet }}" selected disabled>{{ $post->budget }}</option>
-          <option value="1000">〜¥1,000</option>
-          <option value="2000">¥1,000〜¥2,000</option>
-          <option value="3000">¥2,000〜¥3,000</option>
-          <option value="5000">¥3,000〜¥5,000</option>
-          <option value="10000">¥5,000〜¥10,000</option>
-          <option value="30000">¥10,000〜¥30,000</option>
-          <option value="50000">¥30,000〜¥50,000</option>
-          <option value="50001">¥50,000〜</option>
+          <!-- 現在の値を表示（ヘルパーで統一） -->
+          @if($post->budget)
+          <option value="{{ $post->budget }}" selected>
+            {{ App\Helpers\BudgetHelper::formatBudget($post->budget) }} (現在の設定)
+          </option>
+          @else
+          <option value="" selected disabled>予算を選択してください</option>
+          @endif
+
+          <!-- 選択可能なオプション -->
+          <option value="">未設定</option>
+          <option value="1000" {{ $post->budget == 1000 ? 'selected' : '' }}>〜¥1,000</option>
+          <option value="2000" {{ $post->budget == 2000 ? 'selected' : '' }}>¥1,000〜¥2,000</option>
+          <option value="3000" {{ $post->budget == 3000 ? 'selected' : '' }}>¥2,000〜¥3,000</option>
+          <option value="5000" {{ $post->budget == 5000 ? 'selected' : '' }}>¥3,000〜¥5,000</option>
+          <option value="10000" {{ $post->budget == 10000 ? 'selected' : '' }}>¥5,000〜¥10,000</option>
+          <option value="30000" {{ $post->budget == 30000 ? 'selected' : '' }}>¥10,000〜¥30,000</option>
+          <option value="50000" {{ $post->budget == 50000 ? 'selected' : '' }}>¥30,000〜¥50,000</option>
+          <option value="50001" {{ $post->budget == 50001 ? 'selected' : '' }}>¥50,000〜</option>
         </select>
       </div>
 
