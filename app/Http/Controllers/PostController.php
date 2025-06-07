@@ -12,7 +12,23 @@ class PostController extends Controller
 {
     public function index(Post $post)
     {
-        return view('post.index')->with('posts', $post->get());
+        // ❌ 修正前（N+1問題が発生）
+        // return view('post.index')->with('posts', $post->get());
+
+        // ✅ 修正後（Eager Loadingで最適化）
+        $posts = Post::with([
+            'shop:id,name,address',        // 店舗情報（必要な列のみ）
+            'user:id,name',                // ユーザー情報（必要な列のみ）
+            'comments' => function ($query) {
+                $query->with('user:id,name')  // コメントのユーザー情報
+                    ->orderBy('created_at', 'desc')
+                    ->limit(5);              // 最新5件のみ
+            }
+        ])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('post.index', compact('posts'));
     }
 
     public function create(Shop $shop)

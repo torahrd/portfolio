@@ -5,6 +5,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\ShopController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -44,6 +45,16 @@ Route::controller(CommentController::class)->middleware(['auth'])->group(functio
     Route::post('/posts/{post}/comments', 'store')->name('comments.store');
     Route::delete('/comments/{comment}', 'destroy')->name('comments.destroy');
     Route::get('/comments/{comment}/reply', 'reply')->name('comments.reply'); // AJAX用（オプション）
+});
+
+Route::controller(ShopController::class)->middleware(['auth'])->group(function () {
+    Route::post('/shops', 'store')->name('shops.store');
+});
+
+Route::middleware(['throttle:60,1'])->group(function () {
+    Route::controller(ShopController::class)->middleware(['auth'])->group(function () {
+        Route::get('/shops/search', 'search')->name('shops.search');
+    });
 });
 
 Route::middleware('auth')->group(function () {

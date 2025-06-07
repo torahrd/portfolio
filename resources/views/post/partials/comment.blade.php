@@ -34,19 +34,19 @@ if ($level <= 4) {
     <div class="comment-body">{{ $comment->body }}</div>
 
     @auth
-    <button onclick="toggleReplyForm({{ $comment->id }})" class="btn btn-secondary btn-small">返信</button>
+    <button onclick="toggleReplyForm(<?php echo $comment->id; ?>)" class="btn btn-secondary btn-small">返信</button>
     @endauth
 
     <!-- 返信フォーム -->
     @auth
-    <div id="reply-form-{{ $comment->id }}" class="reply-form">
+    <div id="reply-form-<?php echo $comment->id; ?>" class="reply-form">
       <form action="{{ route('comments.store', $post->id) }}" method="POST" style="margin-top: 10px;">
         @csrf
-        <input type="hidden" name="parent_id" value="{{ $comment->id }}">
-        <textarea name="body" rows="2" placeholder="{{ $comment->user->name }}さんに返信..." required></textarea>
+        <input type="hidden" name="parent_id" value="<?php echo $comment->id; ?>">
+        <textarea name="body" rows="2" placeholder="<?php echo $comment->user->name; ?>さんに返信..." required></textarea>
         <div style="margin-top: 5px;">
           <button type="submit" class="btn btn-primary btn-small">返信投稿</button>
-          <button type="button" onclick="toggleReplyForm({{ $comment->id }})" class="btn btn-secondary btn-small">キャンセル</button>
+          <button type="button" onclick="toggleReplyForm(<?php echo $comment->id; ?>)" class="btn btn-secondary btn-small">キャンセル</button>
         </div>
       </form>
     </div>
