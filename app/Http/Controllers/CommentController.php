@@ -3,62 +3,43 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Comment;
+use App\Models\Post;
 
 class CommentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function store(Request $request, Post $post)
     {
-        //
+        // $request->validate([
+        //     'body' => 'required|max:200',
+        //     'parent_id' => 'nullable|exists:comments,id'
+        // ]);
+
+        $input = [
+            'user_id' => Auth::id(),
+            'post_id' => $post->id,
+            'parent_id' => $request->parent_id,
+            'body' => $request->body,
+        ];
+
+        Comment::create($input);
+
+        return redirect()->route('posts.show', $post->id)
+            ->with('success', 'コメントを投稿しました。');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function destroy(Comment $comment)
     {
-        //
-    }
+        // 自分のコメントまたは投稿の作者のみ削除可能
+        if (Auth::id() !== $comment->user_id && Auth::id() !== $comment->post->user_id) {
+            abort(403, '削除権限がありません。');
+        }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        $postId = $comment->post_id;
+        $comment->delete();
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return redirect()->route('posts.show', $postId)
+            ->with('success', 'コメントを削除しました。');
     }
 }

@@ -41,13 +41,9 @@ Route::controller(UserController::class)->middleware(['auth'])->group(function (
 });
 
 Route::controller(CommentController::class)->middleware(['auth'])->group(function () {
-    Route::get('/comments/{post}', 'index')->name('comments.index');
-    Route::get('/comments/{post}/create', 'create')->name('comments.create');
-    Route::post('/comments/{post}', 'sotore')->name('comments.store');
-    Route::get('/commnets/{post}/show', 'show')->name('comments.show');
-    Route::put('/comments/{post}', 'update')->name('comments.update');
-    Route::get('/comments/{post}/edit', 'edit')->name('comments.edit');
-    Route::delete('/comments/{post}', 'destroy')->name('comments.destroy');
+    Route::post('/posts/{post}/comments', 'store')->name('comments.store');
+    Route::delete('/comments/{comment}', 'destroy')->name('comments.destroy');
+    Route::get('/comments/{comment}/reply', 'reply')->name('comments.reply'); // AJAX用（オプション）
 });
 
 Route::middleware('auth')->group(function () {
