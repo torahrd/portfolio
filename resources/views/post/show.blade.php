@@ -146,9 +146,15 @@
     <div class="post-info">
       <h3>基本情報</h3>
       <p><strong>住所:</strong> {{ $post->shop->address }}</p>
-      <p><strong>訪問日時:</strong> {{ $post->visit_time }}</p>
+      <p><strong>訪問日時:</strong> {{ $post->visit_time ?? '未設定' }}</p>
       <p><strong>訪問済:</strong> {{ $post->visit_status ? 'はい' : 'いいえ' }}</p>
-      <p><strong>予算:</strong> {{ number_format($post->budget) }}円</p>
+
+      <!-- 統一された予算表示 -->
+      <p><strong>予算:</strong>
+        <span style="color: #e67e22; font-weight: bold; font-size: 1.1em;">
+          {{ App\Helpers\BudgetHelper::formatBudget($post->budget) }}
+        </span>
+      </p>
     </div>
 
     <div class="menus">
