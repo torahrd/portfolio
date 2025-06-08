@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>show</title>
   <style>
     /* 既存のスタイルに追加 */
@@ -228,7 +229,7 @@
     <div class="comments">
       @forelse($post->comments()->parentComments()->with(['user'])->orderBy('created_at', 'desc')->get() as $comment)
       <!-- メインコメント -->
-      <div class="comment">
+      <div class="comment" data-comment-id="{{ $comment->id }}">
         <div class="comment-meta">
           <strong>{{ $comment->user->name }}</strong>
           <span>{{ $comment->created_at->format('Y/m/d H:i') }}</span>
@@ -242,19 +243,19 @@
         </div>
         <div class="comment-body">{!! $comment->body_with_mentions !!}</div>
         @auth
-        <button onclick="toggleReplyForm(<?php echo $comment->id; ?>)" class="btn btn-secondary btn-small">返信</button>
+        <button class="reply-toggle-btn btn btn-secondary btn-small" data-comment-id="{{ $comment->id }}">返信</button>
         @endauth
 
         <!-- 返信フォーム -->
         @auth
-        <div id="reply-form-<?php echo $comment->id; ?>" class="reply-form">
+        <div id="reply-form-{{ $comment->id }}" class="reply-form">
           <form action="{{ route('comments.store', $post->id) }}" method="POST" style="margin-top: 10px;">
             @csrf
-            <input type="hidden" name="parent_id" value="<?php echo $comment->id; ?>">
-            <textarea name="body" rows="2" placeholder="<?php echo $comment->user->name; ?>さんに返信...&#10;💡 @でスレッド参加者を検索" required></textarea>
+            <input type="hidden" name="parent_id" value="{{ $comment->id }}">
+            <textarea name="body" rows="2" placeholder="{{ $comment->user->name }}さんに返信...&#10;💡 @でスレッド参加者を検索" required></textarea>
             <div style="margin-top: 5px;">
               <button type="submit" class="btn btn-primary btn-small">返信投稿</button>
-              <button type="button" onclick="toggleReplyForm(<?php echo $comment->id; ?>)" class="btn btn-secondary btn-small">キャンセル</button>
+              <button type="button" class="reply-cancel-btn btn btn-secondary btn-small" data-comment-id="{{ $comment->id }}">キャンセル</button>
             </div>
           </form>
         </div>
@@ -263,7 +264,7 @@
 
       <!-- このコメント配下の全ての返信（YouTube風に同階層で表示） -->
       @foreach($comment->getAllRepliesFlat() as $reply)
-      <div class="comment reply" style="margin-left: 30px; border-left: 2px solid #eee; padding-left: 15px;">
+      <div class="comment reply" style="margin-left: 30px; border-left: 2px solid #eee; padding-left: 15px;" data-comment-id="{{ $reply->id }}">
         <div class="comment-meta">
           <strong>{{ $reply->user->name }}</strong>
           <span>{{ $reply->created_at->format('Y/m/d H:i') }}</span>
@@ -280,19 +281,19 @@
         </div>
         <div class="comment-body">{!! $reply->body_with_mentions !!}</div>
         @auth
-        <button onclick="toggleReplyForm(<?php echo $reply->id; ?>)" class="btn btn-secondary btn-small">返信</button>
+        <button class="reply-toggle-btn btn btn-secondary btn-small" data-comment-id="{{ $reply->id }}">返信</button>
         @endauth
 
         <!-- 返信に対する返信フォーム -->
         @auth
-        <div id="reply-form-<?php echo $reply->id; ?>" class="reply-form">
+        <div id="reply-form-{{ $reply->id }}" class="reply-form">
           <form action="{{ route('comments.store', $post->id) }}" method="POST" style="margin-top: 10px;">
             @csrf
-            <input type="hidden" name="parent_id" value="<?php echo $reply->id; ?>">
-            <textarea name="body" rows="2" placeholder="@<?php echo $reply->user->name; ?> さんに返信...&#10;💡 @でスレッド参加者を検索" required></textarea>
+            <input type="hidden" name="parent_id" value="{{ $reply->id }}">
+            <textarea name="body" rows="2" placeholder="@{{ $reply->user->name }} さんに返信...&#10;💡 @でスレッド参加者を検索" required></textarea>
             <div style="margin-top: 5px;">
               <button type="submit" class="btn btn-primary btn-small">返信投稿</button>
-              <button type="button" onclick="toggleReplyForm(<?php echo $reply->id; ?>)" class="btn btn-secondary btn-small">キャンセル</button>
+              <button type="button" class="reply-cancel-btn btn btn-secondary btn-small" data-comment-id="{{ $reply->id }}">キャンセル</button>
             </div>
           </form>
         </div>
@@ -306,26 +307,68 @@
     </div>
   </div>
 
-  <script>
-    // 既存のtoggleReplyForm関数
-    function toggleReplyForm(commentId) {
-      const form = document.getElementById('reply-form-' + commentId);
-      if (form.style.display === 'none' || form.style.display === '') {
-        form.style.display = 'block';
-        form.querySelector('textarea').focus();
-      } else {
-        form.style.display = 'none';
-      }
-    }
+  <!-- jQuery読み込み -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    // メンション検索機能
-    document.addEventListener('DOMContentLoaded', function() {
+  <script>
+    $(document).ready(function() {
+      console.log('jQuery loaded successfully');
+
+      // CSRFトークンの確認
+      const csrfToken = $('meta[name="csrf-token"]').attr('content');
+      console.log('CSRF Token:', csrfToken ? 'Found' : 'Missing');
+
+      // AJAX設定（CSRFトークン付き）
+      $.ajaxSetup({
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRF-TOKEN': csrfToken
+        }
+      });
+
+      // 返信ボタンのイベントリスナー（data属性を使用）
+      $(document).on('click', '.reply-toggle-btn', function() {
+        const commentId = $(this).data('comment-id');
+        console.log('Reply button clicked for comment:', commentId);
+        toggleReplyForm(commentId);
+      });
+
+      // キャンセルボタンのイベントリスナー
+      $(document).on('click', '.reply-cancel-btn', function() {
+        const commentId = $(this).data('comment-id');
+        console.log('Cancel button clicked for comment:', commentId);
+        toggleReplyForm(commentId);
+      });
+
+      // 返信フォームの表示/非表示を切り替える関数
+      function toggleReplyForm(commentId) {
+        const form = document.getElementById('reply-form-' + commentId);
+        if (form) {
+          if (form.style.display === 'none' || form.style.display === '') {
+            form.style.display = 'block';
+            const textarea = form.querySelector('textarea');
+            if (textarea) {
+              textarea.focus();
+            }
+          } else {
+            form.style.display = 'none';
+          }
+        } else {
+          console.error('Reply form not found for comment:', commentId);
+        }
+      }
+
+      // メンション検索機能
       const textareas = document.querySelectorAll('textarea[name="body"]');
       let mentionDropdown = null;
       let currentTextarea = null;
       let currentMentionStart = -1;
 
-      textareas.forEach(textarea => {
+      console.log('Found textareas:', textareas.length);
+
+      textareas.forEach((textarea, index) => {
+        console.log('Setting up textarea', index);
+
         // コンテナを相対位置に設定
         if (!textarea.closest('.comment-form') && !textarea.closest('.reply-form')) {
           textarea.parentElement.style.position = 'relative';
@@ -342,12 +385,14 @@
         // フォーカス時の処理
         textarea.addEventListener('focus', function() {
           currentTextarea = this;
+          console.log('Textarea focused');
         });
       });
 
       function handleMentionInput(textarea) {
         // 新規コメントフォームではメンション機能を無効
         if (textarea.closest('.comment-form') !== null) {
+          console.log('Mention disabled for main comment form');
           return;
         }
 
@@ -358,6 +403,12 @@
         const beforeCursor = value.substring(0, cursorPos);
         const atIndex = beforeCursor.lastIndexOf('@');
 
+        console.log('Input detected:', {
+          value,
+          cursorPos,
+          atIndex
+        });
+
         if (atIndex !== -1) {
           const afterAt = beforeCursor.substring(atIndex + 1);
 
@@ -365,6 +416,7 @@
           if (afterAt.indexOf(' ') === -1 && afterAt.length >= 1) {
             currentMentionStart = atIndex;
             currentTextarea = textarea;
+            console.log('Starting mention search for:', afterAt);
             searchUsers(afterAt, textarea);
           } else {
             hideMentionDropdown();
@@ -419,11 +471,15 @@
           return;
         }
 
+        console.log('Searching users for query:', query);
         showMentionLoading(textarea);
 
         // 返信フォームのコンテキスト情報を取得
         const params = getSearchParams(textarea);
+        console.log('Search params:', params);
+
         if (!params.comment_id) {
+          console.log('No comment_id found, hiding dropdown');
           hideMentionDropdown();
           return;
         }
@@ -433,26 +489,50 @@
           ...params
         }).toString();
 
-        fetch(`/api/users/search?${queryString}`)
-          .then(response => response.json())
+        const url = `/api/users/search?${queryString}`;
+        console.log('Fetching from URL:', url);
+
+        // fetch APIの使用
+        fetch(url, {
+            method: 'GET',
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest',
+              'X-CSRF-TOKEN': csrfToken,
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            }
+          })
+          .then(response => {
+            console.log('Response status:', response.status);
+
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+          })
           .then(users => {
+            console.log('検索結果受信:', users);
             showMentionDropdown(users, textarea);
           })
           .catch(error => {
             console.error('ユーザー検索エラー:', error);
-            hideMentionDropdown();
+            showErrorDropdown('検索エラーが発生しました', textarea);
           });
       }
 
       function getSearchParams(textarea) {
         // 返信フォームのみ対応：parent_comment_idを送信
-        const parentIdInput = textarea.closest('form').querySelector('input[name="parent_id"]');
+        const form = textarea.closest('form');
+        const parentIdInput = form ? form.querySelector('input[name="parent_id"]') : null;
+
         if (parentIdInput) {
+          console.log('Found parent_id:', parentIdInput.value);
           return {
             comment_id: parentIdInput.value
           };
         }
 
+        console.log('No parent_id found');
         return {};
       }
 
@@ -470,14 +550,42 @@
 
         positionDropdown(textarea);
         document.body.appendChild(mentionDropdown);
+
+        console.log('Loading dropdown shown');
+      }
+
+      function showErrorDropdown(message, textarea) {
+        hideMentionDropdown();
+
+        mentionDropdown = document.createElement('div');
+        mentionDropdown.className = 'mention-dropdown';
+        mentionDropdown.style.display = 'block';
+
+        const errorItem = document.createElement('div');
+        errorItem.className = 'mention-loading';
+        errorItem.style.color = 'red';
+        errorItem.textContent = message;
+        mentionDropdown.appendChild(errorItem);
+
+        positionDropdown(textarea);
+        document.body.appendChild(mentionDropdown);
+
+        // 3秒後に非表示
+        setTimeout(() => {
+          hideMentionDropdown();
+        }, 3000);
       }
 
       function showMentionDropdown(users, textarea) {
         hideMentionDropdown();
 
-        if (users.length === 0) {
+        if (!Array.isArray(users) || users.length === 0) {
+          console.log('No users found or invalid response');
+          showErrorDropdown('ユーザーが見つかりません', textarea);
           return;
         }
+
+        console.log('Showing dropdown for users:', users);
 
         mentionDropdown = document.createElement('div');
         mentionDropdown.className = 'mention-dropdown';
@@ -538,6 +646,8 @@
 
         hideMentionDropdown();
         textarea.focus();
+
+        console.log('Mention inserted:', username);
       }
 
       function hideMentionDropdown() {
