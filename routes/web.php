@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ShopController;
+use App\Http\Controllers\UserSearchController;  // ← この行を追加
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -55,6 +56,13 @@ Route::middleware(['throttle:60,1'])->group(function () {
     Route::controller(ShopController::class)->middleware(['auth'])->group(function () {
         Route::get('/shops/search', 'search')->name('shops.search');
     });
+});
+
+// メンション機能用のユーザー検索ルート（★ この部分を追加 ★）
+Route::middleware(['auth'])->group(function () {
+    Route::get('/users/search', [UserSearchController::class, 'search'])
+        ->name('users.search')
+        ->middleware('throttle:60,1');
 });
 
 Route::middleware('auth')->group(function () {

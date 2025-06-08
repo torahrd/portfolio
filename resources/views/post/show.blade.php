@@ -489,7 +489,8 @@
           ...params
         }).toString();
 
-        const url = `/api/users/search?${queryString}`;
+        // 修正: WebルートのURLに変更
+        const url = `/users/search?${queryString}`;
         console.log('Fetching from URL:', url);
 
         // fetch APIの使用
