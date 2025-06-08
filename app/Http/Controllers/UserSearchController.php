@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Comment;
+use Illuminate\Support\Facades\Log;
 
 class UserSearchController extends Controller
 {
@@ -16,22 +17,56 @@ class UserSearchController extends Controller
         $query = $request->get('q', '');
         $commentId = $request->get('comment_id');
 
-        if (strlen($query) < 1 || !$commentId) {
+        // デバッグログ
+        Log::info('User search request', [
+            'query' => $query,
+            'comment_id' => $commentId,
+            'user_id' => auth()->id()
+        ]);
+
+        if (strlen($query) < 1) {
+            Log::info('Query too short');
             return response()->json([]);
+        }
+
+        // comment_idが指定されていない場合は全ユーザーから検索（デバッグ用）
+        if (!$commentId) {
+            Log::info('No comment_id provided, searching all users');
+            $users = User::where('name', 'LIKE', $query . '%')
+                ->where('id', '!=', auth()->id()) // 自分以外
+                ->select('id', 'name')
+                ->limit(10)
+                ->get();
+
+            Log::info('All users search result', ['count' => $users->count()]);
+            return response()->json($users);
         }
 
         // 返信するコメントスレッド内のユーザーを取得
         $userIds = $this->getSpecificThreadUsers($commentId);
 
+        Log::info('Thread users found', [
+            'comment_id' => $commentId,
+            'user_ids' => $userIds
+        ]);
+
         if (empty($userIds)) {
+            Log::info('No users in thread');
             return response()->json([]);
         }
 
         $users = User::whereIn('id', $userIds)
             ->where('name', 'LIKE', $query . '%')
+            ->where('id', '!=', auth()->id()) // 自分は除外
             ->select('id', 'name')
             ->limit(10)
             ->get();
+
+        Log::info('Final search result', [
+            'query' => $query,
+            'matched_users' => $users->count(),
+            'users' => $users->pluck('name')->toArray()
+        ]);
 
         return response()->json($users);
     }
@@ -43,6 +78,7 @@ class UserSearchController extends Controller
     {
         $comment = Comment::find($commentId);
         if (!$comment) {
+            Log::warning('Comment not found', ['comment_id' => $commentId]);
             return [];
         }
 
@@ -52,11 +88,19 @@ class UserSearchController extends Controller
             $rootComment = $rootComment->parent;
         }
 
+        Log::info('Root comment found', [
+            'root_comment_id' => $rootComment->id,
+            'root_user_id' => $rootComment->user_id
+        ]);
+
         // そのスレッドに参加している全ユーザーを取得
         $userIds = collect();
 
         // 元コメントの投稿者
         $userIds->push($rootComment->user_id);
+
+        // 投稿者も追加
+        $userIds->push($rootComment->post->user_id);
 
         // 元コメント配下の全返信の投稿者
         $replies = Comment::where('post_id', $rootComment->post_id)
@@ -65,7 +109,15 @@ class UserSearchController extends Controller
             })
             ->pluck('user_id');
 
+        Log::info('Replies found', [
+            'reply_user_ids' => $replies->toArray()
+        ]);
+
         $userIds = $userIds->merge($replies)->unique()->values();
+
+        Log::info('All thread participants', [
+            'user_ids' => $userIds->toArray()
+        ]);
 
         return $userIds->toArray();
     }
