@@ -53,10 +53,11 @@ class Comment extends Model
         return $query->whereNull('parent_id');
     }
 
-    // メンション表示機能（アクセサ）
+    // メンション表示機能（アクセサ）- 日本語対応版
     public function getBodyWithMentionsAttribute()
     {
-        return preg_replace('/@([a-zA-Z0-9_]+)/', '<span style="color: #1976d2; font-weight: 500;">@$1</span>', $this->body);
+        // 日本語、英数字、アンダースコアに対応した正規表現
+        return preg_replace('/@([a-zA-Z0-9_\p{L}\p{N}]+)/u', '<span style="color: #1976d2; font-weight: 500; background-color: #e3f2fd; padding: 2px 4px; border-radius: 3px;">@$1</span>', $this->body);
     }
 
     // このコメント配下の全ての返信を取得（YouTube風）
