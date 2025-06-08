@@ -11,6 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 use App\Models\Post;
 use App\Models\Comment;
 use App\Models\Folder;
+use App\Models\Shop;
 
 class User extends Authenticatable
 {
@@ -75,5 +76,50 @@ class User extends Authenticatable
     public function followed()
     {
         return $this->belongsToMany(User::class, 'followers', 'followed_id', 'following_id')->withTimestamps();
+    }
+
+    /**
+     * ★ 新規追加: お気に入り店舗のリレーション ★
+     */
+    public function favorite_shops()
+    {
+        return $this->belongsToMany(Shop::class, 'shop_favorites', 'user_id', 'shop_id')->withTimestamps();
+    }
+
+    /**
+     * 特定の店舗がお気に入りかどうかを判定
+     */
+    public function hasFavoriteShop($shopId)
+    {
+        return $this->favorite_shops()->where('shop_id', $shopId)->exists();
+    }
+
+    /**
+     * 店舗をお気に入りに追加
+     */
+    public function addFavoriteShop($shopId)
+    {
+        if (!$this->hasFavoriteShop($shopId)) {
+            return $this->favorite_shops()->attach($shopId);
+        }
+        return false;
+    }
+
+    /**
+     * 店舗をお気に入りから削除
+     */
+    public function removeFavoriteShop($shopId)
+    {
+        return $this->favorite_shops()->detach($shopId);
+    }
+
+    /**
+     * お気に入り店舗をお気に入り追加日時順で取得
+     */
+    public function getFavoriteShopsOrdered()
+    {
+        return $this->favorite_shops()
+            ->withPivot('created_at')
+            ->orderBy('shop_favorites.created_at', 'desc');
     }
 }
