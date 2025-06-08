@@ -27,36 +27,6 @@
       background: #f0f8f0;
     }
 
-    .comment.level-1 {
-      margin-left: 20px;
-      border-left-color: #28a745;
-      background: #f0f8f0;
-    }
-
-    .comment.level-2 {
-      margin-left: 40px;
-      border-left-color: #ffc107;
-      background: #fffbf0;
-    }
-
-    .comment.level-3 {
-      margin-left: 60px;
-      border-left-color: #fd7e14;
-      background: #fff5f0;
-    }
-
-    .comment.level-4 {
-      margin-left: 80px;
-      border-left-color: #dc3545;
-      background: #fdf0f0;
-    }
-
-    .comment.level-5-plus {
-      margin-left: 100px;
-      border-left-color: #6f42c1;
-      background: #f8f0ff;
-    }
-
     .comment-form {
       background: #f8f9fa;
       padding: 15px;
@@ -129,6 +99,42 @@
       border-radius: 4px;
       resize: vertical;
     }
+
+    /* メンション検索ドロップダウン */
+    .mention-dropdown {
+      position: absolute;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 1000;
+      display: none;
+    }
+
+    .mention-item {
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 14px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .mention-item:hover,
+    .mention-item.selected {
+      background-color: #f0f0f0;
+    }
+
+    .mention-item:last-child {
+      border-bottom: none;
+    }
+
+    .mention-loading {
+      padding: 8px 12px;
+      text-align: center;
+      color: #666;
+      font-size: 12px;
+    }
   </style>
 </head>
 
@@ -146,15 +152,9 @@
     <div class="post-info">
       <h3>基本情報</h3>
       <p><strong>住所:</strong> {{ $post->shop->address }}</p>
-      <p><strong>訪問日時:</strong> {{ $post->visit_time ?? '未設定' }}</p>
+      <p><strong>訪問日時:</strong> {{ $post->visit_time }}</p>
       <p><strong>訪問済:</strong> {{ $post->visit_status ? 'はい' : 'いいえ' }}</p>
-
-      <!-- 統一された予算表示 -->
-      <p><strong>予算:</strong>
-        <span style="color: #e67e22; font-weight: bold; font-size: 1.1em;">
-          {{ App\Helpers\BudgetHelper::formatBudget($post->budget) }}
-        </span>
-      </p>
+      <p><strong>予算:</strong> {{ number_format($post->budget) }}円</p>
     </div>
 
     <div class="menus">
@@ -201,7 +201,7 @@
     </div>
   </div>
 
-  <!-- コメントセクション（新規追加部分） -->
+  <!-- コメントセクション（YouTube風） -->
   <div class="comment-section">
     <h3>コメント ({{ $post->comments->where('parent_id', null)->count() }})</h3>
 
@@ -226,8 +226,80 @@
 
     <!-- コメント一覧 -->
     <div class="comments">
-      @forelse($post->comments()->parentComments()->with(['user', 'childrenRecursive.user'])->orderBy('created_at', 'desc')->get() as $comment)
-      @include('post.partials.comment', ['comment' => $comment, 'post' => $post, 'level' => 0])
+      @forelse($post->comments()->parentComments()->with(['user'])->orderBy('created_at', 'desc')->get() as $comment)
+      <!-- メインコメント -->
+      <div class="comment">
+        <div class="comment-meta">
+          <strong>{{ $comment->user->name }}</strong>
+          <span>{{ $comment->created_at->format('Y/m/d H:i') }}</span>
+          @if(Auth::check() && (Auth::id() === $comment->user_id || Auth::id() === $post->user_id))
+          <form action="{{ route('comments.destroy', $comment->id) }}" method="POST" style="display: inline; float: right;">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('削除しますか？')">削除</button>
+          </form>
+          @endif
+        </div>
+        <div class="comment-body">{!! $comment->body_with_mentions !!}</div>
+        @auth
+        <button onclick="toggleReplyForm(<?php echo $comment->id; ?>)" class="btn btn-secondary btn-small">返信</button>
+        @endauth
+
+        <!-- 返信フォーム -->
+        @auth
+        <div id="reply-form-<?php echo $comment->id; ?>" class="reply-form">
+          <form action="{{ route('comments.store', $post->id) }}" method="POST" style="margin-top: 10px;">
+            @csrf
+            <input type="hidden" name="parent_id" value="<?php echo $comment->id; ?>">
+            <textarea name="body" rows="2" placeholder="<?php echo $comment->user->name; ?>さんに返信...&#10;💡 @でスレッド参加者を検索" required></textarea>
+            <div style="margin-top: 5px;">
+              <button type="submit" class="btn btn-primary btn-small">返信投稿</button>
+              <button type="button" onclick="toggleReplyForm(<?php echo $comment->id; ?>)" class="btn btn-secondary btn-small">キャンセル</button>
+            </div>
+          </form>
+        </div>
+        @endauth
+      </div>
+
+      <!-- このコメント配下の全ての返信（YouTube風に同階層で表示） -->
+      @foreach($comment->getAllRepliesFlat() as $reply)
+      <div class="comment reply" style="margin-left: 30px; border-left: 2px solid #eee; padding-left: 15px;">
+        <div class="comment-meta">
+          <strong>{{ $reply->user->name }}</strong>
+          <span>{{ $reply->created_at->format('Y/m/d H:i') }}</span>
+          @if($reply->parent && $reply->parent->user_id !== $comment->user_id)
+          <span style="color: #666;">→ {{ $reply->parent->user->name }}さんへの返信</span>
+          @endif
+          @if(Auth::check() && (Auth::id() === $reply->user_id || Auth::id() === $post->user_id))
+          <form action="{{ route('comments.destroy', $reply->id) }}" method="POST" style="display: inline; float: right;">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('削除しますか？')">削除</button>
+          </form>
+          @endif
+        </div>
+        <div class="comment-body">{!! $reply->body_with_mentions !!}</div>
+        @auth
+        <button onclick="toggleReplyForm(<?php echo $reply->id; ?>)" class="btn btn-secondary btn-small">返信</button>
+        @endauth
+
+        <!-- 返信に対する返信フォーム -->
+        @auth
+        <div id="reply-form-<?php echo $reply->id; ?>" class="reply-form">
+          <form action="{{ route('comments.store', $post->id) }}" method="POST" style="margin-top: 10px;">
+            @csrf
+            <input type="hidden" name="parent_id" value="<?php echo $reply->id; ?>">
+            <textarea name="body" rows="2" placeholder="@<?php echo $reply->user->name; ?> さんに返信...&#10;💡 @でスレッド参加者を検索" required></textarea>
+            <div style="margin-top: 5px;">
+              <button type="submit" class="btn btn-primary btn-small">返信投稿</button>
+              <button type="button" onclick="toggleReplyForm(<?php echo $reply->id; ?>)" class="btn btn-secondary btn-small">キャンセル</button>
+            </div>
+          </form>
+        </div>
+        @endauth
+      </div>
+      @endforeach
+
       @empty
       <p>まだコメントがありません。</p>
       @endforelse
@@ -235,6 +307,7 @@
   </div>
 
   <script>
+    // 既存のtoggleReplyForm関数
     function toggleReplyForm(commentId) {
       const form = document.getElementById('reply-form-' + commentId);
       if (form.style.display === 'none' || form.style.display === '') {
@@ -244,6 +317,249 @@
         form.style.display = 'none';
       }
     }
+
+    // メンション検索機能
+    document.addEventListener('DOMContentLoaded', function() {
+      const textareas = document.querySelectorAll('textarea[name="body"]');
+      let mentionDropdown = null;
+      let currentTextarea = null;
+      let currentMentionStart = -1;
+
+      textareas.forEach(textarea => {
+        // コンテナを相対位置に設定
+        if (!textarea.closest('.comment-form') && !textarea.closest('.reply-form')) {
+          textarea.parentElement.style.position = 'relative';
+        }
+
+        textarea.addEventListener('input', function(e) {
+          handleMentionInput(this);
+        });
+
+        textarea.addEventListener('keydown', function(e) {
+          handleMentionKeydown(e, this);
+        });
+
+        // フォーカス時の処理
+        textarea.addEventListener('focus', function() {
+          currentTextarea = this;
+        });
+      });
+
+      function handleMentionInput(textarea) {
+        // 新規コメントフォームではメンション機能を無効
+        if (textarea.closest('.comment-form') !== null) {
+          return;
+        }
+
+        const value = textarea.value;
+        const cursorPos = textarea.selectionStart;
+
+        // @マークを検出
+        const beforeCursor = value.substring(0, cursorPos);
+        const atIndex = beforeCursor.lastIndexOf('@');
+
+        if (atIndex !== -1) {
+          const afterAt = beforeCursor.substring(atIndex + 1);
+
+          // @の後に空白がない場合のみメンション検索
+          if (afterAt.indexOf(' ') === -1 && afterAt.length >= 1) {
+            currentMentionStart = atIndex;
+            currentTextarea = textarea;
+            searchUsers(afterAt, textarea);
+          } else {
+            hideMentionDropdown();
+          }
+        } else {
+          hideMentionDropdown();
+        }
+      }
+
+      function handleMentionKeydown(e, textarea) {
+        // 新規コメントフォームではメンション機能を無効
+        if (textarea.closest('.comment-form') !== null) {
+          return;
+        }
+
+        if (mentionDropdown && mentionDropdown.style.display !== 'none') {
+          const items = mentionDropdown.querySelectorAll('.mention-item');
+          const selectedItem = mentionDropdown.querySelector('.mention-item.selected');
+
+          if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            let nextItem = selectedItem ? selectedItem.nextElementSibling : items[0];
+            if (!nextItem || nextItem.classList.contains('mention-loading')) {
+              nextItem = items[0];
+            }
+            selectMentionItem(nextItem);
+          } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            let prevItem = selectedItem ? selectedItem.previousElementSibling : items[items.length - 1];
+            if (!prevItem || prevItem.classList.contains('mention-loading')) {
+              prevItem = items[items.length - 1];
+            }
+            selectMentionItem(prevItem);
+          } else if (e.key === 'Enter' && selectedItem && !selectedItem.classList.contains('mention-loading')) {
+            e.preventDefault();
+            const username = selectedItem.textContent.trim();
+            insertMention(username, textarea);
+          } else if (e.key === 'Escape') {
+            hideMentionDropdown();
+          }
+        }
+      }
+
+      function searchUsers(query, textarea) {
+        // 新規コメントフォームではメンション機能を無効（二重チェック）
+        if (textarea.closest('.comment-form') !== null) {
+          return;
+        }
+
+        if (query.length < 1) {
+          hideMentionDropdown();
+          return;
+        }
+
+        showMentionLoading(textarea);
+
+        // 返信フォームのコンテキスト情報を取得
+        const params = getSearchParams(textarea);
+        if (!params.comment_id) {
+          hideMentionDropdown();
+          return;
+        }
+
+        const queryString = new URLSearchParams({
+          q: query,
+          ...params
+        }).toString();
+
+        fetch(`/api/users/search?${queryString}`)
+          .then(response => response.json())
+          .then(users => {
+            showMentionDropdown(users, textarea);
+          })
+          .catch(error => {
+            console.error('ユーザー検索エラー:', error);
+            hideMentionDropdown();
+          });
+      }
+
+      function getSearchParams(textarea) {
+        // 返信フォームのみ対応：parent_comment_idを送信
+        const parentIdInput = textarea.closest('form').querySelector('input[name="parent_id"]');
+        if (parentIdInput) {
+          return {
+            comment_id: parentIdInput.value
+          };
+        }
+
+        return {};
+      }
+
+      function showMentionLoading(textarea) {
+        hideMentionDropdown();
+
+        mentionDropdown = document.createElement('div');
+        mentionDropdown.className = 'mention-dropdown';
+        mentionDropdown.style.display = 'block';
+
+        const loadingItem = document.createElement('div');
+        loadingItem.className = 'mention-loading';
+        loadingItem.textContent = '検索中...';
+        mentionDropdown.appendChild(loadingItem);
+
+        positionDropdown(textarea);
+        document.body.appendChild(mentionDropdown);
+      }
+
+      function showMentionDropdown(users, textarea) {
+        hideMentionDropdown();
+
+        if (users.length === 0) {
+          return;
+        }
+
+        mentionDropdown = document.createElement('div');
+        mentionDropdown.className = 'mention-dropdown';
+        mentionDropdown.style.display = 'block';
+
+        users.forEach((user, index) => {
+          const item = document.createElement('div');
+          item.className = 'mention-item' + (index === 0 ? ' selected' : '');
+          item.textContent = user.name;
+
+          item.addEventListener('click', function() {
+            insertMention(user.name, textarea);
+          });
+
+          item.addEventListener('mouseenter', function() {
+            selectMentionItem(this);
+          });
+
+          mentionDropdown.appendChild(item);
+        });
+
+        positionDropdown(textarea);
+        document.body.appendChild(mentionDropdown);
+      }
+
+      function positionDropdown(textarea) {
+        const rect = textarea.getBoundingClientRect();
+        mentionDropdown.style.left = rect.left + 'px';
+        mentionDropdown.style.top = (rect.bottom + window.scrollY + 2) + 'px';
+        mentionDropdown.style.minWidth = Math.min(rect.width, 200) + 'px';
+      }
+
+      function selectMentionItem(item) {
+        if (!item || item.classList.contains('mention-loading')) return;
+
+        const selected = mentionDropdown.querySelector('.mention-item.selected');
+        if (selected) {
+          selected.classList.remove('selected');
+        }
+
+        item.classList.add('selected');
+      }
+
+      function insertMention(username, textarea) {
+        const value = textarea.value;
+        const cursorPos = textarea.selectionStart;
+
+        // @マークから現在位置までを置換
+        const beforeMention = value.substring(0, currentMentionStart);
+        const afterCursor = value.substring(cursorPos);
+
+        const newValue = beforeMention + '@' + username + ' ' + afterCursor;
+        textarea.value = newValue;
+
+        // カーソル位置を調整
+        const newCursorPos = currentMentionStart + username.length + 2;
+        textarea.setSelectionRange(newCursorPos, newCursorPos);
+
+        hideMentionDropdown();
+        textarea.focus();
+      }
+
+      function hideMentionDropdown() {
+        if (mentionDropdown) {
+          mentionDropdown.remove();
+          mentionDropdown = null;
+        }
+        currentMentionStart = -1;
+      }
+
+      // ドキュメント外クリックでドロップダウンを閉じる
+      document.addEventListener('click', function(e) {
+        if (mentionDropdown && !mentionDropdown.contains(e.target) && !e.target.matches('textarea[name="body"]')) {
+          hideMentionDropdown();
+        }
+      });
+
+      // ウィンドウリサイズ時にドロップダウンを閉じる
+      window.addEventListener('resize', function() {
+        hideMentionDropdown();
+      });
+    });
   </script>
 </body>
 

@@ -41,10 +41,10 @@ Route::controller(UserController::class)->middleware(['auth'])->group(function (
     Route::get('/users', 'index')->name('user');
 });
 
+// コメント機能のルート
 Route::controller(CommentController::class)->middleware(['auth'])->group(function () {
     Route::post('/posts/{post}/comments', 'store')->name('comments.store');
     Route::delete('/comments/{comment}', 'destroy')->name('comments.destroy');
-    Route::get('/comments/{comment}/reply', 'reply')->name('comments.reply'); // AJAX用（オプション）
 });
 
 Route::controller(ShopController::class)->middleware(['auth'])->group(function () {

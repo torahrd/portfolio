@@ -31,7 +31,7 @@ if ($level <= 4) {
       @endif
     </div>
 
-    <div class="comment-body">{{ $comment->body }}</div>
+    <div class="comment-body">{!! $comment->body_with_mentions !!}</div>
 
     @auth
     <button onclick="toggleReplyForm(<?php echo $comment->id; ?>)" class="btn btn-secondary btn-small">返信</button>
@@ -43,7 +43,7 @@ if ($level <= 4) {
       <form action="{{ route('comments.store', $post->id) }}" method="POST" style="margin-top: 10px;">
         @csrf
         <input type="hidden" name="parent_id" value="<?php echo $comment->id; ?>">
-        <textarea name="body" rows="2" placeholder="<?php echo $comment->user->name; ?>さんに返信..." required></textarea>
+        <textarea name="body" rows="2" placeholder="<?php echo $comment->user->name; ?>さんに返信...&#10;💡 @でスレッド参加者を検索" required></textarea>
         <div style="margin-top: 5px;">
           <button type="submit" class="btn btn-primary btn-small">返信投稿</button>
           <button type="button" onclick="toggleReplyForm(<?php echo $comment->id; ?>)" class="btn btn-secondary btn-small">キャンセル</button>

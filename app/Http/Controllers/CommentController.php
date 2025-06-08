@@ -6,16 +6,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Comment;
 use App\Models\Post;
+use App\Http\Requests\CommentStoreRequest;
 
 class CommentController extends Controller
 {
-    public function store(Request $request, Post $post)
+    public function store(CommentStoreRequest $request, Post $post)
     {
-        // $request->validate([
-        //     'body' => 'required|max:200',
-        //     'parent_id' => 'nullable|exists:comments,id'
-        // ]);
-
         $input = [
             'user_id' => Auth::id(),
             'post_id' => $post->id,

@@ -53,23 +53,28 @@ class Comment extends Model
         return $query->whereNull('parent_id');
     }
 
-    // 子コメントを再帰的に取得（すべての階層の返信）
-    public function childrenRecursive()
+    // メンション表示機能（アクセサ）
+    public function getBodyWithMentionsAttribute()
     {
-        return $this->children()->with('childrenRecursive');
+        return preg_replace('/@([a-zA-Z0-9_]+)/', '<span style="color: #1976d2; font-weight: 500;">@$1</span>', $this->body);
     }
 
-    // インデントレベルを計算
-    public function getIndentLevel()
+    // このコメント配下の全ての返信を取得（YouTube風）
+    public function getAllRepliesFlat()
     {
-        $level = 0;
-        $current = $this;
+        $allReplies = collect();
+        $this->collectAllReplies($this->id, $allReplies);
+        return $allReplies->sortBy('created_at');
+    }
 
-        while ($current->parent_id) {
-            $level++;
-            $current = $current->parent;
+    // 再帰的に全ての返信を収集
+    private function collectAllReplies($parentId, &$collection)
+    {
+        $replies = Comment::where('parent_id', $parentId)->with('user', 'parent.user')->get();
+
+        foreach ($replies as $reply) {
+            $collection->push($reply);
+            $this->collectAllReplies($reply->id, $collection);
         }
-
-        return $level;
     }
 }
