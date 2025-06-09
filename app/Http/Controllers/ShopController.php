@@ -11,7 +11,33 @@ use Illuminate\Support\Facades\Cache;
 class ShopController extends Controller
 {
     /**
-     * 店舗検索（AJAX専用）
+     * ★ 新規追加: 店舗詳細画面を表示 ★
+     */
+    public function show(Shop $shop)
+    {
+        // 必要なデータを効率的に読み込み
+        $shop->load([
+            'business_hours', // 営業時間
+            'favorited_by_users:id,name', // お気に入りユーザー（最小限のデータ）
+            'posts' => function ($query) {
+                // 最近の投稿5件を投稿者情報付きで取得
+                $query->with('user:id,name')
+                    ->orderBy('created_at', 'desc')
+                    ->limit(5);
+            }
+        ]);
+
+        // 現在のユーザーがお気に入りしているかチェック
+        $isFavorited = auth()->check() ? $shop->isFavoritedBy(auth()->id()) : false;
+
+        // 曜日名の配列（日本語）
+        $dayNames = ['日', '月', '火', '水', '木', '金', '土'];
+
+        return view('shops.show', compact('shop', 'isFavorited', 'dayNames'));
+    }
+
+    /**
+     * 店舗検索（AJAX専用）- 既存機能
      */
     public function search(ShopSearchRequest $request)
     {
@@ -41,7 +67,7 @@ class ShopController extends Controller
     }
 
     /**
-     * 新しい店舗を作成（AJAX専用）
+     * 新しい店舗を作成（AJAX専用）- 既存機能
      */
     public function store(ShopStoreRequest $request)
     {
