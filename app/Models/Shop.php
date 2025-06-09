@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 use App\Models\Business_hours;
 use App\Models\Post;
@@ -24,18 +25,24 @@ class Shop extends Model
         'reservation_url',
     ];
 
+    /**
+     * 投稿との関連
+     */
     public function posts()
     {
         return $this->hasMany(Post::class);
     }
 
+    /**
+     * 営業時間との関連
+     */
     public function business_hours()
     {
         return $this->hasMany(Business_hours::class);
     }
 
     /**
-     * ★ 新規追加: この店舗をお気に入りにしているユーザーのリレーション ★
+     * ★ この店舗をお気に入りにしているユーザーのリレーション ★
      */
     public function favorited_by_users()
     {
@@ -55,6 +62,7 @@ class Shop extends Model
      */
     public function isFavoritedBy($userId)
     {
+        if (!$userId) return false;
         return $this->favorited_by_users()->where('user_id', $userId)->exists();
     }
 
@@ -66,6 +74,80 @@ class Shop extends Model
         return $this->favorited_by_users()
             ->withPivot('created_at')
             ->orderBy('shop_favorites.created_at', 'desc');
+    }
+
+    /**
+     * ★ 新規追加: 投稿データから平均予算を計算 ★
+     */
+    public function getAverageBudgetAttribute()
+    {
+        $avgBudget = $this->posts()->whereNotNull('budget')->avg('budget');
+        return $avgBudget ? round($avgBudget) : null;
+    }
+
+    /**
+     * ★ 新規追加: 平均予算を表示用文字列で取得 ★
+     */
+    public function getFormattedAverageBudgetAttribute()
+    {
+        $avg = $this->average_budget;
+        if (!$avg) return '予算情報なし';
+
+        return \App\Helpers\BudgetHelper::formatBudget($avg);
+    }
+
+    /**
+     * ★ 新規追加: 今日の営業時間を取得 ★
+     */
+    public function getTodayBusinessHoursAttribute()
+    {
+        $today = Carbon::now()->dayOfWeek; // 0=日曜日, 1=月曜日, ...
+        return $this->business_hours()->where('day', $today)->first();
+    }
+
+    /**
+     * ★ 新規追加: 現在営業中かどうかを判定 ★
+     */
+    public function getIsOpenNowAttribute()
+    {
+        $todayHours = $this->today_business_hours;
+        if (!$todayHours) return false;
+
+        $now = Carbon::now()->format('H:i');
+        $openTime = Carbon::parse($todayHours->open_time)->format('H:i');
+        $closeTime = Carbon::parse($todayHours->close_time)->format('H:i');
+
+        // 営業時間内かチェック
+        if ($closeTime > $openTime) {
+            // 通常の営業時間（例: 09:00-17:00）
+            return $now >= $openTime && $now <= $closeTime;
+        } else {
+            // 深夜営業（例: 22:00-02:00）
+            return $now >= $openTime || $now <= $closeTime;
+        }
+    }
+
+    /**
+     * ★ 新規追加: 営業ステータスを文字列で取得 ★
+     */
+    public function getOpenStatusAttribute()
+    {
+        $todayHours = $this->today_business_hours;
+        if (!$todayHours) return '営業時間不明';
+
+        return $this->is_open_now ? '営業中' : '営業時間外';
+    }
+
+    /**
+     * ★ 新規追加: 最近の投稿を取得（5件） ★
+     */
+    public function getRecentPostsAttribute()
+    {
+        return $this->posts()
+            ->with(['user:id,name'])
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
     }
 
     /**

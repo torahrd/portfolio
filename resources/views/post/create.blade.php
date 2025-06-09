@@ -162,6 +162,8 @@
 
   <script>
     $(document).ready(function() {
+      console.log('Post create page loaded');
+
       // AJAX設定（全リクエストに適用）
       $.ajaxSetup({
         headers: {
@@ -175,6 +177,7 @@
       // 検索ボックスに入力があったときの処理
       $('#shop-search').on('input', function() {
         const query = $(this).val().trim();
+        console.log('Input detected:', query);
 
         // 既存のタイムアウトをクリア（連続入力対応）
         clearTimeout(searchTimeout);
@@ -202,24 +205,43 @@
        * 店舗検索を実行
        */
       function searchShops(query) {
+        console.log('Starting search for:', query);
         showLoading();
 
+        // ★修正: リクエストパラメータとエラーハンドリングを改善★
         $.ajax({
-          url: '{{ route("shops.search") }}',
+          url: '/shops/search', // ルートを確認
           method: 'GET',
           data: {
             query: query
           },
+          dataType: 'json', // レスポンスタイプを明示
           success: function(response) {
+            console.log('Search response:', response);
             displayResults(response, query);
           },
-          error: function(xhr) {
+          error: function(xhr, status, error) {
+            console.error('Search error:', {
+              status: xhr.status,
+              statusText: xhr.statusText,
+              responseText: xhr.responseText,
+              error: error
+            });
+
             if (xhr.status === 422) {
               // バリデーションエラー
-              const errors = xhr.responseJSON.errors;
-              showError(Object.values(errors).flat().join(' '));
+              try {
+                const errors = JSON.parse(xhr.responseText).errors;
+                showError(Object.values(errors).flat().join(' '));
+              } catch (e) {
+                showError('検索データの形式が正しくありません');
+              }
+            } else if (xhr.status === 403) {
+              showError('検索権限がありません');
+            } else if (xhr.status === 404) {
+              showError('検索機能が見つかりません');
             } else {
-              showError('検索に失敗しました');
+              showError('検索に失敗しました（ステータス: ' + xhr.status + '）');
             }
           }
         });
@@ -232,11 +254,11 @@
         const $results = $('#search-results');
         $results.empty();
 
-        if (response.has_results) {
+        if (response.has_results && response.shops && response.shops.length > 0) {
           // 検索結果がある場合
           response.shops.forEach(function(shop) {
             const $item = $('<div class="search-result-item"></div>')
-              .html('<strong>' + shop.name + '</strong><br><small>' + shop.address + '</small>')
+              .html('<strong>' + escapeHtml(shop.name) + '</strong><br><small>' + escapeHtml(shop.address) + '</small>')
               .on('click', function() {
                 selectShop(shop);
               });
@@ -262,6 +284,7 @@
         $('#shop-search').val(shop.name + ' - ' + shop.address);
         $('#selected-shop-id').val(shop.id);
         hideResults();
+        console.log('Shop selected:', shop);
       }
 
       /**
@@ -269,29 +292,60 @@
        */
       function createNewShop(name) {
         const address = prompt('店舗の住所を入力してください:');
-        if (!address) return;
+        if (!address || address.trim() === '') return;
+
+        console.log('Creating new shop:', {
+          name: name,
+          address: address
+        });
 
         $.ajax({
-          url: '{{ route("shops.store") }}',
+          url: '/shops', // ルートを確認
           method: 'POST',
           data: {
-            name: name,
-            address: address
+            name: name.trim(),
+            address: address.trim(),
+            _token: $('meta[name="csrf-token"]').attr('content')
           },
+          dataType: 'json',
           success: function(response) {
+            console.log('Shop creation response:', response);
             if (response.success) {
               selectShop(response.shop);
               alert('新しい店舗を作成しました！');
+            } else {
+              alert('エラー: ' + (response.message || '店舗の作成に失敗しました'));
             }
           },
           error: function(xhr) {
+            console.error('Shop creation error:', xhr);
             if (xhr.status === 422) {
-              const errors = xhr.responseJSON.errors;
-              alert('エラー: ' + Object.values(errors).flat().join(' '));
+              try {
+                const errors = JSON.parse(xhr.responseText).errors;
+                alert('エラー: ' + Object.values(errors).flat().join(' '));
+              } catch (e) {
+                alert('店舗の作成に失敗しました');
+              }
             } else {
-              alert('店舗の作成に失敗しました');
+              alert('店舗の作成に失敗しました（ステータス: ' + xhr.status + '）');
             }
           }
+        });
+      }
+
+      /**
+       * HTMLエスケープ
+       */
+      function escapeHtml(text) {
+        const map = {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#039;'
+        };
+        return text.replace(/[&<>"']/g, function(m) {
+          return map[m];
         });
       }
 
@@ -309,7 +363,7 @@
        */
       function showError(message) {
         $('#search-results')
-          .html('<div class="loading" style="color: red;">' + message + '</div>')
+          .html('<div class="loading" style="color: red;">' + escapeHtml(message) + '</div>')
           .show();
       }
 
@@ -319,33 +373,33 @@
       function hideResults() {
         $('#search-results').hide();
       }
-    });
 
-    /**
-     * キーボードナビゲーション
-     */
-    $('#shop-search').on('keydown', function(e) {
-      const $items = $('.search-result-item');
-      let currentIndex = $items.index($('.search-result-item.selected'));
+      /**
+       * キーボードナビゲーション
+       */
+      $('#shop-search').on('keydown', function(e) {
+        const $items = $('.search-result-item');
+        let currentIndex = $items.index($('.search-result-item.selected'));
 
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        currentIndex = (currentIndex + 1) % $items.length;
-        selectResultItem(currentIndex);
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        currentIndex = currentIndex <= 0 ? $items.length - 1 : currentIndex - 1;
-        selectResultItem(currentIndex);
-      } else if (e.key === 'Enter') {
-        e.preventDefault();
-        $('.search-result-item.selected').click();
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          currentIndex = (currentIndex + 1) % $items.length;
+          selectResultItem(currentIndex);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          currentIndex = currentIndex <= 0 ? $items.length - 1 : currentIndex - 1;
+          selectResultItem(currentIndex);
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          $('.search-result-item.selected').click();
+        }
+      });
+
+      function selectResultItem(index) {
+        $('.search-result-item').removeClass('selected');
+        $('.search-result-item').eq(index).addClass('selected');
       }
     });
-
-    function selectResultItem(index) {
-      $('.search-result-item').removeClass('selected');
-      $('.search-result-item').eq(index).addClass('selected');
-    }
   </script>
 </body>
 

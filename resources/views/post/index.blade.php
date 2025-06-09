@@ -20,6 +20,19 @@
       padding-bottom: 10px;
     }
 
+    /* ★ 新規追加: 店舗名リンクのスタイル ★ */
+    .shop-link {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+
+    .shop-link:hover {
+      color: #0056b3;
+      text-decoration: underline;
+    }
+
     .budget {
       color: #e67e22;
       font-weight: bold;
@@ -89,12 +102,26 @@
     <div class="post-item">
       <div class="post-header">
         <h2>
+          <!-- ★ 修正: 投稿詳細と店舗詳細の両方へのリンクを追加 ★ -->
           <a href="{{ route('posts.show', $post->id) }}">
-            {{ $post->shop->name }}
+            <a href="{{ route('shops.show', $post->shop->id) }}" class="shop-link">
+              {{ $post->shop->name }}
+            </a>
           </a>
+          <small style="margin-left: 10px;">
+            <a href="{{ route('posts.show', $post->id) }}" style="color: #6c757d; font-size: 0.8em;">
+              投稿詳細 →
+            </a>
+          </small>
         </h2>
         <p><strong>訪問日時:</strong> {{ $post->visit_time ?? '未設定' }}</p>
-        <p><strong>住所:</strong> {{ $post->shop->address }}</p>
+
+        <!-- ★ 新規追加: 店舗住所にも店舗詳細へのリンクを追加 ★ -->
+        <p><strong>住所:</strong>
+          <a href="{{ route('shops.show', $post->shop->id) }}" class="shop-link">
+            {{ $post->shop->address }}
+          </a>
+        </p>
 
         <!-- 改善された予算表示 -->
         <p><strong>予算:</strong>
@@ -149,6 +176,8 @@
       <div class="actions" style="margin-top: 15px;">
         <a href="{{ route('posts.show', $post->id) }}" class="btn btn-primary">詳細を見る</a>
         <a href="{{ route('posts.edit', $post->id) }}" class="btn btn-secondary">編集</a>
+        <!-- ★ 新規追加: 店舗詳細へのボタンも追加 ★ -->
+        <a href="{{ route('shops.show', $post->shop->id) }}" class="btn btn-info">店舗詳細</a>
       </div>
     </div>
     @endforeach
