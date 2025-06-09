@@ -5,9 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;  // ★ 修正: use文を追加
+use Illuminate\Support\Facades\Log;
 use App\Models\Shop;
-use App\Http\Requests\ShopFavoriteRequest;
 
 class FavoriteShopController extends Controller
 {
@@ -20,53 +19,62 @@ class FavoriteShopController extends Controller
     }
 
     /**
-     * 店舗をお気に入りに追加（AJAX専用）
+     * 店舗をお気に入りに追加（POST）
      * 
-     * @param ShopFavoriteRequest $request
+     * @param Request $request
      * @param Shop $shop
      * @return JsonResponse
      */
-    public function store(ShopFavoriteRequest $request, Shop $shop): JsonResponse
+    public function store(Request $request, Shop $shop): JsonResponse
     {
         try {
-            // AJAXリクエストチェック
-            if (!$request->ajax()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'AJAX request required'
-                ], 400);
-            }
+            Log::info('お気に入り追加リクエスト開始', [
+                'user_id' => Auth::id(),
+                'shop_id' => $shop->id,
+                'request_method' => $request->method()
+            ]);
 
             /** @var \App\Models\User $user */
             $user = Auth::user();
 
             // 既にお気に入りに登録済みかチェック
             if ($user->hasFavoriteShop($shop->id)) {
+                Log::warning('既にお気に入り登録済み', [
+                    'user_id' => $user->id,
+                    'shop_id' => $shop->id
+                ]);
+
                 return response()->json([
                     'success' => false,
                     'message' => 'この店舗は既にお気に入りに登録されています',
                     'is_favorited' => true,
-                    'favorites_count' => $shop->favorites_count
-                ], 409); // 409 Conflict
+                    'favorites_count' => $shop->favorited_by_users()->count()
+                ], 409);
             }
 
             // お気に入りに追加
             $user->addFavoriteShop($shop->id);
 
             // 更新されたお気に入り数を取得
-            $shop->refresh();
             $favoritesCount = $shop->favorited_by_users()->count();
+
+            Log::info('お気に入り追加成功', [
+                'user_id' => $user->id,
+                'shop_id' => $shop->id,
+                'new_favorites_count' => $favoritesCount
+            ]);
 
             return response()->json([
                 'success' => true,
                 'message' => 'お気に入りに追加しました',
                 'is_favorited' => true,
                 'favorites_count' => $favoritesCount
-            ]);
+            ], 200);
         } catch (\Exception $e) {
-            Log::error('Favorite shop store error: ' . $e->getMessage(), [  // ★ 修正: \Log を Log に変更
+            Log::error('お気に入り追加エラー', [
                 'user_id' => Auth::id(),
                 'shop_id' => $shop->id,
+                'error_message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
 
@@ -78,7 +86,7 @@ class FavoriteShopController extends Controller
     }
 
     /**
-     * 店舗をお気に入りから削除（AJAX専用）
+     * 店舗をお気に入りから削除（DELETE）
      * 
      * @param Request $request
      * @param Shop $shop
@@ -87,44 +95,54 @@ class FavoriteShopController extends Controller
     public function destroy(Request $request, Shop $shop): JsonResponse
     {
         try {
-            // AJAXリクエストチェック
-            if (!$request->ajax()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'AJAX request required'
-                ], 400);
-            }
+            Log::info('お気に入り削除リクエスト開始', [
+                'user_id' => Auth::id(),
+                'shop_id' => $shop->id,
+                'request_method' => $request->method(),
+                'headers' => $request->headers->all()
+            ]);
 
             /** @var \App\Models\User $user */
             $user = Auth::user();
 
             // お気に入りに登録されていないかチェック
             if (!$user->hasFavoriteShop($shop->id)) {
+                Log::warning('お気に入り未登録での削除試行', [
+                    'user_id' => $user->id,
+                    'shop_id' => $shop->id
+                ]);
+
                 return response()->json([
                     'success' => false,
                     'message' => 'この店舗はお気に入りに登録されていません',
                     'is_favorited' => false,
-                    'favorites_count' => $shop->favorites_count
-                ], 409); // 409 Conflict
+                    'favorites_count' => $shop->favorited_by_users()->count()
+                ], 404);
             }
 
             // お気に入りから削除
             $user->removeFavoriteShop($shop->id);
 
             // 更新されたお気に入り数を取得
-            $shop->refresh();
             $favoritesCount = $shop->favorited_by_users()->count();
+
+            Log::info('お気に入り削除成功', [
+                'user_id' => $user->id,
+                'shop_id' => $shop->id,
+                'new_favorites_count' => $favoritesCount
+            ]);
 
             return response()->json([
                 'success' => true,
                 'message' => 'お気に入りから削除しました',
                 'is_favorited' => false,
                 'favorites_count' => $favoritesCount
-            ]);
+            ], 200);
         } catch (\Exception $e) {
-            Log::error('Favorite shop destroy error: ' . $e->getMessage(), [  // ★ 修正: \Log を Log に変更
+            Log::error('お気に入り削除エラー', [
                 'user_id' => Auth::id(),
                 'shop_id' => $shop->id,
+                'error_message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
 
@@ -136,7 +154,7 @@ class FavoriteShopController extends Controller
     }
 
     /**
-     * お気に入り状態を取得（AJAX専用）
+     * お気に入り状態を取得（GET）
      * 
      * @param Request $request
      * @param Shop $shop
@@ -145,14 +163,6 @@ class FavoriteShopController extends Controller
     public function status(Request $request, Shop $shop): JsonResponse
     {
         try {
-            // AJAXリクエストチェック
-            if (!$request->ajax()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'AJAX request required'
-                ], 400);
-            }
-
             /** @var \App\Models\User $user */
             $user = Auth::user();
             $isFavorited = $user ? $user->hasFavoriteShop($shop->id) : false;
@@ -162,12 +172,12 @@ class FavoriteShopController extends Controller
                 'success' => true,
                 'is_favorited' => $isFavorited,
                 'favorites_count' => $favoritesCount
-            ]);
+            ], 200);
         } catch (\Exception $e) {
-            Log::error('Favorite shop status error: ' . $e->getMessage(), [  // ★ 修正: \Log を Log に変更
+            Log::error('お気に入り状態取得エラー', [
                 'user_id' => Auth::id(),
                 'shop_id' => $shop->id,
-                'trace' => $e->getTraceAsString()
+                'error_message' => $e->getMessage()
             ]);
 
             return response()->json([
