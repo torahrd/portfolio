@@ -61,6 +61,15 @@
       background-color: #007bff;
       color: white;
     }
+
+    .selected-shop-display {
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #d4edda;
+      border: 1px solid #c3e6cb;
+      border-radius: 4px;
+      color: #155724;
+    }
   </style>
 </head>
 
@@ -70,7 +79,7 @@
   <form action="/posts" method="post">
     @csrf
 
-    <!-- 店舗検索セクション（新機能） -->
+    <!-- 店舗検索セクション（修正版） -->
     <div class="shop-search-container">
       <label for="shop-search">店舗を選択:</label>
       <input type="text"
@@ -84,6 +93,9 @@
 
       <!-- 検索結果を表示するエリア -->
       <div id="search-results" class="search-results"></div>
+
+      <!-- 選択された店舗を表示するエリア -->
+      <div id="selected-shop-display" class="selected-shop-display" style="display: none;"></div>
     </div>
 
     <!-- 訪問ステータス -->
@@ -163,6 +175,7 @@
   <script>
     $(document).ready(function() {
       console.log('Post create page loaded');
+      console.log('CSRF Token:', $('meta[name="csrf-token"]').attr('content'));
 
       // AJAX設定（全リクエストに適用）
       $.ajaxSetup({
@@ -185,6 +198,7 @@
         // 2文字未満の場合は検索結果を非表示
         if (query.length < 2) {
           hideResults();
+          clearSelectedShop(); // 選択をクリア
           return;
         }
 
@@ -208,7 +222,7 @@
         console.log('Starting search for:', query);
         showLoading();
 
-        // ★修正: リクエストパラメータとエラーハンドリングを改善★
+        // ★修正: URLを確認し、エラーハンドリングを改善★
         $.ajax({
           url: '/shops/search', // ルートを確認
           method: 'GET',
@@ -225,10 +239,13 @@
               status: xhr.status,
               statusText: xhr.statusText,
               responseText: xhr.responseText,
-              error: error
+              error: error,
+              url: this.url
             });
 
-            if (xhr.status === 422) {
+            if (xhr.status === 404) {
+              showError('検索機能が見つかりません。ルートを確認してください。');
+            } else if (xhr.status === 422) {
               // バリデーションエラー
               try {
                 const errors = JSON.parse(xhr.responseText).errors;
@@ -238,8 +255,8 @@
               }
             } else if (xhr.status === 403) {
               showError('検索権限がありません');
-            } else if (xhr.status === 404) {
-              showError('検索機能が見つかりません');
+            } else if (xhr.status === 500) {
+              showError('サーバーエラーが発生しました');
             } else {
               showError('検索に失敗しました（ステータス: ' + xhr.status + '）');
             }
@@ -281,10 +298,28 @@
        * 店舗を選択
        */
       function selectShop(shop) {
-        $('#shop-search').val(shop.name + ' - ' + shop.address);
-        $('#selected-shop-id').val(shop.id);
-        hideResults();
         console.log('Shop selected:', shop);
+
+        // 検索ボックスには店舗名のみ表示
+        $('#shop-search').val(shop.name);
+
+        // 隠しフィールドにIDを設定
+        $('#selected-shop-id').val(shop.id);
+
+        // 選択された店舗を視覚的に表示
+        const $selectedDisplay = $('#selected-shop-display');
+        $selectedDisplay.html('<strong>選択された店舗:</strong> ' + escapeHtml(shop.name) + '<br><small>' + escapeHtml(shop.address) + '</small>');
+        $selectedDisplay.show();
+
+        hideResults();
+      }
+
+      /**
+       * 選択された店舗をクリア
+       */
+      function clearSelectedShop() {
+        $('#selected-shop-id').val('');
+        $('#selected-shop-display').hide();
       }
 
       /**
@@ -399,6 +434,17 @@
         $('.search-result-item').removeClass('selected');
         $('.search-result-item').eq(index).addClass('selected');
       }
+
+      // ★新規追加: フォーム送信前のバリデーション★
+      $('form').on('submit', function(e) {
+        const shopId = $('#selected-shop-id').val();
+        if (!shopId) {
+          e.preventDefault();
+          alert('店舗を選択してください');
+          $('#shop-search').focus();
+          return false;
+        }
+      });
     });
   </script>
 </body>

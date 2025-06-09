@@ -7,7 +7,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\UserSearchController;
-use App\Http\Controllers\FavoriteShopController;  // ★ 新規追加
+use App\Http\Controllers\FavoriteShopController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -51,31 +51,33 @@ Route::controller(CommentController::class)->middleware(['auth'])->group(functio
     Route::delete('/comments/{comment}', 'destroy')->name('comments.destroy');
 });
 
-// 店舗機能のルート
-Route::controller(ShopController::class)->middleware(['auth'])->group(function () {
-    Route::post('/shops', 'store')->name('shops.store');
-    Route::get('/shops/{shop}', 'show')->name('shops.show');  // ★ 新規追加: 店舗詳細
+// ★修正: 店舗機能のルートを整理★
+Route::middleware(['auth'])->group(function () {
+    // 店舗検索（GET）- レート制限付き
+    Route::get('/shops/search', [ShopController::class, 'search'])
+        ->name('shops.search')
+        ->middleware('throttle:60,1');
+
+    // 店舗作成（POST）
+    Route::post('/shops', [ShopController::class, 'store'])->name('shops.store');
+
+    // 店舗詳細（GET）
+    Route::get('/shops/{shop}', [ShopController::class, 'show'])->name('shops.show');
 });
 
-// 店舗検索（レート制限付き）
-Route::middleware(['throttle:60,1'])->group(function () {
-    Route::controller(ShopController::class)->middleware(['auth'])->group(function () {
-        Route::get('/shops/search', 'search')->name('shops.search');
-    });
-});
-
-// ★ 新規追加: お気に入り機能のルート ★
+// ★修正: お気に入り機能のルート★
 Route::middleware(['auth', 'throttle:30,1'])->group(function () {
-    Route::controller(FavoriteShopController::class)->group(function () {
-        // お気に入り追加
-        Route::post('/shops/{shop}/favorite', 'store')->name('shops.favorite.store');
+    // お気に入り追加
+    Route::post('/shops/{shop}/favorite', [FavoriteShopController::class, 'store'])
+        ->name('shops.favorite.store');
 
-        // お気に入り削除
-        Route::delete('/shops/{shop}/favorite', 'destroy')->name('shops.favorite.destroy');
+    // お気に入り削除
+    Route::delete('/shops/{shop}/favorite', [FavoriteShopController::class, 'destroy'])
+        ->name('shops.favorite.destroy');
 
-        // お気に入り状態取得
-        Route::get('/shops/{shop}/favorite/status', 'status')->name('shops.favorite.status');
-    });
+    // お気に入り状態取得
+    Route::get('/shops/{shop}/favorite/status', [FavoriteShopController::class, 'status'])
+        ->name('shops.favorite.status');
 });
 
 // メンション機能用のユーザー検索ルート

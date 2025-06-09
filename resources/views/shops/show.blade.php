@@ -408,57 +408,80 @@
         // ボタンを無効化（連続クリック防止）
         $btn.addClass('loading').prop('disabled', true);
 
-        // API呼び出し - ★修正: データとメソッドの指定を改善★
+        // ★修正: AJAX呼び出しの設定を正しく行う★
         const url = `/shops/${shopId}/favorite`;
-
-        let requestData = {
-          url: url,
-          success: function(response) {
-            console.log('Success response:', response);
-            if (response.success) {
-              // ボタンの状態を更新
-              updateFavoriteButton($btn, response.is_favorited, response.favorites_count);
-
-              // メッセージ表示
-              showMessage(response.message, 'success');
-            } else {
-              showMessage(response.message, 'error');
-            }
-          },
-          error: function(xhr) {
-            console.error('Favorite toggle error:', xhr);
-            console.error('Response text:', xhr.responseText);
-
-            let errorMessage = 'エラーが発生しました';
-            if (xhr.responseJSON && xhr.responseJSON.message) {
-              errorMessage = xhr.responseJSON.message;
-            }
-
-            showMessage(errorMessage, 'error');
-          },
-          complete: function() {
-            // ボタンを再有効化
-            $btn.removeClass('loading').prop('disabled', false);
-          }
-        };
 
         if (isFavorited) {
           // お気に入り解除（DELETE）
-          requestData.method = 'DELETE';
-          requestData.data = {
-            _method: 'DELETE', // Laravel用のメソッドスプーフィング
-            _token: $('meta[name="csrf-token"]').attr('content')
-          };
+          $.ajax({
+            url: url,
+            type: 'DELETE',
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest',
+              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+              console.log('Delete success response:', response);
+              if (response.success) {
+                updateFavoriteButton($btn, response.is_favorited, response.favorites_count);
+                showMessage(response.message, 'success');
+              } else {
+                showMessage(response.message, 'error');
+              }
+            },
+            error: function(xhr) {
+              console.error('Delete error:', xhr);
+              handleAjaxError(xhr);
+            },
+            complete: function() {
+              $btn.removeClass('loading').prop('disabled', false);
+            }
+          });
         } else {
           // お気に入り追加（POST）
-          requestData.method = 'POST';
-          requestData.data = {
-            _token: $('meta[name="csrf-token"]').attr('content')
-          };
+          $.ajax({
+            url: url,
+            type: 'POST',
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest',
+              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+              console.log('Post success response:', response);
+              if (response.success) {
+                updateFavoriteButton($btn, response.is_favorited, response.favorites_count);
+                showMessage(response.message, 'success');
+              } else {
+                showMessage(response.message, 'error');
+              }
+            },
+            error: function(xhr) {
+              console.error('Post error:', xhr);
+              handleAjaxError(xhr);
+            },
+            complete: function() {
+              $btn.removeClass('loading').prop('disabled', false);
+            }
+          });
         }
-
-        $.ajax(requestData);
       });
+
+      /**
+       * AJAXエラーハンドリング
+       */
+      function handleAjaxError(xhr) {
+        let errorMessage = 'エラーが発生しました';
+        if (xhr.responseJSON && xhr.responseJSON.message) {
+          errorMessage = xhr.responseJSON.message;
+        } else if (xhr.status === 404) {
+          errorMessage = 'APIエンドポイントが見つかりません';
+        } else if (xhr.status === 403) {
+          errorMessage = '権限がありません';
+        } else if (xhr.status === 500) {
+          errorMessage = 'サーバーエラーが発生しました';
+        }
+        showMessage(errorMessage, 'error');
+      }
 
       /**
        * お気に入りボタンの状態を更新
