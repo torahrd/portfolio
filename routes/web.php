@@ -51,7 +51,7 @@ Route::controller(CommentController::class)->middleware(['auth'])->group(functio
     Route::delete('/comments/{comment}', 'destroy')->name('comments.destroy');
 });
 
-// ★修正: 店舗機能のルートを整理★
+// 店舗機能のルート
 Route::middleware(['auth'])->group(function () {
     // 店舗検索（GET）- レート制限付き
     Route::get('/shops/search', [ShopController::class, 'search'])
@@ -65,17 +65,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/shops/{shop}', [ShopController::class, 'show'])->name('shops.show');
 });
 
-// ★修正: お気に入り機能のルート★
-Route::middleware(['auth', 'throttle:30,1'])->group(function () {
-    // お気に入り追加
+// ★重要: お気に入り機能のルート（DELETEメソッド対応）★
+Route::middleware(['auth'])->group(function () {
+    // お気に入り追加（POST）
     Route::post('/shops/{shop}/favorite', [FavoriteShopController::class, 'store'])
         ->name('shops.favorite.store');
 
-    // お気に入り削除
+    // ★修正: お気に入り削除（DELETE）★
     Route::delete('/shops/{shop}/favorite', [FavoriteShopController::class, 'destroy'])
         ->name('shops.favorite.destroy');
 
-    // お気に入り状態取得
+    // お気に入り状態取得（GET）
     Route::get('/shops/{shop}/favorite/status', [FavoriteShopController::class, 'status'])
         ->name('shops.favorite.status');
 });

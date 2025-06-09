@@ -70,6 +70,12 @@
       transform: scale(1.2);
     }
 
+    .favorite-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
     .status-indicators {
       display: flex;
       gap: 15px;
@@ -190,27 +196,23 @@
       background: #5a6268;
     }
 
-    .loading {
-      opacity: 0.6;
-      pointer-events: none;
-    }
-
-    .error-message {
-      background: #f8d7da;
-      color: #721c24;
+    .message {
       padding: 10px 15px;
       border-radius: 5px;
       margin: 10px 0;
-      border: 1px solid #f5c6cb;
+      border: 1px solid;
     }
 
-    .success-message {
+    .message.success {
       background: #d4edda;
       color: #155724;
-      padding: 10px 15px;
-      border-radius: 5px;
-      margin: 10px 0;
-      border: 1px solid #c3e6cb;
+      border-color: #c3e6cb;
+    }
+
+    .message.error {
+      background: #f8d7da;
+      color: #721c24;
+      border-color: #f5c6cb;
     }
 
     /* レスポンシブ対応 */
@@ -386,113 +388,141 @@
 
   <script>
     $(document).ready(function() {
-      // AJAX設定
+      // CSRFトークンの設定（最重要）
       $.ajaxSetup({
         headers: {
-          'X-Requested-With': 'XMLHttpRequest',
           'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
       });
 
-      // お気に入りボタンのクリックイベント
-      $('#favorite-btn').on('click', function() {
+      // ★修正: お気に入りボタンのクリックイベント★
+      $('#favorite-btn').on('click', function(e) {
+        e.preventDefault();
+
         const $btn = $(this);
         const shopId = $btn.data('shop-id');
-        const isFavorited = $btn.data('favorited') === 'true';
 
-        console.log('Favorite button clicked:', {
+        // ★重要: 現在の状態をボタンのクラスから判定★
+        const isFavorited = $btn.hasClass('favorited');
+
+        // 連続クリック防止
+        if ($btn.prop('disabled')) return;
+
+        console.log('★デバッグ: お気に入りボタンクリック★', {
           shopId: shopId,
-          isFavorited: isFavorited
+          isFavorited: isFavorited,
+          buttonClasses: $btn.attr('class'),
+          dataFavorited: $btn.data('favorited'),
+          method: isFavorited ? 'DELETE' : 'POST'
         });
 
-        // ボタンを無効化（連続クリック防止）
-        $btn.addClass('loading').prop('disabled', true);
+        // ボタンを無効化
+        $btn.prop('disabled', true);
 
-        // ★修正: AJAX呼び出しの設定を正しく行う★
+        // リクエスト設定
         const url = `/shops/${shopId}/favorite`;
+        const method = isFavorited ? 'DELETE' : 'POST';
 
-        if (isFavorited) {
-          // お気に入り解除（DELETE）
-          $.ajax({
-            url: url,
-            type: 'DELETE',
-            headers: {
-              'X-Requested-With': 'XMLHttpRequest',
-              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(response) {
-              console.log('Delete success response:', response);
-              if (response.success) {
-                updateFavoriteButton($btn, response.is_favorited, response.favorites_count);
-                showMessage(response.message, 'success');
-              } else {
-                showMessage(response.message, 'error');
-              }
-            },
-            error: function(xhr) {
-              console.error('Delete error:', xhr);
-              handleAjaxError(xhr);
-            },
-            complete: function() {
-              $btn.removeClass('loading').prop('disabled', false);
+        $.ajax({
+          url: url,
+          type: method,
+          dataType: 'json',
+          timeout: 10000,
+          success: function(response) {
+            console.log('★成功レスポンス★', response);
+
+            if (response.success) {
+              // ★修正: ボタンの状態を確実に更新★
+              updateFavoriteButton($btn, response.is_favorited, response.favorites_count);
+
+              // 成功メッセージを表示
+              showMessage(response.message, 'success');
+            } else {
+              showMessage(response.message || 'エラーが発生しました', 'error');
             }
-          });
-        } else {
-          // お気に入り追加（POST）
-          $.ajax({
-            url: url,
-            type: 'POST',
-            headers: {
-              'X-Requested-With': 'XMLHttpRequest',
-              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(response) {
-              console.log('Post success response:', response);
-              if (response.success) {
-                updateFavoriteButton($btn, response.is_favorited, response.favorites_count);
-                showMessage(response.message, 'success');
-              } else {
-                showMessage(response.message, 'error');
+          },
+          error: function(xhr, status, error) {
+            console.error('★AJAXエラー★', {
+              status: xhr.status,
+              statusText: xhr.statusText,
+              responseText: xhr.responseText,
+              error: error
+            });
+
+            // ★修正: 409エラーの特別処理★
+            if (xhr.status === 409) {
+              // 409エラーの場合、レスポンスから正しい状態を取得
+              try {
+                const errorResponse = JSON.parse(xhr.responseText);
+                console.log('★409エラー処理★', errorResponse);
+
+                if (errorResponse.is_favorited !== undefined) {
+                  // レスポンスの状態に基づいてボタンを更新
+                  updateFavoriteButton($btn, errorResponse.is_favorited, errorResponse.favorites_count || 0);
+                  showMessage('お気に入り状態を同期しました', 'success');
+                  return;
+                }
+              } catch (e) {
+                console.error('409エラーレスポンス解析失敗', e);
               }
-            },
-            error: function(xhr) {
-              console.error('Post error:', xhr);
-              handleAjaxError(xhr);
-            },
-            complete: function() {
-              $btn.removeClass('loading').prop('disabled', false);
             }
-          });
-        }
+
+            // その他のエラー処理
+            let errorMessage = 'エラーが発生しました';
+
+            switch (xhr.status) {
+              case 401:
+                errorMessage = 'ログインが必要です';
+                window.location.href = '/login';
+                return;
+              case 403:
+                errorMessage = '権限がありません';
+                break;
+              case 404:
+                errorMessage = '店舗が見つかりません';
+                break;
+              case 419:
+                errorMessage = 'セッションが期限切れです。ページを更新してください。';
+                setTimeout(() => location.reload(), 2000);
+                break;
+              case 422:
+                if (xhr.responseJSON && xhr.responseJSON.errors) {
+                  errorMessage = Object.values(xhr.responseJSON.errors).flat().join(' ');
+                } else {
+                  errorMessage = 'リクエストデータが無効です';
+                }
+                break;
+              case 500:
+                errorMessage = 'サーバーエラーが発生しました';
+                break;
+              default:
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                  errorMessage = xhr.responseJSON.message;
+                } else {
+                  errorMessage = `エラー (${xhr.status}): ${error}`;
+                }
+            }
+
+            showMessage(errorMessage, 'error');
+          },
+          complete: function() {
+            // ボタンを再有効化
+            $btn.prop('disabled', false);
+          }
+        });
       });
 
       /**
-       * AJAXエラーハンドリング
-       */
-      function handleAjaxError(xhr) {
-        let errorMessage = 'エラーが発生しました';
-        if (xhr.responseJSON && xhr.responseJSON.message) {
-          errorMessage = xhr.responseJSON.message;
-        } else if (xhr.status === 404) {
-          errorMessage = 'APIエンドポイントが見つかりません';
-        } else if (xhr.status === 403) {
-          errorMessage = '権限がありません';
-        } else if (xhr.status === 500) {
-          errorMessage = 'サーバーエラーが発生しました';
-        }
-        showMessage(errorMessage, 'error');
-      }
-
-      /**
-       * お気に入りボタンの状態を更新
+       * ★修正: お気に入りボタンの状態を確実に更新★
        */
       function updateFavoriteButton($btn, isFavorited, favoritesCount) {
-        console.log('Updating button:', {
-          isFavorited: isFavorited,
-          favoritesCount: favoritesCount
+        console.log('★ボタン更新開始★', {
+          isFavorited,
+          favoritesCount,
+          beforeClasses: $btn.attr('class')
         });
 
-        // data属性を更新
+        // ★重要: data属性とクラスの両方を更新★
         $btn.data('favorited', isFavorited);
 
         // クラスを更新
@@ -509,16 +539,24 @@
         // お気に入り数を更新
         $btn.find('.favorite-count').text(`(${favoritesCount})`);
         $('#favorites-count').text(favoritesCount);
+
+        console.log('★ボタン更新完了★', {
+          afterClasses: $btn.attr('class'),
+          dataFavorited: $btn.data('favorited')
+        });
       }
 
       /**
        * メッセージを表示
        */
       function showMessage(message, type) {
-        const messageClass = type === 'success' ? 'success-message' : 'error-message';
-        const $messageDiv = $(`<div class="${messageClass}">${message}</div>`);
+        const $messageArea = $('#message-area');
+        const messageClass = type === 'success' ? 'success' : 'error';
 
-        $('#message-area').empty().append($messageDiv);
+        const $messageDiv = $(`<div class="message ${messageClass}">${message}</div>`);
+
+        // 既存のメッセージを削除して新しいメッセージを表示
+        $messageArea.empty().append($messageDiv);
 
         // 3秒後に自動で消去
         setTimeout(() => {
@@ -526,7 +564,22 @@
             $(this).remove();
           });
         }, 3000);
+
+        // ページトップにスクロール
+        $('html, body').animate({
+          scrollTop: 0
+        }, 300);
       }
+
+      // ★追加: ページ読み込み時の状態確認★
+      console.log('★初期状態確認★', {
+        shopId: $('#favorite-btn').data('shop-id'),
+        dataFavorited: $('#favorite-btn').data('favorited'),
+        hasClass: {
+          favorited: $('#favorite-btn').hasClass('favorited'),
+          notFavorited: $('#favorite-btn').hasClass('not-favorited')
+        }
+      });
     });
   </script>
 </body>
