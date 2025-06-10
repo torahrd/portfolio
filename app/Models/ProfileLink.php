@@ -1,5 +1,4 @@
 <?php
-// app/Models/ProfileLink.php
 
 namespace App\Models;
 
