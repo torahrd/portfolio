@@ -31,7 +31,7 @@ class ProfileController extends Controller
         $user->loadCount(['followers', 'following', 'posts']);
 
         $posts = $user->posts()
-            ->with('user')
+            ->with('user', 'shop')
             ->latest()
             ->paginate(12);
 
@@ -47,32 +47,22 @@ class ProfileController extends Controller
     }
 
     /**
-     * トークン経由でのプロフィール表示
-     */
-    public function showByToken(Request $request, $token)
-    {
-        $profileLink = ProfileLink::where('token', $token)
-            ->with('user')
-            ->first();
-
-        if (!$profileLink || !$profileLink->isValid()) {
-            abort(404, 'プロフィールリンクが見つからないか、期限切れです');
-        }
-
-        $user = $profileLink->user;
-        $user->loadCount(['followers', 'following', 'posts']);
-
-        return view('profile.show-by-link', compact('user', 'profileLink'));
-    }
-
-    /**
      * プロフィール編集フォーム表示
      */
     public function edit()
     {
         $user = auth()->user();
-        return view('profile.edit', compact('user'));
+
+        // ★修正: $posts変数を追加★
+        $posts = $user->posts()
+            ->with('user', 'shop')
+            ->latest()
+            ->paginate(5);
+
+        return view('profile.edit', compact('user', 'posts'));
     }
+
+    // 他のメソッドは変更なし...
 
     /**
      * プロフィール更新
