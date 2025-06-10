@@ -1,15 +1,15 @@
 <?php
-// app/Http/Controllers/FollowController.php
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Http\Request;
-use App\Notifications\NewFollower;
-use App\Notifications\FollowRequestAccepted;
+use App\Models\User;
 
 class FollowController extends Controller
 {
+    /**
+     * フォロー/アンフォロー処理
+     */
     public function follow(Request $request, User $user)
     {
         $currentUser = auth()->user();
@@ -36,14 +36,14 @@ class FollowController extends Controller
         // フォロー処理
         $currentUser->follow($user);
 
-        // 通知送信
+        // 通知処理（将来実装予定）
         if ($user->is_private) {
             // プライベートアカウントの場合は申請通知
-            $user->notify(new \App\Notifications\NewFollowRequest($currentUser));
+            // $user->notify(new \App\Notifications\NewFollowRequest($currentUser));
             $message = $user->name . 'にフォロー申請を送信しました';
         } else {
             // パブリックアカウントの場合はフォロー完了通知
-            $user->notify(new NewFollower($currentUser));
+            // $user->notify(new NewFollower($currentUser));
             $message = $user->name . 'をフォローしました';
         }
 
@@ -56,6 +56,9 @@ class FollowController extends Controller
         ]);
     }
 
+    /**
+     * フォロー申請の承認
+     */
     public function acceptFollowRequest(Request $request, User $user)
     {
         $currentUser = auth()->user();
@@ -68,8 +71,8 @@ class FollowController extends Controller
 
         $currentUser->acceptFollowRequest($user);
 
-        // 承認通知を送信
-        $user->notify(new FollowRequestAccepted($currentUser));
+        // 承認通知を送信（将来実装予定）
+        // $user->notify(new FollowRequestAccepted($currentUser));
 
         return response()->json([
             'success' => true,
@@ -77,6 +80,9 @@ class FollowController extends Controller
         ]);
     }
 
+    /**
+     * フォロー申請の拒否
+     */
     public function rejectFollowRequest(Request $request, User $user)
     {
         $currentUser = auth()->user();
@@ -95,20 +101,24 @@ class FollowController extends Controller
         ]);
     }
 
+    /**
+     * フォロワー一覧
+     */
     public function followers(Request $request, User $user)
     {
         $followers = $user->followers()
-            ->with('profile:user_id,avatar')
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
         return view('profile.followers', compact('user', 'followers'));
     }
 
+    /**
+     * フォロー中一覧
+     */
     public function following(Request $request, User $user)
     {
         $following = $user->following()
-            ->with('profile:user_id,avatar')
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
