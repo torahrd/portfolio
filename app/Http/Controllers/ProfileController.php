@@ -1,17 +1,18 @@
 <?php
-// app/Http/Controllers/ProfileController.php
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UpdateProfileRequest;
+use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\ProfileLink;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ProfileController extends Controller
 {
+    /**
+     * プロフィール表示
+     */
     public function show(User $user)
     {
         // プライベートアカウントのアクセス制御
@@ -45,6 +46,9 @@ class ProfileController extends Controller
         ));
     }
 
+    /**
+     * トークン経由でのプロフィール表示
+     */
     public function showByToken(Request $request, $token)
     {
         $profileLink = ProfileLink::where('token', $token)
@@ -61,27 +65,50 @@ class ProfileController extends Controller
         return view('profile.show-by-link', compact('user', 'profileLink'));
     }
 
+    /**
+     * プロフィール編集フォーム表示
+     */
     public function edit()
     {
         $user = auth()->user();
         return view('profile.edit', compact('user'));
     }
 
-    public function update(UpdateProfileRequest $request)
+    /**
+     * プロフィール更新
+     */
+    public function update(Request $request)
     {
         $user = auth()->user();
-        $data = $request->validated();
+
+        // 基本的なバリデーション
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'min:2', 'max:50'],
+            'bio' => ['nullable', 'string', 'max:500'],
+            'location' => ['nullable', 'string', 'max:100'],
+            'website' => ['nullable', 'url', 'max:255'],
+            'avatar' => [
+                'nullable',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:2048'
+            ],
+            'is_private' => ['boolean']
+        ]);
 
         if ($request->hasFile('avatar')) {
-            $data['avatar'] = $this->handleAvatarUpload($request->file('avatar'), $user);
+            $validated['avatar'] = $this->handleAvatarUpload($request->file('avatar'), $user);
         }
 
-        $user->update($data);
+        $user->update($validated);
 
         return redirect()->route('profile.show', $user)
             ->with('success', 'プロフィールを更新しました');
     }
 
+    /**
+     * プロフィールリンク生成
+     */
     public function generateProfileLink(Request $request)
     {
         $user = auth()->user();
@@ -101,6 +128,9 @@ class ProfileController extends Controller
         ]);
     }
 
+    /**
+     * アバター画像のアップロード処理
+     */
     private function handleAvatarUpload($file, User $user): string
     {
         // 古いアバターを削除
