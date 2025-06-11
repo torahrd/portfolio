@@ -19,7 +19,10 @@
     <link rel="stylesheet" href="{{ asset('css/profile.css') }}">
 </head>
 
-<body class="font-sans antialiased">
+<body class="font-sans antialiased"
+    data-authenticated='@json(auth()->check())'
+    @auth data-user-id='@json(auth()->id())' @endauth>
+
     <div class="min-h-screen bg-gray-100">
         @include('layouts.navigation')
 
@@ -50,17 +53,20 @@
     <!-- カスタムJS -->
     <script src="{{ asset('js/profile.js') }}"></script>
 
-    <!-- 認証状態のJavaScript変数 -->
+    <!-- ✅ VS Code安全な記述方法 -->
+    @verbatim
     <script>
-        window.isAuthenticated = @json(auth() - > check());
-        @auth
-        window.currentUserId = {
-            {
-                auth() - > id()
-            }
-        };
-        @endauth
+        // データ属性から安全に取得
+        const bodyElement = document.body;
+        window.isAuthenticated = JSON.parse(bodyElement.dataset.authenticated || 'false');
+        window.currentUserId = bodyElement.dataset.userId ?
+            parseInt(bodyElement.dataset.userId) : null;
+
+        // デバッグ用（開発時のみ使用）
+        console.log('認証状態:', window.isAuthenticated);
+        console.log('ユーザーID:', window.currentUserId);
     </script>
+    @endverbatim
 </body>
 
 </html>
