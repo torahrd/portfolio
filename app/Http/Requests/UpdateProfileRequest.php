@@ -1,5 +1,4 @@
 <?php
-// app/Http/Requests/UpdateProfileRequest.php
 
 namespace App\Http\Requests;
 
@@ -8,11 +7,17 @@ use Illuminate\Validation\Rule;
 
 class UpdateProfileRequest extends FormRequest
 {
+    /**
+     * ユーザーがこのリクエストを行う権限があるかを判定
+     */
     public function authorize(): bool
     {
         return true;
     }
 
+    /**
+     * バリデーションルールを定義
+     */
     public function rules(): array
     {
         return [
@@ -31,6 +36,9 @@ class UpdateProfileRequest extends FormRequest
         ];
     }
 
+    /**
+     * エラーメッセージをカスタマイズ
+     */
     public function messages(): array
     {
         return [
@@ -40,10 +48,26 @@ class UpdateProfileRequest extends FormRequest
             'bio.max' => '自己紹介は500文字以内で入力してください',
             'location.max' => '場所は100文字以内で入力してください',
             'website.url' => '有効なURLを入力してください',
+            'website.max' => 'ウェブサイトURLは255文字以内で入力してください',
             'avatar.image' => 'プロフィール画像は画像ファイルである必要があります',
             'avatar.mimes' => 'プロフィール画像はJPEG、PNG、WebP形式のみ対応しています',
             'avatar.max' => 'プロフィール画像は2MB以下にしてください',
             'avatar.dimensions' => 'プロフィール画像は100x100px以上、2000x2000px以下にしてください'
+        ];
+    }
+
+    /**
+     * フィールド名をカスタマイズ
+     */
+    public function attributes(): array
+    {
+        return [
+            'name' => '名前',
+            'bio' => '自己紹介',
+            'location' => '場所',
+            'website' => 'ウェブサイト',
+            'avatar' => 'プロフィール画像',
+            'is_private' => 'プライバシー設定'
         ];
     }
 }
