@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\ValidationException;
 use App\Models\User;
 
 class FollowRequest extends FormRequest
@@ -21,26 +22,35 @@ class FollowRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // ルートパラメータの検証は自動的に行われるため、ここでは特別なルールは不要
+            // ルートパラメータの基本的な検証
+            // 詳細なビジネスロジックはコントローラー側で処理
         ];
     }
 
     /**
-     * バリデーション前の前処理
+     * カスタムバリデーション（withValidatorを使用）
      */
-    protected function prepareForValidation(): void
+    public function withValidator($validator): void
     {
-        // 自分自身をフォローしようとしていないかチェック
-        $targetUser = $this->route('user');
+        $validator->after(function ($validator) {
+            $targetUser = $this->route('user');
 
-        if ($targetUser && auth()->id() === $targetUser->id) {
-            $this->failedValidation(
-                $this->getValidatorInstance()->errors()->add(
+            // 自分自身をフォローしようとしていないかチェック
+            if ($targetUser && auth()->id() === $targetUser->id) {
+                $validator->errors()->add(
                     'user',
                     '自分自身をフォローすることはできません'
-                )
-            );
-        }
+                );
+            }
+
+            // ユーザーが存在するかチェック
+            if (!$targetUser) {
+                $validator->errors()->add(
+                    'user',
+                    '指定されたユーザーが存在しません'
+                );
+            }
+        });
     }
 
     /**
@@ -54,7 +64,17 @@ class FollowRequest extends FormRequest
     }
 
     /**
-     * 認証済みユーザーを取得
+     * フィールド名をカスタマイズ
+     */
+    public function attributes(): array
+    {
+        return [
+            'user' => 'ユーザー'
+        ];
+    }
+
+    /**
+     * 認証済みユーザーを型安全に取得
      */
     public function getAuthenticatedUser(): User
     {
@@ -69,5 +89,23 @@ class FollowRequest extends FormRequest
     public function getTargetUser(): User
     {
         return $this->route('user');
+    }
+
+    /**
+     * フォロー処理が可能かチェック
+     */
+    public function canFollow(): bool
+    {
+        $currentUser = $this->getAuthenticatedUser();
+        $targetUser = $this->getTargetUser();
+
+        // 自分自身はフォローできない
+        if ($currentUser->id === $targetUser->id) {
+            return false;
+        }
+
+        // 既にフォロー中または申請中ではないかチェック
+        return !$currentUser->isFollowing($targetUser) &&
+            !$currentUser->hasSentFollowRequest($targetUser);
     }
 }
