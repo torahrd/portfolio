@@ -3,7 +3,7 @@
    ========================================================================== */
 
 @layer components {
-    /* フォーム要素の基本スタイル */
+    /* フォーム要素の基本レイアウト */
     .form-field {
         @apply mb-4;
     }
@@ -17,36 +17,20 @@
         @apply text-red-500;
     }
 
-    .form-input,
-    .form-textarea,
-    .form-select {
-        @apply block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm 
-               focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 
-               disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed
-               transition-all duration-200;
-    }
-
-    .form-input:invalid,
-    .form-textarea:invalid,
-    .form-select:invalid {
-        @apply border-red-300 focus:border-red-500 focus:ring-red-500;
-    }
-
-    /* エラー状態 */
-    .form-input.error,
-    .form-textarea.error,
-    .form-select.error {
+    /* バリデーション状態のスタイル */
+    .form-error-state {
         @apply border-red-500 focus:border-red-500 focus:ring-red-500 bg-red-50;
     }
 
-    /* 成功状態 */
-    .form-input.success,
-    .form-textarea.success,
-    .form-select.success {
+    .form-success-state {
         @apply border-green-500 focus:border-green-500 focus:ring-green-500 bg-green-50;
     }
 
-    /* エラーメッセージ */
+    .form-invalid-state {
+        @apply border-red-300 focus:border-red-500 focus:ring-red-500;
+    }
+
+    /* メッセージスタイル */
     .form-error {
         @apply text-red-600 text-sm mt-1 flex items-center;
     }
@@ -55,7 +39,6 @@
         @apply mr-1;
     }
 
-    /* 成功メッセージ */
     .form-success {
         @apply text-green-600 text-sm mt-1 flex items-center;
     }
@@ -64,136 +47,26 @@
         @apply mr-1;
     }
 
-    /* ヘルプテキスト */
-    .form-help {
+    .form-help-text {
         @apply text-gray-500 text-sm mt-1;
     }
 
-    /* チェックボックス・ラジオボタン */
+    /* インタラクティブ要素 */
     .form-checkbox,
     .form-radio {
-        @apply w-4 h-4 text-primary-600 bg-gray-100 border-gray-300 rounded 
-               focus:ring-primary-500 focus:ring-2;
+        @apply rounded text-primary-600 focus:ring-primary-500 focus:ring-offset-0;
     }
 
-    .form-radio {
-        @apply rounded-full;
+    .form-switch {
+        @apply rounded-full bg-gray-200 focus:ring-primary-500;
     }
 
-    .form-checkbox-label,
-    .form-radio-label {
-        @apply text-sm font-medium text-gray-700 dark:text-gray-300;
+    /* アニメーション */
+    .form-animate-in {
+        @apply transition-all duration-200 ease-in-out;
     }
 
-    /* ファイルアップロード */
-    .form-file {
-        @apply block w-full text-sm text-gray-500
-               file:mr-4 file:py-2 file:px-4
-               file:rounded-lg file:border-0
-               file:text-sm file:font-semibold
-               file:bg-primary-50 file:text-primary-700
-               hover:file:bg-primary-100
-               file:transition-colors file:duration-200;
-    }
-
-    /* 検索フィールド */
-    .form-search {
-        @apply form-input pl-10;
-    }
-
-    .form-search-icon {
-        @apply absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400;
-    }
-
-    /* フォームグループ */
-    .form-group {
-        @apply space-y-1;
-    }
-
-    .form-group-horizontal {
-        @apply flex items-center space-x-4;
-    }
-
-    /* 入力グループ */
-    .input-group {
-        @apply relative flex;
-    }
-
-    .input-group .form-input {
-        @apply rounded-none first:rounded-l-lg last:rounded-r-lg;
-    }
-
-    .input-addon {
-        @apply px-3 py-2 bg-gray-50 border border-gray-300 text-gray-500 text-sm
-               first:rounded-l-lg last:rounded-r-lg first:border-r-0 last:border-l-0;
-    }
-
-    /* フォームカード */
-    .form-card {
-        @apply bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6;
-    }
-
-    .form-card-header {
-        @apply border-b border-gray-200 dark:border-gray-700 pb-4 mb-6;
-    }
-
-    .form-card-title {
-        @apply text-lg font-semibold text-gray-900 dark:text-white;
-    }
-
-    /* フローティングラベル */
-    .form-floating {
-        @apply relative;
-    }
-
-    .form-floating input,
-    .form-floating textarea {
-        @apply pt-6 pb-2;
-    }
-
-    .form-floating label {
-        @apply absolute left-3 top-3 text-gray-500 transition-all duration-200 pointer-events-none;
-    }
-
-    .form-floating input:focus + label,
-    .form-floating input:not(:placeholder-shown) + label,
-    .form-floating textarea:focus + label,
-    .form-floating textarea:not(:placeholder-shown) + label {
-        @apply top-1 text-xs text-primary-600;
-    }
-}
-
-/* バリデーション状態のアニメーション */
-@layer utilities {
-    .validation-shake {
-        animation: shake 0.5s ease-in-out;
-    }
-
-    @keyframes shake {
-        0%,
-        100% {
-            transform: translateX(0);
-        }
-        25% {
-            transform: translateX(-5px);
-        }
-        75% {
-            transform: translateX(5px);
-        }
-    }
-
-    .validation-fade-in {
-        animation: fadeIn 0.3s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(-10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    .form-fade-in {
+        @apply animate-fade-in;
     }
 }
