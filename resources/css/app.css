@@ -1,3 +1,171 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* コンポーネントCSSを読み込み */
+@import "./components/profile.css";
+@import "./components/posts.css";
+@import "./components/forms.css";
+@import "./components/validation.css";
+
+/* ベーススタイル */
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        @apply antialiased font-ja;
+    }
+
+    /* 日本語フォントの定義 */
+    .font-ja {
+        font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN",
+            "Yu Gothic Medium", "Meiryo", "Figtree", sans-serif;
+    }
+
+    /* フォーカススタイルの統一 */
+    *:focus {
+        @apply outline-none;
+    }
+
+    /* リンクの基本スタイル */
+    a {
+        @apply transition-colors duration-200;
+    }
+
+    /* 印刷用スタイル */
+    @media print {
+        .print-hidden {
+            @apply hidden;
+        }
+
+        .print-visible {
+            @apply block;
+        }
+    }
+}
+
+/* コンポーネントレイヤー */
+@layer components {
+    /* 最適化されたグリッドシステム */
+    .grid-auto-fit {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+
+    .grid-auto-fill {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+
+    /* コンテナレスポンシブ */
+    .container-responsive {
+        @apply container mx-auto px-4 sm:px-6 lg:px-8;
+    }
+
+    /* フォーカスリング */
+    .focus-ring {
+        @apply focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500;
+    }
+
+    /* 省略スタイル */
+    .text-ellipsis-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .text-ellipsis-3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    /* スクロールバーのカスタマイズ */
+    .custom-scrollbar::-webkit-scrollbar {
+        @apply w-2;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        @apply bg-gray-100 dark:bg-gray-800;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        @apply bg-gray-300 dark:bg-gray-600 rounded;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        @apply bg-gray-400 dark:bg-gray-500;
+    }
+}
+
+/* ユーティリティレイヤー */
+@layer utilities {
+    /* スクロールアニメーション */
+    .animate-on-scroll {
+        @apply opacity-0 translate-y-4 transition-all duration-700 ease-out;
+    }
+
+    .animate-on-scroll.visible {
+        @apply opacity-100 translate-y-0;
+    }
+
+    /* ダークモード用 */
+    .dark-mode-text {
+        @apply text-gray-900 dark:text-gray-100;
+    }
+
+    .dark-mode-bg {
+        @apply bg-white dark:bg-gray-900;
+    }
+
+    /* レスポンシブ画像 */
+    .img-responsive {
+        @apply w-full h-auto object-cover;
+    }
+
+    /* アスペクト比 */
+    .aspect-square {
+        aspect-ratio: 1 / 1;
+    }
+
+    .aspect-video {
+        aspect-ratio: 16 / 9;
+    }
+
+    .aspect-photo {
+        aspect-ratio: 4 / 3;
+    }
+
+    /* プリローダー用 */
+    .preloader {
+        @apply fixed inset-0 z-50 flex items-center justify-center bg-white dark:bg-gray-900;
+    }
+
+    /* スムーズスクロール */
+    .smooth-scroll {
+        scroll-behavior: smooth;
+    }
+}
+
+/* Alpine.js クローク */
+[x-cloak] {
+    display: none !important;
+}
+
+/* パフォーマンス最適化 */
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* GPU加速が必要な要素 */
+.gpu-accelerated {
+    transform: translateZ(0);
+    will-change: transform;
+}
