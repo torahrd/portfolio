@@ -1,3 +1,7 @@
+@import "./components/modern-ui.css";
+@import "./components/glassmorphism.css";
+@import "./components/neumorphism.css";
+@import "./components/animations.css";
 @import "./components/profile.css";
 @import "./components/posts.css";
 @import "./components/forms.css";
@@ -7,30 +11,168 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ベーススタイル */
+/* ============================================================================
+   ベーススタイル - 2025年モダンデザイン対応
+   ============================================================================ */
+
 @layer base {
+    /* ルート要素の基本設定 */
+    :root {
+        /* カスタムプロパティ - 2025年カラーパレット */
+        --color-mocha-50: #faf8f6;
+        --color-mocha-500: #a47864;
+        --color-mocha-900: #5d3e2b;
+        --color-sage-500: #87a96b;
+        --color-electric-500: #1e90ff;
+        --color-coral-500: #ff6b6b;
+        --color-neutral-50: #fdfcfb;
+        --color-neutral-100: #f9f7f4;
+        --color-neutral-500: #b8a694;
+        --color-neutral-900: #4a3e35;
+
+        /* グラスモーフィズム用プロパティ */
+        --glass-bg: rgba(255, 255, 255, 0.15);
+        --glass-border: rgba(255, 255, 255, 0.2);
+        --glass-blur: 10px;
+
+        /* ニューモーフィズム用プロパティ */
+        --neu-light: #ffffff;
+        --neu-dark: #bebebe;
+        --neu-bg: #f0f0f0;
+
+        /* スペーシングシステム */
+        --spacing-xs: 0.25rem;
+        --spacing-sm: 0.5rem;
+        --spacing-md: 1rem;
+        --spacing-lg: 1.5rem;
+        --spacing-xl: 2rem;
+        --spacing-2xl: 3rem;
+
+        /* アニメーション設定 */
+        --transition-fast: 0.15s ease-out;
+        --transition-base: 0.2s ease-out;
+        --transition-slow: 0.3s ease-out;
+        --transition-slower: 0.5s ease-out;
+    }
+
+    /* HTML基本設定 */
     html {
         scroll-behavior: smooth;
+        scroll-padding-top: 4rem;
+        font-feature-settings: "kern" 1, "liga" 1, "calt" 1, "pnum" 1, "tnum" 0,
+            "onum" 1, "lnum" 0, "dlig" 0;
     }
 
+    /* Body基本設定 */
     body {
-        @apply antialiased font-ja;
+        @apply antialiased font-ja text-neutral-900 bg-neutral-50;
+        font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        line-height: 1.6;
     }
 
-    /* 日本語フォントの定義 */
+    /* 日本語フォントの最適化 */
     .font-ja {
         font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN",
-            "Yu Gothic Medium", "Meiryo", "Figtree", sans-serif;
+            "Yu Gothic Medium", "Meiryo", "Inter", sans-serif;
+        font-weight: 400;
+        letter-spacing: 0.02em;
     }
 
-    /* フォーカススタイルの統一 */
-    *:focus {
-        @apply outline-none;
+    /* 見出しのタイポグラフィ階層 */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @apply font-ja text-neutral-900;
+        font-weight: 600;
+        line-height: 1.3;
+        letter-spacing: -0.02em;
+    }
+
+    h1 {
+        @apply text-3xl lg:text-4xl;
+    }
+    h2 {
+        @apply text-2xl lg:text-3xl;
+    }
+    h3 {
+        @apply text-xl lg:text-2xl;
+    }
+    h4 {
+        @apply text-lg lg:text-xl;
+    }
+    h5 {
+        @apply text-base lg:text-lg;
+    }
+    h6 {
+        @apply text-sm lg:text-base;
+    }
+
+    /* パラグラフの最適化 */
+    p {
+        @apply text-neutral-700 leading-relaxed;
+        margin-bottom: 1em;
     }
 
     /* リンクの基本スタイル */
     a {
-        @apply transition-colors duration-200;
+        @apply transition-colors duration-200 text-mocha-600 hover:text-mocha-800;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+        text-decoration-color: currentColor;
+        text-underline-offset: 0.2em;
+        text-decoration-thickness: 2px;
+    }
+
+    /* フォーカススタイルの統一 */
+    *:focus {
+        @apply outline-none ring-2 ring-mocha-500 ring-offset-2 ring-offset-neutral-50;
+        outline: 2px solid transparent;
+        outline-offset: 2px;
+    }
+
+    /* 選択テキストのスタイル */
+    ::selection {
+        @apply bg-mocha-500 text-white;
+    }
+
+    ::-moz-selection {
+        @apply bg-mocha-500 text-white;
+    }
+
+    /* スクロールバーのカスタマイズ */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        @apply bg-neutral-100;
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        @apply bg-neutral-400 hover:bg-neutral-500;
+        border-radius: 4px;
+        transition: background-color var(--transition-base);
+    }
+
+    ::-webkit-scrollbar-corner {
+        @apply bg-neutral-100;
+    }
+
+    /* Firefox スクロールバー */
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: theme("colors.neutral.400") theme("colors.neutral.100");
     }
 
     /* 印刷用スタイル */
@@ -38,39 +180,127 @@
         .print-hidden {
             @apply hidden;
         }
-
         .print-visible {
             @apply block;
+        }
+
+        body {
+            @apply text-black bg-white;
+        }
+
+        a {
+            @apply text-black no-underline;
+        }
+
+        .shadow,
+        .shadow-sm,
+        .shadow-md,
+        .shadow-lg,
+        .shadow-xl {
+            box-shadow: none !important;
+        }
+    }
+
+    /* 高コントラストモード対応 */
+    @media (prefers-contrast: high) {
+        :root {
+            --color-mocha-500: #8b4513;
+            --color-sage-500: #556b2f;
+            --color-electric-500: #0000ff;
+            --color-coral-500: #ff0000;
+        }
+    }
+
+    /* 動きを抑えるユーザー設定への対応 */
+    @media (prefers-reduced-motion) {
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+        }
+    }
+
+    /* ダークモード基本対応（将来の機能拡張用） */
+    @media (prefers-color-scheme: dark) {
+        .dark-mode-auto {
+            @apply bg-neutral-900 text-neutral-100;
         }
     }
 }
 
-/* コンポーネントレイヤー */
+/* ============================================================================
+   コンポーネントレイヤー - 再利用可能なUIパターン
+   ============================================================================ */
+
 @layer components {
-    /* 最適化されたグリッドシステム */
+    /* コンテナシステム */
+    .container-responsive {
+        @apply container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12;
+        max-width: 1200px;
+    }
+
+    .container-narrow {
+        @apply container mx-auto px-4 sm:px-6 lg:px-8;
+        max-width: 800px;
+    }
+
+    .container-wide {
+        @apply container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16;
+        max-width: 1400px;
+    }
+
+    /* グリッドシステム */
     .grid-auto-fit {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
     }
 
     .grid-auto-fill {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+    }
+
+    /* ベントーグリッド（2025年トレンド） */
+    .bento-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
         gap: 1rem;
+        auto-rows: 200px;
     }
 
-    /* コンテナレスポンシブ */
-    .container-responsive {
-        @apply container mx-auto px-4 sm:px-6 lg:px-8;
+    .bento-item-large {
+        grid-row: span 2;
+        grid-column: span 2;
     }
 
-    /* フォーカスリング */
-    .focus-ring {
-        @apply focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500;
+    .bento-item-wide {
+        grid-column: span 2;
     }
 
-    /* 省略スタイル */
+    .bento-item-tall {
+        grid-row: span 2;
+    }
+
+    /* カードシステム */
+    .card-base {
+        @apply bg-white rounded-2xl shadow-md transition-all duration-300;
+        border: 1px solid rgba(164, 120, 100, 0.1);
+    }
+
+    .card-hover {
+        @apply hover:shadow-lg hover:-translate-y-1;
+    }
+
+    .card-interactive {
+        @apply card-base card-hover cursor-pointer;
+    }
+
+    /* テキスト省略 */
     .text-ellipsis-2 {
         display: -webkit-box;
         -webkit-line-clamp: 2;
@@ -85,59 +315,196 @@
         overflow: hidden;
     }
 
-    /* スクロールバーのカスタマイズ */
-    .custom-scrollbar::-webkit-scrollbar {
-        @apply w-2;
+    /* アスペクト比 */
+    .aspect-golden {
+        aspect-ratio: 1.618;
     }
 
-    .custom-scrollbar::-webkit-scrollbar-track {
-        @apply bg-gray-100 dark:bg-gray-800;
+    .aspect-photo {
+        aspect-ratio: 4/3;
     }
 
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-        @apply bg-gray-300 dark:bg-gray-600 rounded;
+    .aspect-video-wide {
+        aspect-ratio: 21/9;
     }
 
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-        @apply bg-gray-400 dark:bg-gray-500;
+    /* フォーカス可能要素の統一スタイル */
+    .focusable {
+        @apply focus:outline-none focus:ring-2 focus:ring-mocha-500 focus:ring-offset-2;
+        transition: box-shadow var(--transition-base);
+    }
+
+    /* 状態表示 */
+    .status-online {
+        @apply bg-success-500 text-white;
+    }
+
+    .status-offline {
+        @apply bg-neutral-400 text-white;
+    }
+
+    .status-busy {
+        @apply bg-warning-500 text-white;
+    }
+
+    .status-away {
+        @apply bg-coral-500 text-white;
     }
 }
 
-/* ユーティリティレイヤー */
+/* ============================================================================
+   ユーティリティレイヤー - 特殊効果とヘルパー
+   ============================================================================ */
+
 @layer utilities {
-    /* スクロールアニメーション */
-    .animate-scroll {
-        animation: scroll 20s linear infinite;
-    }
-
-    @keyframes scroll {
-        0% {
-            transform: translateX(0);
-        }
-        100% {
-            transform: translateX(-100%);
-        }
-    }
-
     /* 高度なホバーエフェクト */
     .hover-lift {
-        @apply transition-transform duration-300 ease-out hover:-translate-y-1 hover:shadow-lg;
+        @apply transition-all duration-300 ease-out;
+        transform: translateY(0) scale(1);
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 10px 25px -5px rgba(164, 120, 100, 0.25);
+    }
+
+    .hover-glow:hover {
+        box-shadow: 0 0 20px rgba(164, 120, 100, 0.4);
     }
 
     /* グラデーション背景 */
-    .bg-gradient-primary {
+    .bg-gradient-mocha {
         background: linear-gradient(
             135deg,
-            theme("colors.primary.500"),
-            theme("colors.primary.600")
+            var(--color-mocha-500),
+            var(--color-mocha-600)
         );
     }
 
-    .bg-gradient-secondary {
+    .bg-gradient-sage {
         background: linear-gradient(
             135deg,
-            theme("colors.secondary.500"),
-            theme("colors.secondary.600")
+            var(--color-sage-500),
+            var(--color-sage-600)
         );
     }
+
+    .bg-gradient-warm {
+        background: linear-gradient(
+            135deg,
+            var(--color-mocha-500),
+            var(--color-coral-500)
+        );
+    }
+
+    .bg-gradient-cool {
+        background: linear-gradient(
+            135deg,
+            var(--color-electric-500),
+            var(--color-sage-500)
+        );
+    }
+
+    /* テキストグラデーション */
+    .text-gradient-mocha {
+        background: linear-gradient(
+            135deg,
+            var(--color-mocha-600),
+            var(--color-mocha-800)
+        );
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .text-gradient-warm {
+        background: linear-gradient(
+            135deg,
+            var(--color-mocha-600),
+            var(--color-coral-600)
+        );
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* パフォーマンス最適化 */
+    .will-change-transform {
+        will-change: transform;
+    }
+
+    .will-change-opacity {
+        will-change: opacity;
+    }
+
+    .will-change-scroll {
+        will-change: scroll-position;
+    }
+
+    /* アクセシビリティヘルパー */
+    .sr-only-focusable:focus {
+        @apply not-sr-only;
+    }
+
+    .skip-link {
+        @apply sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 
+               bg-mocha-600 text-white px-4 py-2 rounded-md z-50;
+    }
+
+    /* 印刷用ユーティリティ */
+    @media print {
+        .print-break-before {
+            break-before: page;
+        }
+
+        .print-break-after {
+            break-after: page;
+        }
+
+        .print-no-break {
+            break-inside: avoid;
+        }
+    }
+
+    /* レスポンシブテキスト */
+    .text-responsive-sm {
+        @apply text-sm sm:text-base md:text-lg;
+    }
+
+    .text-responsive-base {
+        @apply text-base sm:text-lg md:text-xl;
+    }
+
+    .text-responsive-lg {
+        @apply text-lg sm:text-xl md:text-2xl lg:text-3xl;
+    }
+
+    .text-responsive-xl {
+        @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl;
+    }
 }
+
+/* ============================================================================
+   レガシーサポート
+   ============================================================================ */
+
+/* 古いブラウザ対応 */
+@supports not (backdrop-filter: blur(10px)) {
+    .glass {
+        background: rgba(255, 255, 255, 0.9);
+    }
+}
+
+/* Internet Explorer 11 対応 */
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    .grid-auto-fit {
+        display: -ms-grid;
+    }
+}
+
+/* クリティカルCSSインライン化用マーカー */
+/* CRITICAL_CSS_START */
+.critical-above-fold {
+    /* フォールドより上の重要なスタイル */
+}
+/* CRITICAL_CSS_END */

@@ -1,72 +1,706 @@
-/* ==========================================================================
-   バリデーション・フォーム統一スタイル
-   ========================================================================== */
+/* ============================================================================
+   バリデーション・フォーム統一スタイル - 2025年モダンデザイン
+   ============================================================================ */
 
 @layer components {
-    /* フォーム要素の基本レイアウト */
+    /* ============================================================================
+       フォーム要素の基本レイアウト
+       ============================================================================ */
+
     .form-field {
-        @apply mb-4;
+        @apply mb-6 relative;
+        animation: slideUp 0.4s ease-out;
     }
 
     .form-label {
-        @apply block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2;
+        @apply block text-sm font-semibold text-neutral-700 mb-3
+               transition-colors duration-200;
+        font-size: 0.95rem;
+        letter-spacing: 0.01em;
+    }
+
+    .form-label.required {
+        position: relative;
     }
 
     .form-label.required::after {
         content: " *";
-        @apply text-red-500;
+        @apply text-coral-500 font-bold;
+        margin-left: 0.25rem;
+        animation: pulse 2s infinite;
     }
 
-    /* バリデーション状態のスタイル */
+    /* ============================================================================
+       バリデーション状態のスタイル - アニメーション対応
+       ============================================================================ */
+
     .form-error-state {
-        @apply border-red-500 focus:border-red-500 focus:ring-red-500 bg-red-50;
+        @apply border-error-500 focus:border-error-600 focus:ring-error-500;
+        background: linear-gradient(
+            135deg,
+            rgba(239, 68, 68, 0.05),
+            rgba(239, 68, 68, 0.02)
+        );
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        box-shadow: inset 0 2px 4px rgba(239, 68, 68, 0.1),
+            0 0 0 3px rgba(239, 68, 68, 0.1);
+        animation: formShakeError 0.5s ease-in-out;
     }
 
     .form-success-state {
-        @apply border-green-500 focus:border-green-500 focus:ring-green-500 bg-green-50;
+        @apply border-success-500 focus:border-success-600 focus:ring-success-500;
+        background: linear-gradient(
+            135deg,
+            rgba(34, 197, 94, 0.05),
+            rgba(34, 197, 94, 0.02)
+        );
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        box-shadow: inset 0 2px 4px rgba(34, 197, 94, 0.1),
+            0 0 0 3px rgba(34, 197, 94, 0.1);
+    }
+
+    .form-warning-state {
+        @apply border-warning-500 focus:border-warning-600 focus:ring-warning-500;
+        background: linear-gradient(
+            135deg,
+            rgba(245, 158, 11, 0.05),
+            rgba(245, 158, 11, 0.02)
+        );
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        box-shadow: inset 0 2px 4px rgba(245, 158, 11, 0.1),
+            0 0 0 3px rgba(245, 158, 11, 0.1);
+    }
+
+    .form-info-state {
+        @apply border-electric-500 focus:border-electric-600 focus:ring-electric-500;
+        background: linear-gradient(
+            135deg,
+            rgba(30, 144, 255, 0.05),
+            rgba(30, 144, 255, 0.02)
+        );
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        box-shadow: inset 0 2px 4px rgba(30, 144, 255, 0.1),
+            0 0 0 3px rgba(30, 144, 255, 0.1);
     }
 
     .form-invalid-state {
-        @apply border-red-300 focus:border-red-500 focus:ring-red-500;
+        @apply border-error-400 focus:border-error-500 focus:ring-error-500;
+        background: rgba(239, 68, 68, 0.03);
     }
 
-    /* メッセージスタイル */
+    /* ============================================================================
+       メッセージスタイル - 改良されたデザイン
+       ============================================================================ */
+
+    .form-message {
+        @apply text-sm mt-3 flex items-start gap-2 p-3 rounded-lg
+               transition-all duration-300 ease-out;
+        animation: messageSlideIn 0.4s ease-out;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border-left: 3px solid transparent;
+    }
+
     .form-error {
-        @apply text-red-600 text-sm mt-1 flex items-center;
+        @apply form-message text-error-700 border-error-500;
+        background: linear-gradient(
+            135deg,
+            rgba(239, 68, 68, 0.1),
+            rgba(239, 68, 68, 0.05)
+        );
+        border-left-color: theme("colors.error.500");
     }
 
     .form-error i {
-        @apply mr-1;
+        @apply text-error-500 mt-0.5 flex-shrink-0;
+        animation: bounceGentle 0.6s ease-out;
     }
 
     .form-success {
-        @apply text-green-600 text-sm mt-1 flex items-center;
+        @apply form-message text-success-700 border-success-500;
+        background: linear-gradient(
+            135deg,
+            rgba(34, 197, 94, 0.1),
+            rgba(34, 197, 94, 0.05)
+        );
+        border-left-color: theme("colors.success.500");
     }
 
     .form-success i {
-        @apply mr-1;
+        @apply text-success-500 mt-0.5 flex-shrink-0;
+        animation: checkmarkDraw 0.6s ease-out;
+    }
+
+    .form-warning {
+        @apply form-message text-warning-700 border-warning-500;
+        background: linear-gradient(
+            135deg,
+            rgba(245, 158, 11, 0.1),
+            rgba(245, 158, 11, 0.05)
+        );
+        border-left-color: theme("colors.warning.500");
+    }
+
+    .form-warning i {
+        @apply text-warning-500 mt-0.5 flex-shrink-0;
+        animation: warningPulse 1s ease-in-out infinite;
+    }
+
+    .form-info {
+        @apply form-message text-electric-700 border-electric-500;
+        background: linear-gradient(
+            135deg,
+            rgba(30, 144, 255, 0.1),
+            rgba(30, 144, 255, 0.05)
+        );
+        border-left-color: theme("colors.electric.500");
+    }
+
+    .form-info i {
+        @apply text-electric-500 mt-0.5 flex-shrink-0;
     }
 
     .form-help-text {
-        @apply text-gray-500 text-sm mt-1;
+        @apply form-message text-neutral-600 border-neutral-300;
+        background: linear-gradient(
+            135deg,
+            rgba(184, 166, 148, 0.05),
+            rgba(184, 166, 148, 0.02)
+        );
+        border-left-color: theme("colors.neutral.300");
     }
 
-    /* インタラクティブ要素 */
+    .form-help-text i {
+        @apply text-neutral-500 mt-0.5 flex-shrink-0;
+    }
+
+    /* ============================================================================
+       メッセージリスト（複数エラー対応）
+       ============================================================================ */
+
+    .form-message-list {
+        @apply space-y-2;
+    }
+
+    .form-message-item {
+        @apply flex items-start gap-2 text-sm;
+    }
+
+    .form-message-item i {
+        @apply mt-0.5 flex-shrink-0;
+    }
+
+    .form-error-list {
+        @apply form-message border-error-500;
+        background: linear-gradient(
+            135deg,
+            rgba(239, 68, 68, 0.1),
+            rgba(239, 68, 68, 0.05)
+        );
+    }
+
+    .form-error-list .form-message-item {
+        @apply text-error-700;
+    }
+
+    .form-error-list .form-message-item i {
+        @apply text-error-500;
+    }
+
+    /* ============================================================================
+       インタラクティブ要素 - カスタムデザイン
+       ============================================================================ */
+
+    .form-checkbox-group,
+    .form-radio-group {
+        @apply space-y-3;
+    }
+
+    .form-checkbox-item,
+    .form-radio-item {
+        @apply flex items-center gap-3 p-3 rounded-lg
+               transition-all duration-200 hover:bg-neutral-50
+               cursor-pointer relative;
+        background: rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border: 1px solid rgba(164, 120, 100, 0.1);
+    }
+
+    .form-checkbox-item:hover,
+    .form-radio-item:hover {
+        background: rgba(164, 120, 100, 0.05);
+        border-color: rgba(164, 120, 100, 0.2);
+        transform: translateX(2px);
+    }
+
+    .form-checkbox-item.checked,
+    .form-radio-item.checked {
+        background: linear-gradient(
+            135deg,
+            rgba(164, 120, 100, 0.1),
+            rgba(135, 169, 107, 0.1)
+        );
+        border-color: rgba(164, 120, 100, 0.3);
+    }
+
     .form-checkbox,
     .form-radio {
-        @apply rounded text-primary-600 focus:ring-primary-500 focus:ring-offset-0;
+        @apply w-5 h-5 cursor-pointer appearance-none
+               border-2 border-neutral-300 
+               transition-all duration-200 ease-out
+               focus:outline-none focus:ring-2 focus:ring-mocha-500 focus:ring-offset-2;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        position: relative;
     }
+
+    .form-checkbox {
+        @apply rounded-md;
+    }
+
+    .form-radio {
+        @apply rounded-full;
+    }
+
+    .form-checkbox:checked,
+    .form-radio:checked {
+        @apply border-mocha-500;
+        background: linear-gradient(
+            135deg,
+            var(--color-mocha-500),
+            var(--color-sage-500)
+        );
+        animation: checkboxPop 0.3s ease-out;
+    }
+
+    .form-checkbox:checked::after {
+        content: "✓";
+        @apply absolute inset-0 flex items-center justify-center
+               text-white text-sm font-bold;
+        animation: checkmarkDraw 0.4s ease-out;
+    }
+
+    .form-radio:checked::after {
+        content: "";
+        @apply absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
+               w-2 h-2 bg-white rounded-full;
+        animation: radioDot 0.3s ease-out;
+    }
+
+    .form-checkbox:hover:not(:checked),
+    .form-radio:hover:not(:checked) {
+        @apply border-mocha-400;
+        background: rgba(164, 120, 100, 0.1);
+    }
+
+    /* ============================================================================
+       スイッチ・トグル
+       ============================================================================ */
 
     .form-switch {
-        @apply rounded-full bg-gray-200 focus:ring-primary-500;
+        @apply w-12 h-6 bg-neutral-300 rounded-full cursor-pointer
+               transition-all duration-300 ease-out relative
+               focus:outline-none focus:ring-2 focus:ring-mocha-500 focus:ring-offset-2;
+        appearance: none;
+        background: linear-gradient(
+            135deg,
+            rgba(184, 166, 148, 0.3),
+            rgba(184, 166, 148, 0.5)
+        );
     }
 
-    /* アニメーション */
+    .form-switch::before {
+        content: "";
+        @apply absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full
+               transition-all duration-300 ease-out;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .form-switch:checked {
+        background: linear-gradient(
+            135deg,
+            var(--color-mocha-500),
+            var(--color-sage-500)
+        );
+    }
+
+    .form-switch:checked::before {
+        transform: translateX(1.5rem);
+        box-shadow: 0 2px 6px rgba(164, 120, 100, 0.3);
+    }
+
+    .form-switch:hover {
+        transform: scale(1.05);
+    }
+
+    /* ============================================================================
+       プログレス・ステップ表示
+       ============================================================================ */
+
+    .form-progress {
+        @apply w-full bg-neutral-200 rounded-full overflow-hidden mb-6;
+        height: 8px;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+    }
+
+    .form-progress-fill {
+        @apply h-full rounded-full transition-all duration-500 ease-out;
+        background: linear-gradient(
+            90deg,
+            var(--color-mocha-500),
+            var(--color-sage-500),
+            var(--color-electric-500)
+        );
+        background-size: 200% 100%;
+        animation: progressGlow 2s infinite;
+        position: relative;
+    }
+
+    .form-progress-fill::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.6),
+            transparent
+        );
+    }
+
+    .form-steps {
+        @apply flex items-center justify-between mb-8;
+    }
+
+    .form-step {
+        @apply flex items-center gap-2 text-sm font-medium;
+    }
+
+    .form-step-number {
+        @apply w-8 h-8 rounded-full border-2 flex items-center justify-center
+               text-xs font-bold transition-all duration-300;
+    }
+
+    .form-step.completed .form-step-number {
+        @apply bg-success-500 border-success-500 text-white;
+    }
+
+    .form-step.active .form-step-number {
+        @apply bg-mocha-500 border-mocha-500 text-white;
+        animation: pulse 2s infinite;
+    }
+
+    .form-step.pending .form-step-number {
+        @apply bg-neutral-200 border-neutral-300 text-neutral-600;
+    }
+
+    /* ============================================================================
+       リアルタイムバリデーション表示
+       ============================================================================ */
+
+    .form-realtime-feedback {
+        @apply absolute right-3 top-1/2 transform -translate-y-1/2
+               transition-all duration-200;
+    }
+
+    .form-realtime-feedback.validating {
+        @apply text-neutral-400;
+        animation: spin 1s linear infinite;
+    }
+
+    .form-realtime-feedback.valid {
+        @apply text-success-500;
+        animation: checkmarkDraw 0.6s ease-out;
+    }
+
+    .form-realtime-feedback.invalid {
+        @apply text-error-500;
+        animation: shake 0.5s ease-in-out;
+    }
+
+    /* ============================================================================
+       文字数カウンター
+       ============================================================================ */
+
+    .form-counter {
+        @apply text-xs text-neutral-500 mt-1 flex justify-between items-center;
+    }
+
+    .form-counter.warning {
+        @apply text-warning-600;
+    }
+
+    .form-counter.error {
+        @apply text-error-600;
+        animation: pulse 1s infinite;
+    }
+
+    .form-counter-progress {
+        @apply w-16 h-1 bg-neutral-200 rounded-full overflow-hidden ml-2;
+    }
+
+    .form-counter-fill {
+        @apply h-full bg-mocha-500 transition-all duration-300;
+    }
+
+    .form-counter.warning .form-counter-fill {
+        @apply bg-warning-500;
+    }
+
+    .form-counter.error .form-counter-fill {
+        @apply bg-error-500;
+    }
+
+    /* ============================================================================
+       アニメーション定義
+       ============================================================================ */
+
+    @keyframes formShakeError {
+        0%,
+        100% {
+            transform: translateX(0);
+        }
+        10%,
+        30%,
+        50%,
+        70%,
+        90% {
+            transform: translateX(-3px);
+        }
+        20%,
+        40%,
+        60%,
+        80% {
+            transform: translateX(3px);
+        }
+    }
+
+    @keyframes messageSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes checkmarkDraw {
+        0% {
+            opacity: 0;
+            transform: scale(0);
+        }
+        50% {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @keyframes checkboxPop {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.2);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    @keyframes radioDot {
+        0% {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0);
+        }
+        100% {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+    }
+
+    @keyframes warningPulse {
+        0%,
+        100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.7;
+        }
+    }
+
+    @keyframes progressGlow {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+
+    /* ============================================================================
+       アニメーション・フェードイン
+       ============================================================================ */
+
     .form-animate-in {
-        @apply transition-all duration-200 ease-in-out;
+        @apply transition-all duration-300 ease-in-out;
+        animation: slideUp 0.4s ease-out;
     }
 
     .form-fade-in {
         @apply animate-fade-in;
+    }
+
+    .form-slide-up {
+        @apply animate-slide-up;
+    }
+
+    /* ============================================================================
+       レスポンシブ対応
+       ============================================================================ */
+
+    @media (max-width: 768px) {
+        .form-message {
+            @apply p-2 text-xs;
+        }
+
+        .form-checkbox-item,
+        .form-radio-item {
+            @apply p-2;
+        }
+
+        .form-steps {
+            @apply flex-col gap-2;
+        }
+
+        .form-step {
+            @apply w-full justify-center;
+        }
+
+        .form-counter {
+            @apply flex-col items-start gap-1;
+        }
+
+        .form-counter-progress {
+            @apply w-full ml-0;
+        }
+    }
+
+    /* ============================================================================
+       プリファレンス対応
+       ============================================================================ */
+
+    @media (prefers-reduced-motion: reduce) {
+        .form-error-state {
+            animation: none;
+        }
+
+        .form-message,
+        .form-animate-in,
+        .form-fade-in,
+        .form-slide-up {
+            animation: none;
+        }
+
+        .form-checkbox:checked,
+        .form-radio:checked {
+            animation: none;
+        }
+
+        .form-progress-fill {
+            animation: none;
+        }
+
+        .form-step.active .form-step-number {
+            animation: none;
+        }
+
+        .form-realtime-feedback.validating {
+            animation: none;
+        }
+    }
+
+    /* ============================================================================
+       高コントラスト対応
+       ============================================================================ */
+
+    @media (prefers-contrast: high) {
+        .form-error {
+            @apply border-error-600;
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .form-success {
+            @apply border-success-600;
+            background: rgba(34, 197, 94, 0.2);
+        }
+
+        .form-warning {
+            @apply border-warning-600;
+            background: rgba(245, 158, 11, 0.2);
+        }
+
+        .form-info {
+            @apply border-electric-600;
+            background: rgba(30, 144, 255, 0.2);
+        }
+
+        .form-checkbox,
+        .form-radio {
+            @apply border-2 border-neutral-700;
+            background: white;
+        }
+
+        .form-switch {
+            @apply border-2 border-neutral-700;
+            background: white;
+        }
+    }
+
+    /* ============================================================================
+       印刷対応
+       ============================================================================ */
+
+    @media print {
+        .form-message {
+            @apply border border-neutral-400 text-neutral-800;
+            background: white !important;
+            backdrop-filter: none;
+        }
+
+        .form-error {
+            @apply border-error-600 text-error-800;
+        }
+
+        .form-success {
+            @apply border-success-600 text-success-800;
+        }
+
+        .form-progress {
+            @apply border border-neutral-400;
+            background: white !important;
+        }
+
+        .form-progress-fill {
+            background: #666 !important;
+        }
     }
 }
