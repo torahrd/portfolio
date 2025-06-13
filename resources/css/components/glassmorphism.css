@@ -1,0 +1,434 @@
+/* ============================================================================
+   グラスモーフィズム効果 - 2025年モダンデザイン
+   ============================================================================ */
+
+@layer components {
+    /* ============================================================================
+       基本グラスエフェクト
+       ============================================================================ */
+
+    .glass {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .glass::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.4),
+            transparent
+        );
+    }
+
+    /* ダークグラス */
+    .glass-dark {
+        background: rgba(0, 0, 0, 0.15);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .glass-dark::before {
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.2),
+            transparent
+        );
+    }
+
+    /* カラーグラス */
+    .glass-mocha {
+        background: rgba(164, 120, 100, 0.15);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(164, 120, 100, 0.2);
+    }
+
+    .glass-sage {
+        background: rgba(135, 169, 107, 0.15);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(135, 169, 107, 0.2);
+    }
+
+    .glass-electric {
+        background: rgba(30, 144, 255, 0.15);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(30, 144, 255, 0.2);
+    }
+
+    .glass-coral {
+        background: rgba(255, 107, 107, 0.15);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 107, 107, 0.2);
+    }
+
+    /* ============================================================================
+       グラス強度バリエーション
+       ============================================================================ */
+
+    .glass-subtle {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .glass-medium {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .glass-strong {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .glass-intense {
+        background: rgba(255, 255, 255, 0.35);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    /* ============================================================================
+       グラスナビゲーション
+       ============================================================================ */
+
+    .glass-nav {
+        @apply glass-medium fixed top-4 left-1/2 transform -translate-x-1/2 
+               rounded-2xl px-6 py-3 z-40;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 8px 32px 0 rgba(164, 120, 100, 0.1);
+    }
+
+    .glass-nav:hover {
+        background: rgba(255, 255, 255, 0.2);
+        box-shadow: 0 12px 40px 0 rgba(164, 120, 100, 0.15);
+    }
+
+    .glass-nav-mobile {
+        @apply glass-strong fixed top-0 left-0 right-0 
+               px-4 py-4 z-50;
+        border-radius: 0 0 24px 24px;
+        box-shadow: 0 4px 24px 0 rgba(164, 120, 100, 0.1);
+    }
+
+    /* ============================================================================
+       グラスカード
+       ============================================================================ */
+
+    .glass-card {
+        @apply glass-medium rounded-2xl p-6 shadow-lg;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 8px 32px 0 rgba(164, 120, 100, 0.08);
+    }
+
+    .glass-card:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 40px 0 rgba(164, 120, 100, 0.12);
+    }
+
+    .glass-card-interactive {
+        @apply glass-card cursor-pointer;
+    }
+
+    .glass-card-interactive:hover {
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 20px 50px 0 rgba(164, 120, 100, 0.15);
+    }
+
+    /* ============================================================================
+       グラスモーダル・ダイアログ
+       ============================================================================ */
+
+    .glass-modal-backdrop {
+        @apply fixed inset-0 z-50;
+        background: rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        animation: fadeIn 0.3s ease-out;
+    }
+
+    .glass-modal {
+        @apply glass-strong fixed left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2
+               rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl;
+        animation: scaleIn 0.3s ease-out;
+        box-shadow: 0 20px 60px 0 rgba(164, 120, 100, 0.2);
+    }
+
+    .glass-drawer {
+        @apply glass-strong fixed right-0 top-0 bottom-0 w-80 p-6 shadow-2xl;
+        border-radius: 24px 0 0 24px;
+        transform: translateX(100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .glass-drawer.open {
+        transform: translateX(0);
+    }
+
+    /* ============================================================================
+       グラスボタン
+       ============================================================================ */
+
+    .glass-btn {
+        @apply glass-subtle rounded-xl px-6 py-3 text-sm font-semibold
+               transition-all duration-200 ease-out focusable;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .glass-btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.3),
+            transparent
+        );
+        transition: left 0.5s ease-out;
+    }
+
+    .glass-btn:hover::before {
+        left: 100%;
+    }
+
+    .glass-btn:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateY(-1px);
+        box-shadow: 0 8px 25px rgba(164, 120, 100, 0.15);
+    }
+
+    .glass-btn:active {
+        transform: translateY(0);
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* ============================================================================
+       グラスフォーム要素
+       ============================================================================ */
+
+    .glass-input {
+        @apply glass-subtle rounded-xl px-4 py-3 text-base
+               placeholder-neutral-400 border-0 outline-none
+               transition-all duration-200;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+
+    .glass-input:focus {
+        background: rgba(255, 255, 255, 0.2);
+        box-shadow: 0 0 0 2px rgba(164, 120, 100, 0.3);
+        transform: translateY(-1px);
+    }
+
+    .glass-textarea {
+        @apply glass-input resize-y;
+        min-height: 120px;
+    }
+
+    .glass-select {
+        @apply glass-input pr-10 cursor-pointer;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23a47864'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 20px;
+    }
+
+    /* ============================================================================
+       グラスサイドバー・パネル
+       ============================================================================ */
+
+    .glass-sidebar {
+        @apply glass-medium fixed left-0 top-0 bottom-0 w-64 p-6 shadow-2xl;
+        border-radius: 0 24px 24px 0;
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        box-shadow: 4px 0 24px 0 rgba(164, 120, 100, 0.1);
+    }
+
+    .glass-panel {
+        @apply glass-medium rounded-2xl p-6 shadow-lg;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow: 0 8px 32px 0 rgba(164, 120, 100, 0.1);
+    }
+
+    /* ============================================================================
+       グラスヘッダー・フッター
+       ============================================================================ */
+
+    .glass-header {
+        @apply glass-medium sticky top-0 z-40 px-6 py-4;
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .glass-footer {
+        @apply glass-subtle py-8 px-6 mt-auto;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* ============================================================================
+       グラステーブル
+       ============================================================================ */
+
+    .glass-table {
+        @apply w-full;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .glass-table th {
+        @apply glass-subtle text-left px-6 py-4 text-sm font-semibold 
+               text-neutral-700 border-b border-white/20;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+
+    .glass-table th:first-child {
+        border-radius: 12px 0 0 0;
+    }
+
+    .glass-table th:last-child {
+        border-radius: 0 12px 0 0;
+    }
+
+    .glass-table td {
+        @apply px-6 py-4 text-sm text-neutral-600 border-b border-white/10;
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .glass-table tbody tr:hover td {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .glass-table tbody tr:last-child td:first-child {
+        border-radius: 0 0 0 12px;
+    }
+
+    .glass-table tbody tr:last-child td:last-child {
+        border-radius: 0 0 12px 0;
+    }
+
+    /* ============================================================================
+       グラスツールチップ・ドロップダウン
+       ============================================================================ */
+
+    .glass-tooltip {
+        @apply glass-strong rounded-lg px-3 py-2 text-xs font-medium
+               text-neutral-800 shadow-lg;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        animation: scaleIn 0.2s ease-out;
+    }
+
+    .glass-dropdown {
+        @apply glass-medium rounded-xl shadow-lg border-0 overflow-hidden;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow: 0 12px 40px 0 rgba(164, 120, 100, 0.15);
+    }
+
+    .glass-dropdown-item {
+        @apply px-4 py-3 text-sm text-neutral-700 hover:bg-white/20
+               transition-colors duration-150 border-b border-white/10;
+    }
+
+    .glass-dropdown-item:last-child {
+        border-bottom: none;
+    }
+
+    /* ============================================================================
+       レスポンシブ対応
+       ============================================================================ */
+
+    @media (max-width: 768px) {
+        .glass-nav {
+            @apply relative top-0 left-0 transform-none w-full
+                   rounded-none px-4 py-3;
+        }
+
+        .glass-sidebar {
+            @apply w-full rounded-none;
+        }
+
+        .glass-modal {
+            @apply mx-4 p-6 max-w-sm;
+        }
+
+        .glass-drawer {
+            @apply w-full rounded-none;
+        }
+    }
+
+    /* ============================================================================
+       フォールバック（backdrop-filterサポートなし）
+       ============================================================================ */
+
+    @supports not (backdrop-filter: blur(10px)) {
+        .glass,
+        .glass-subtle {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .glass-medium {
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .glass-strong {
+            background: rgba(255, 255, 255, 0.98);
+        }
+
+        .glass-dark {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .glass-mocha {
+            background: rgba(164, 120, 100, 0.9);
+        }
+
+        .glass-sage {
+            background: rgba(135, 169, 107, 0.9);
+        }
+
+        .glass-electric {
+            background: rgba(30, 144, 255, 0.9);
+        }
+
+        .glass-coral {
+            background: rgba(255, 107, 107, 0.9);
+        }
+    }
+}

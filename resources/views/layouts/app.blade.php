@@ -14,504 +14,25 @@
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
 
     <!-- Font Awesome (アイコン用) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plq7G5tGm0rU+1SPhVotteLpBERwTkw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
 
     <!-- Scripts (Tailwind + Alpine.js) -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <!-- Alpine.js (軽量なJavaScriptフレームワーク - jQueryの代替) -->
+    <!-- Alpine.js (軽量なJavaScriptフレームワーク) -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-</head>
 
-<body class="font-sans antialiased dark-mode-bg"
-    data-authenticated="{{ auth()->check() ? 'true' : 'false' }}"
-    @auth data-user-id="{{ auth()->id() }}" @endauth
-    x-data="appData()">
-
-    <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-        @include('layouts.navigation')
-
-        <!-- Page Heading -->
-        @if (isset($header))
-        <header class="bg-white dark:bg-gray-800 shadow">
-            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                <div class="dark-mode-text">
-                    {{ $header }}
-                </div>
-            </div>
-        </header>
-        @endif
-
-        <!-- Flash Messages -->
-        @if (session('success'))
-        <div class="fixed top-4 right-4 z-50 animate-slide-up">
-            <div class="alert alert-success flex items-center p-4 rounded-lg shadow-lg"
-                x-data="{ show: true }"
-                x-show="show"
-                x-transition:enter="transition ease-out duration-300"
-                x-transition:enter-start="opacity-0 transform scale-90"
-                x-transition:enter-end="opacity-100 transform scale-100"
-                x-transition:leave="transition ease-in duration-200"
-                x-transition:leave-start="opacity-100 transform scale-100"
-                x-transition:leave-end="opacity-0 transform scale-90"
-                x-init="setTimeout(() => show = false, 5000)">
-                <i class="fas fa-check-circle mr-2"></i>
-                {{ session('success') }}
-                <button @click="show = false" class="ml-4 text-success-600 hover:text-success-800">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        </div>
-        @endif
-
-        @if (session('error'))
-        <div class="fixed top-4 right-4 z-50 animate-slide-up">
-            <div class="alert alert-danger flex items-center p-4 rounded-lg shadow-lg"
-                x-data="{ show: true }"
-                x-show="show"
-                x-transition:enter="transition ease-out duration-300"
-                x-transition:enter-start="opacity-0 transform scale-90"
-                x-transition:enter-end="opacity-100 transform scale-100"
-                x-transition:leave="transition ease-in duration-200"
-                x-transition:leave-start="opacity-100 transform scale-100"
-                x-transition:leave-end="opacity-0 transform scale-90"
-                x-init="setTimeout(() => show = false, 5000)">
-                <i class="fas fa-exclamation-circle mr-2"></i>
-                {{ session('error') }}
-                <button @click="show = false" class="ml-4 text-danger-600 hover:text-danger-800">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        </div>
-        @endif
-
-        @if (session('warning'))
-        <div class="fixed top-4 right-4 z-50 animate-slide-up">
-            <div class="alert alert-warning flex items-center p-4 rounded-lg shadow-lg"
-                x-data="{ show: true }"
-                x-show="show"
-                x-transition:enter="transition ease-out duration-300"
-                x-transition:enter-start="opacity-0 transform scale-90"
-                x-transition:enter-end="opacity-100 transform scale-100"
-                x-transition:leave="transition ease-in duration-200"
-                x-transition:leave-start="opacity-100 transform scale-100"
-                x-transition:leave-end="opacity-0 transform scale-90"
-                x-init="setTimeout(() => show = false, 5000)">
-                <i class="fas fa-exclamation-triangle mr-2"></i>
-                {{ session('warning') }}
-                <button @click="show = false" class="ml-4 text-warning-600 hover:text-warning-800">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        </div>
-        @endif
-
-        @if (session('info'))
-        <div class="fixed top-4 right-4 z-50 animate-slide-up">
-            <div class="alert alert-info flex items-center p-4 rounded-lg shadow-lg"
-                x-data="{ show: true }"
-                x-show="show"
-                x-transition:enter="transition ease-out duration-300"
-                x-transition:enter-start="opacity-0 transform scale-90"
-                x-transition:enter-end="opacity-100 transform scale-100"
-                x-transition:leave="transition ease-in duration-200"
-                x-transition:leave-start="opacity-100 transform scale-100"
-                x-transition:leave-end="opacity-0 transform scale-90"
-                x-init="setTimeout(() => show = false, 5000)">
-                <i class="fas fa-info-circle mr-2"></i>
-                {{ session('info') }}
-                <button @click="show = false" class="ml-4 text-blue-600 hover:text-blue-800">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        </div>
-        @endif
-
-        <!-- Page Content -->
-        <main class="dark-mode-text">
-            {{ $slot }}
-        </main>
-    </div>
-
-    <!-- フォロー申請モーダル (Alpine.js版) -->
-    @auth
-    <div x-show="showFollowRequestsModal"
-        x-transition:enter="transition ease-out duration-300"
-        x-transition:enter-start="opacity-0"
-        x-transition:enter-end="opacity-100"
-        x-transition:leave="transition ease-in duration-200"
-        x-transition:leave-start="opacity-100"
-        x-transition:leave-end="opacity-0"
-        class="fixed inset-0 z-50 overflow-y-auto"
-        x-cloak>
-        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <!-- Background overlay -->
-            <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"
-                @click="showFollowRequestsModal = false"></div>
-
-            <!-- Modal panel -->
-            <div class="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-gray-800 shadow-xl rounded-lg"
-                @click.stop>
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">
-                        <i class="fas fa-user-plus mr-2"></i>
-                        フォロー申請
-                    </h3>
-                    <button @click="showFollowRequestsModal = false"
-                        class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-
-                <div class="space-y-4">
-                    <!-- フォロー申請のリストをここに表示 -->
-                    <div id="follow-requests-list">
-                        <p class="text-gray-600 dark:text-gray-400 text-center py-4">
-                            <i class="fas fa-inbox text-3xl text-gray-300 block mb-2"></i>
-                            現在フォロー申請はありません
-                        </p>
-                    </div>
-                </div>
-
-                <div class="flex justify-end mt-6 space-x-3">
-                    <button @click="showFollowRequestsModal = false"
-                        class="btn btn-secondary">
-                        閉じる
-                    </button>
-                    <button @click="refreshFollowRequests()" class="btn btn-outline-primary">
-                        <i class="fas fa-sync-alt mr-1"></i>
-                        更新
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    @endauth
-
-    <!-- JavaScriptの初期化 -->
-    @verbatim
+    <!-- スクロールアニメーション用スクリプト -->
     <script>
-        // アプリケーションデータの初期化
-        function appData() {
-            // メタタグから認証情報を取得
-            const authCheck = document.querySelector('meta[name="auth-check"]');
-            const userId = document.querySelector('meta[name="user-id"]');
-
-            const isAuthenticated = authCheck ? authCheck.content === 'true' : false;
-            const currentUserId = userId ? parseInt(userId.content) : null;
-
-            // グローバル変数も設定（既存コードとの互換性）
-            window.isAuthenticated = isAuthenticated;
-            window.currentUserId = currentUserId;
-
-            return {
-                isAuthenticated: isAuthenticated,
-                currentUserId: currentUserId,
-                showFollowRequestsModal: false,
-
-                // フォロー申請モーダルを開く
-                openFollowRequestsModal() {
-                    this.showFollowRequestsModal = true;
-                    this.loadFollowRequests();
-                },
-
-                // フォロー申請を読み込む
-                async loadFollowRequests() {
-                    if (!this.isAuthenticated) return;
-
-                    try {
-                        const response = await fetch('/api/follow-requests', {
-                            headers: {
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                            }
-                        });
-
-                        if (response.ok) {
-                            const data = await response.json();
-                            this.renderFollowRequests(data.requests);
-                        }
-                    } catch (error) {
-                        console.error('フォロー申請の取得に失敗しました:', error);
-                    }
-                },
-
-                // フォロー申請を表示
-                renderFollowRequests(requests) {
-                    const container = document.getElementById('follow-requests-list');
-                    if (!container) return;
-
-                    if (requests.length === 0) {
-                        container.innerHTML = `
-                            <p class="text-gray-600 dark:text-gray-400 text-center py-4">
-                                <i class="fas fa-inbox text-3xl text-gray-300 block mb-2"></i>
-                                現在フォロー申請はありません
-                            </p>
-                        `;
-                        return;
-                    }
-
-                    const requestsHtml = requests.map(request => `
-                        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                            <div class="flex items-center space-x-3">
-                                <img src="${request.user.avatar_url}" alt="${request.user.name}" class="w-10 h-10 rounded-full">
-                                <div>
-                                    <p class="font-medium text-gray-900 dark:text-white">${request.user.name}</p>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400">${request.created_at}</p>
-                                </div>
-                            </div>
-                            <div class="flex space-x-2">
-                                <button onclick="handleFollowRequest(${request.user.id}, 'accept')" 
-                                        class="btn btn-success btn-sm">
-                                    承認
-                                </button>
-                                <button onclick="handleFollowRequest(${request.user.id}, 'reject')" 
-                                        class="btn btn-danger btn-sm">
-                                    拒否
-                                </button>
-                            </div>
-                        </div>
-                    `).join('');
-
-                    container.innerHTML = requestsHtml;
-                }
-            };
-        }
-
-        // Alpine.jsのデータストア
-        document.addEventListener('alpine:init', () => {
-            const authMeta = document.querySelector('meta[name="auth-check"]');
-            const userMeta = document.querySelector('meta[name="user-id"]');
-
-            Alpine.store('user', {
-                isAuthenticated: authMeta ? authMeta.content === 'true' : false,
-                currentUserId: userMeta ? parseInt(userMeta.content) : null,
-
-                // フォロー機能
-                async followUser(userId) {
-                    try {
-                        const response = await fetch(`/users/${userId}/follow`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                            }
-                        });
-
-                        if (response.ok) {
-                            const data = await response.json();
-                            return data;
-                        }
-                        throw new Error('フォローに失敗しました');
-                    } catch (error) {
-                        console.error('Follow error:', error);
-                        throw error;
-                    }
-                },
-
-                // フォロー申請の処理
-                async handleFollowRequest(userId, action) {
-                    try {
-                        const response = await fetch(`/users/${userId}/${action}`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                            }
-                        });
-
-                        if (response.ok) {
-                            const data = await response.json();
-                            return data;
-                        }
-                        throw new Error(`フォロー申請の${action === 'accept' ? '承認' : '拒否'}に失敗しました`);
-                    } catch (error) {
-                        console.error('Follow request error:', error);
-                        throw error;
-                    }
-                }
-            });
-        });
-
-        // メッセージ表示システム
-        const MessageDisplay = {
-            show: (message, type = 'success', duration = 5000) => {
-                // 既存のメッセージを削除
-                const existingMessages = document.querySelectorAll('.dynamic-message');
-                existingMessages.forEach(msg => msg.remove());
-
-                // メッセージ要素を作成
-                const messageDiv = document.createElement('div');
-                messageDiv.className = `dynamic-message fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full`;
-
-                // タイプに応じてスタイルを設定
-                const styles = {
-                    success: 'bg-success-500 text-white',
-                    error: 'bg-danger-500 text-white',
-                    warning: 'bg-warning-500 text-white',
-                    info: 'bg-blue-500 text-white'
-                };
-
-                const icons = {
-                    success: 'fas fa-check-circle',
-                    error: 'fas fa-exclamation-circle',
-                    warning: 'fas fa-exclamation-triangle',
-                    info: 'fas fa-info-circle'
-                };
-
-                messageDiv.className += ` ${styles[type] || styles.info}`;
-
-                messageDiv.innerHTML = `
-                    <div class="flex items-center space-x-3">
-                        <i class="${icons[type] || icons.info}"></i>
-                        <span>${message}</span>
-                        <button onclick="this.parentElement.parentElement.remove()" 
-                                class="ml-4 text-white hover:text-gray-200 transition-colors duration-200">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                `;
-
-                // DOMに追加
-                document.body.appendChild(messageDiv);
-
-                // アニメーション: スライドイン
-                setTimeout(() => {
-                    messageDiv.classList.remove('translate-x-full');
-                }, 100);
-
-                // 自動削除
-                setTimeout(() => {
-                    messageDiv.classList.add('translate-x-full');
-                    setTimeout(() => {
-                        if (messageDiv.parentElement) {
-                            messageDiv.remove();
-                        }
-                    }, 300);
-                }, duration);
-            },
-
-            success: (message, duration = 5000) => MessageDisplay.show(message, 'success', duration),
-            error: (message, duration = 5000) => MessageDisplay.show(message, 'error', duration),
-            warning: (message, duration = 5000) => MessageDisplay.show(message, 'warning', duration),
-            info: (message, duration = 5000) => MessageDisplay.show(message, 'info', duration)
-        };
-
-        // フォーム送信の共通処理
-        const FormHandler = {
-            async submit(form, options = {}) {
-                const formData = new FormData(form);
-                const url = form.action;
-                const method = form.method || 'POST';
-
-                // デフォルトオプション
-                const defaultOptions = {
-                    showLoading: true,
-                    showSuccess: true,
-                    showError: true,
-                    onSuccess: null,
-                    onError: null,
-                    onComplete: null
-                };
-
-                const config = {
-                    ...defaultOptions,
-                    ...options
-                };
-
-                // ローディング表示
-                if (config.showLoading) {
-                    const submitButton = form.querySelector('button[type="submit"]');
-                    if (submitButton) {
-                        submitButton.disabled = true;
-                        submitButton.classList.add('loading');
-                    }
-                }
-
-                try {
-                    const response = await fetch(url, {
-                        method: method,
-                        body: formData,
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        }
-                    });
-
-                    if (response.ok) {
-                        const data = await response.json();
-
-                        if (config.showSuccess && data.message) {
-                            MessageDisplay.success(data.message);
-                        }
-
-                        if (config.onSuccess) {
-                            config.onSuccess(data);
-                        }
-
-                        return data;
-                    } else {
-                        const errorData = await response.json();
-                        throw new Error(errorData.message || 'エラーが発生しました');
-                    }
-                } catch (error) {
-                    if (config.showError) {
-                        MessageDisplay.error(error.message);
-                    }
-
-                    if (config.onError) {
-                        config.onError(error);
-                    }
-
-                    throw error;
-                } finally {
-                    // ローディング解除
-                    if (config.showLoading) {
-                        const submitButton = form.querySelector('button[type="submit"]');
-                        if (submitButton) {
-                            submitButton.disabled = false;
-                            submitButton.classList.remove('loading');
-                        }
-                    }
-
-                    if (config.onComplete) {
-                        config.onComplete();
-                    }
-                }
-            }
-        };
-
-        // フォロー申請処理のグローバル関数
-        async function handleFollowRequest(userId, action) {
-            try {
-                const data = await Alpine.store('user').handleFollowRequest(userId, action);
-
-                if (data.message) {
-                    MessageDisplay.success(data.message);
-                }
-
-                // フォロー申請リストを更新
-                const appData = Alpine.$data(document.body);
-                if (appData && typeof appData.loadFollowRequests === 'function') {
-                    appData.loadFollowRequests();
-                }
-
-            } catch (error) {
-                MessageDisplay.error(error.message);
-            }
-        }
-
-        // フォロー申請更新のグローバル関数
-        async function refreshFollowRequests() {
-            const appData = Alpine.$data(document.body);
-            if (appData && typeof appData.loadFollowRequests === 'function') {
-                await appData.loadFollowRequests();
-                MessageDisplay.success('フォロー申請を更新しました');
-            }
-        }
-
-        // スクロールアニメーションの初期化
+        // スクロール時のアニメーション制御
         document.addEventListener('DOMContentLoaded', function() {
             const observerOptions = {
                 threshold: 0.1,
@@ -522,32 +43,420 @@
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('visible');
-                        // パフォーマンス向上のため一度表示されたら監視を停止
-                        observer.unobserve(entry.target);
                     }
                 });
             }, observerOptions);
 
-            // .animate-on-scroll クラスを持つ要素を監視
-            document.querySelectorAll('.animate-on-scroll').forEach(el => {
+            // スクロールアニメーション対象要素を監視
+            document.querySelectorAll('.animate-on-scroll, .animate-on-scroll-left, .animate-on-scroll-right, .animate-on-scroll-scale').forEach(el => {
                 observer.observe(el);
             });
         });
-
-        // グローバル関数として公開
-        window.MessageDisplay = MessageDisplay;
-        window.FormHandler = FormHandler;
-        window.handleFollowRequest = handleFollowRequest;
-        window.refreshFollowRequests = refreshFollowRequests;
-
-        // デバッグ用ログ（開発時のみ）
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            console.log('認証状態:', window.isAuthenticated);
-            console.log('ユーザーID:', window.currentUserId);
-            console.log('App initialized successfully');
-        }
     </script>
-    @endverbatim
+</head>
+
+<body class="font-sans antialiased text-neutral-900 bg-gradient-to-br from-neutral-50 to-mocha-50"
+    data-authenticated="{{ auth()->check() ? 'true' : 'false' }}"
+    @auth data-user-id="{{ auth()->id() }}" @endauth>
+
+    <!-- Skip Link (アクセシビリティ) -->
+    <a href="#main-content" class="skip-link">メインコンテンツへスキップ</a>
+
+    <!-- メイン背景装飾 -->
+    <div class="fixed inset-0 -z-10 overflow-hidden">
+        <div class="absolute -top-40 -right-40 w-80 h-80 rounded-full bg-mocha-200/20 blur-3xl animate-float"></div>
+        <div class="absolute -bottom-40 -left-40 w-96 h-96 rounded-full bg-sage-200/15 blur-3xl animate-float" style="animation-delay: -1s;"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-electric-200/10 blur-3xl animate-float" style="animation-delay: -2s;"></div>
+    </div>
+
+    <div class="min-h-screen flex flex-col">
+        <!-- メインナビゲーション -->
+        <nav class="glass-nav sticky top-0 z-40 transition-all duration-300"
+            x-data="{ open: false, scrolled: false }"
+            x-init="
+                 window.addEventListener('scroll', () => {
+                     scrolled = window.scrollY > 50;
+                 });
+             "
+            :class="{ 'glass-strong': scrolled }">
+
+            <div class="container-responsive">
+                <div class="flex items-center justify-between h-16">
+                    <!-- ロゴ・ブランド -->
+                    <div class="flex items-center">
+                        <a href="{{ route('posts.index') }}"
+                            class="flex items-center gap-3 text-xl font-bold text-gradient-mocha hover:text-mocha-700 transition-colors duration-200">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-mocha-500 to-sage-500 flex items-center justify-center text-white shadow-lg">
+                                <i class="fas fa-utensils text-lg"></i>
+                            </div>
+                            <span class="hidden sm:block">{{ config('app.name', 'FoodieConnect') }}</span>
+                        </a>
+                    </div>
+
+                    <!-- デスクトップナビゲーション -->
+                    <div class="hidden md:flex items-center space-x-1">
+                        <a href="{{ route('posts.index') }}"
+                            class="nav-link {{ request()->routeIs('posts.index') ? 'active' : '' }}">
+                            <i class="nav-link-icon fas fa-home"></i>
+                            <span>ホーム</span>
+                        </a>
+
+                        @auth
+                        <a href="{{ route('posts.create') }}"
+                            class="nav-link {{ request()->routeIs('posts.create') ? 'active' : '' }}">
+                            <i class="nav-link-icon fas fa-plus"></i>
+                            <span>投稿作成</span>
+                        </a>
+
+                        <a href="{{ route('profile.show', auth()->user()) }}"
+                            class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}">
+                            <i class="nav-link-icon fas fa-user"></i>
+                            <span>プロフィール</span>
+                        </a>
+                        @endauth
+                    </div>
+
+                    <!-- ユーザーメニュー・認証ボタン -->
+                    <div class="flex items-center space-x-2">
+                        @auth
+                        <!-- 通知ボタン -->
+                        <div class="relative" x-data="{ showNotifications: false }">
+                            <button @click="showNotifications = !showNotifications"
+                                class="nav-link p-2 relative">
+                                <i class="fas fa-bell text-lg"></i>
+                                <!-- 通知バッジ（未読通知がある場合） -->
+                                <span class="absolute -top-1 -right-1 w-5 h-5 bg-coral-500 text-white text-xs rounded-full flex items-center justify-center animate-pulse">
+                                    3
+                                </span>
+                            </button>
+
+                            <!-- 通知ドロップダウン -->
+                            <div x-show="showNotifications"
+                                x-transition:enter="transition ease-out duration-200"
+                                x-transition:enter-start="opacity-0 scale-95"
+                                x-transition:enter-end="opacity-1 scale-100"
+                                x-transition:leave="transition ease-in duration-150"
+                                x-transition:leave-start="opacity-1 scale-100"
+                                x-transition:leave-end="opacity-0 scale-95"
+                                @click.away="showNotifications = false"
+                                class="glass-dropdown absolute right-0 mt-2 w-80 py-2 z-50">
+                                <div class="px-4 py-2 border-b border-neutral-100">
+                                    <h3 class="font-semibold text-neutral-900">通知</h3>
+                                </div>
+                                <div class="max-h-64 overflow-y-auto">
+                                    <!-- 通知アイテム（サンプル） -->
+                                    <a href="#" class="glass-dropdown-item flex items-start gap-3">
+                                        <i class="fas fa-heart text-coral-500 mt-1"></i>
+                                        <div>
+                                            <p class="text-sm"><strong>田中さん</strong>があなたの投稿にいいねしました</p>
+                                            <p class="text-xs text-neutral-500">2分前</p>
+                                        </div>
+                                    </a>
+                                    <a href="#" class="glass-dropdown-item flex items-start gap-3">
+                                        <i class="fas fa-comment text-electric-500 mt-1"></i>
+                                        <div>
+                                            <p class="text-sm"><strong>佐藤さん</strong>があなたの投稿にコメントしました</p>
+                                            <p class="text-xs text-neutral-500">10分前</p>
+                                        </div>
+                                    </a>
+                                    <a href="#" class="glass-dropdown-item flex items-start gap-3">
+                                        <i class="fas fa-user-plus text-sage-500 mt-1"></i>
+                                        <div>
+                                            <p class="text-sm"><strong>山田さん</strong>があなたをフォローしました</p>
+                                            <p class="text-xs text-neutral-500">1時間前</p>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="px-4 py-2 border-t border-neutral-100">
+                                    <a href="#" class="text-sm text-mocha-600 hover:text-mocha-700">すべての通知を見る</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ユーザーメニュー -->
+                        <div class="relative" x-data="{ open: false }">
+                            <button @click="open = !open"
+                                class="flex items-center gap-2 nav-link">
+                                <img src="{{ auth()->user()->avatar_url }}"
+                                    alt="{{ auth()->user()->name }}"
+                                    class="w-8 h-8 rounded-full object-cover border-2 border-mocha-300">
+                                <span class="hidden sm:block">{{ auth()->user()->name }}</span>
+                                <i class="fas fa-chevron-down text-xs transition-transform duration-200"
+                                    :class="{ 'rotate-180': open }"></i>
+                            </button>
+
+                            <!-- ユーザードロップダウン -->
+                            <div x-show="open"
+                                x-transition:enter="transition ease-out duration-200"
+                                x-transition:enter-start="opacity-0 scale-95"
+                                x-transition:enter-end="opacity-1 scale-100"
+                                x-transition:leave="transition ease-in duration-150"
+                                x-transition:leave-start="opacity-1 scale-100"
+                                x-transition:leave-end="opacity-0 scale-95"
+                                @click.away="open = false"
+                                class="glass-dropdown absolute right-0 mt-2 w-48 py-2 z-50">
+
+                                <a href="{{ route('profile.show', auth()->user()) }}"
+                                    class="glass-dropdown-item">
+                                    <i class="fas fa-user w-4"></i>
+                                    プロフィール
+                                </a>
+                                <a href="{{ route('profile.edit') }}"
+                                    class="glass-dropdown-item">
+                                    <i class="fas fa-cog w-4"></i>
+                                    設定
+                                </a>
+                                <div class="border-t border-neutral-100 my-1"></div>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="glass-dropdown-item w-full text-left">
+                                        <i class="fas fa-sign-out-alt w-4"></i>
+                                        ログアウト
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        @else
+                        <!-- ゲストユーザー用ボタン -->
+                        <a href="{{ route('login') }}" class="btn-ghost">
+                            <i class="fas fa-sign-in-alt mr-2"></i>
+                            ログイン
+                        </a>
+                        <a href="{{ route('register') }}" class="btn btn-primary">
+                            <i class="fas fa-user-plus mr-2"></i>
+                            新規登録
+                        </a>
+                        @endauth
+
+                        <!-- モバイルメニューボタン -->
+                        <button @click="open = !open"
+                            class="md:hidden nav-link p-2"
+                            aria-label="メニューを開く">
+                            <i class="fas fa-bars text-lg" x-show="!open"></i>
+                            <i class="fas fa-times text-lg" x-show="open"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- モバイルナビゲーション -->
+                <div x-show="open"
+                    x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="opacity-0 -translate-y-2"
+                    x-transition:enter-end="opacity-1 translate-y-0"
+                    x-transition:leave="transition ease-in duration-150"
+                    x-transition:leave-start="opacity-1 translate-y-0"
+                    x-transition:leave-end="opacity-0 -translate-y-2"
+                    @click.away="open = false"
+                    class="md:hidden glass-medium rounded-2xl mt-4 p-4">
+
+                    <div class="space-y-2">
+                        <a href="{{ route('posts.index') }}"
+                            class="nav-link {{ request()->routeIs('posts.index') ? 'active' : '' }}">
+                            <i class="nav-link-icon fas fa-home"></i>
+                            <span>ホーム</span>
+                        </a>
+
+                        @auth
+                        <a href="{{ route('posts.create') }}"
+                            class="nav-link {{ request()->routeIs('posts.create') ? 'active' : '' }}">
+                            <i class="nav-link-icon fas fa-plus"></i>
+                            <span>投稿作成</span>
+                        </a>
+
+                        <a href="{{ route('profile.show', auth()->user()) }}"
+                            class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}">
+                            <i class="nav-link-icon fas fa-user"></i>
+                            <span>プロフィール</span>
+                        </a>
+
+                        <div class="border-t border-neutral-200 my-2"></div>
+
+                        <a href="{{ route('profile.edit') }}"
+                            class="nav-link">
+                            <i class="nav-link-icon fas fa-cog"></i>
+                            <span>設定</span>
+                        </a>
+
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="nav-link w-full text-left">
+                                <i class="nav-link-icon fas fa-sign-out-alt"></i>
+                                <span>ログアウト</span>
+                            </button>
+                        </form>
+                        @endauth
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- メインコンテンツエリア -->
+        <main id="main-content" class="flex-1" role="main">
+            <!-- ページヘッダー（必要に応じて表示） -->
+            @if (isset($header))
+            <header class="glass-card mx-4 mt-4 p-6 animate-slide-down">
+                <div class="container-responsive">
+                    {{ $header }}
+                </div>
+            </header>
+            @endif
+
+            <!-- メッセージ表示エリア -->
+            <div id="flash-messages" class="container-responsive mt-4">
+                @if (session('success'))
+                <div class="alert alert-success animate-slide-down"
+                    x-data="{ show: true }"
+                    x-show="show"
+                    x-init="setTimeout(() => show = false, 5000)">
+                    <i class="alert-icon fas fa-check-circle"></i>
+                    <div class="alert-content">
+                        {{ session('success') }}
+                    </div>
+                    <button @click="show = false" class="alert-close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                @endif
+
+                @if (session('error'))
+                <div class="alert alert-error animate-slide-down"
+                    x-data="{ show: true }"
+                    x-show="show"
+                    x-init="setTimeout(() => show = false, 5000)">
+                    <i class="alert-icon fas fa-exclamation-circle"></i>
+                    <div class="alert-content">
+                        {{ session('error') }}
+                    </div>
+                    <button @click="show = false" class="alert-close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                @endif
+
+                @if (session('warning'))
+                <div class="alert alert-warning animate-slide-down"
+                    x-data="{ show: true }"
+                    x-show="show"
+                    x-init="setTimeout(() => show = false, 5000)">
+                    <i class="alert-icon fas fa-exclamation-triangle"></i>
+                    <div class="alert-content">
+                        {{ session('warning') }}
+                    </div>
+                    <button @click="show = false" class="alert-close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                @endif
+            </div>
+
+            <!-- ページコンテンツ -->
+            <div class="container-responsive py-6">
+                {{ $slot }}
+            </div>
+        </main>
+
+        <!-- フッター -->
+        <footer class="glass-footer mt-auto">
+            <div class="container-responsive">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                    <!-- ブランド情報 -->
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-mocha-500 to-sage-500 flex items-center justify-center text-white">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                            <span class="font-bold text-mocha-700">{{ config('app.name', 'FoodieConnect') }}</span>
+                        </div>
+                        <p class="text-sm text-neutral-600 leading-relaxed">
+                            お気に入りの店舗を発見・共有し、<br>
+                            新しい美食体験を楽しみましょう。
+                        </p>
+                    </div>
+
+                    <!-- サービス -->
+                    <div>
+                        <h3 class="font-semibold text-neutral-900 mb-4">サービス</h3>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="{{ route('posts.index') }}" class="text-neutral-600 hover:text-mocha-600 transition-colors">投稿を見る</a></li>
+                            @auth
+                            <li><a href="{{ route('posts.create') }}" class="text-neutral-600 hover:text-mocha-600 transition-colors">投稿を作成</a></li>
+                            @else
+                            <li><a href="{{ route('register') }}" class="text-neutral-600 hover:text-mocha-600 transition-colors">新規登録</a></li>
+                            @endauth
+                        </ul>
+                    </div>
+
+                    <!-- サポート -->
+                    <div>
+                        <h3 class="font-semibold text-neutral-900 mb-4">サポート</h3>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="#" class="text-neutral-600 hover:text-mocha-600 transition-colors">ヘルプ</a></li>
+                            <li><a href="#" class="text-neutral-600 hover:text-mocha-600 transition-colors">お問い合わせ</a></li>
+                            <li><a href="#" class="text-neutral-600 hover:text-mocha-600 transition-colors">プライバシーポリシー</a></li>
+                            <li><a href="#" class="text-neutral-600 hover:text-mocha-600 transition-colors">利用規約</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- SNS -->
+                    <div>
+                        <h3 class="font-semibold text-neutral-900 mb-4">フォローする</h3>
+                        <div class="flex space-x-3">
+                            <a href="#" class="w-10 h-10 rounded-full bg-gradient-to-br from-mocha-400 to-sage-400 flex items-center justify-center text-white hover:from-mocha-500 hover:to-sage-500 transition-all duration-200 hover:-translate-y-0.5">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 rounded-full bg-gradient-to-br from-electric-400 to-coral-400 flex items-center justify-center text-white hover:from-electric-500 hover:to-coral-500 transition-all duration-200 hover:-translate-y-0.5">
+                                <i class="fab fa-facebook"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 rounded-full bg-gradient-to-br from-coral-400 to-mocha-400 flex items-center justify-center text-white hover:from-coral-500 hover:to-mocha-500 transition-all duration-200 hover:-translate-y-0.5">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- コピーライト -->
+                <div class="border-t border-neutral-200 pt-6 flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-sm text-neutral-600">
+                        © {{ date('Y') }} {{ config('app.name', 'FoodieConnect') }}. All rights reserved.
+                    </p>
+                    <p class="text-xs text-neutral-500 mt-2 md:mt-0">
+                        Made with <i class="fas fa-heart text-coral-500"></i> in Japan
+                    </p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- フローティングアクションボタン（モバイル用） -->
+    @auth
+    <a href="{{ route('posts.create') }}"
+        class="btn-floating md:hidden"
+        aria-label="新しい投稿を作成">
+        <i class="fas fa-plus text-lg"></i>
+    </a>
+    @endauth
+
+    <!-- トップに戻るボタン -->
+    <button id="scroll-to-top"
+        class="fixed bottom-6 left-6 w-12 h-12 rounded-full bg-neutral-600/80 text-white backdrop-blur-md hidden hover:bg-neutral-700/90 transition-all duration-200 z-40"
+        onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+        aria-label="ページの先頭に戻る">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script>
+        // スクロールトップボタンの表示制御
+        window.addEventListener('scroll', function() {
+            const scrollButton = document.getElementById('scroll-to-top');
+            if (window.scrollY > 300) {
+                scrollButton.classList.remove('hidden');
+                scrollButton.classList.add('animate-fade-in');
+            } else {
+                scrollButton.classList.add('hidden');
+                scrollButton.classList.remove('animate-fade-in');
+            }
+        });
+    </script>
 </body>
 
 </html>

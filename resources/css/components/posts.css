@@ -1,32 +1,157 @@
-/* ==========================================================================
-   投稿関連コンポーネント
-   ========================================================================== */
+/* ============================================================================
+   投稿関連コンポーネント - 2025年モダンデザイン
+   ============================================================================ */
 
 @layer components {
-    /* 投稿作成セクション */
+    /* ============================================================================
+       投稿作成セクション - グラスモーフィズム効果
+       ============================================================================ */
+
     .create-post-section {
-        @apply bg-gradient-to-br from-blue-500 to-purple-600 text-white p-8 rounded-xl mb-8 text-center;
+        @apply glass-card p-8 mb-8 text-center relative overflow-hidden;
+        background: linear-gradient(
+            135deg,
+            rgba(164, 120, 100, 0.15),
+            rgba(135, 169, 107, 0.15)
+        );
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid rgba(164, 120, 100, 0.2);
+        animation: fadeIn 0.8s ease-out;
+    }
+
+    .create-post-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.1),
+            transparent
+        );
+        animation: shimmer 3s infinite;
     }
 
     .create-post-section h2 {
-        @apply text-2xl font-light mb-4;
+        @apply text-2xl font-light mb-4 text-gradient-mocha;
+        animation: slideDown 0.6s ease-out 0.2s both;
+    }
+
+    .create-post-section p {
+        @apply text-neutral-600 mb-6 leading-relaxed;
+        animation: slideUp 0.6s ease-out 0.4s both;
     }
 
     .create-post-section .btn {
-        @apply bg-white bg-opacity-20 border-2 border-white border-opacity-30 text-white px-8 py-3 font-semibold transition-all duration-300 hover:bg-opacity-30 hover:border-opacity-50 hover:-translate-y-1;
+        @apply glass-btn text-mocha-700 hover:text-mocha-800 
+               font-semibold transition-all duration-300
+               hover:-translate-y-1 hover:shadow-glow;
+        animation: scaleIn 0.6s ease-out 0.6s both;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 2px solid rgba(164, 120, 100, 0.3);
     }
 
-    /* 投稿アイテム */
-    .post-item {
-        @apply bg-white border border-gray-200 rounded-lg p-5 mb-5 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1;
+    .create-post-section .btn:hover {
+        background: rgba(164, 120, 100, 0.1);
+        border-color: rgba(164, 120, 100, 0.5);
+        box-shadow: 0 8px 25px rgba(164, 120, 100, 0.25);
     }
+
+    /* ============================================================================
+       投稿アイテム - ニューモーフィズム + グラス効果
+       ============================================================================ */
+
+    .post-item {
+        @apply card-base p-6 mb-6 relative overflow-hidden
+               transition-all duration-300 ease-out hover-lift;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(164, 120, 100, 0.1);
+        box-shadow: 0 4px 15px rgba(164, 120, 100, 0.08),
+            inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        animation: slideUp 0.6s ease-out;
+        transform-origin: bottom center;
+    }
+
+    .post-item:hover {
+        transform: translateY(-4px) scale(1.01);
+        box-shadow: 0 12px 40px rgba(164, 120, 100, 0.15),
+            inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        border-color: rgba(164, 120, 100, 0.2);
+    }
+
+    .post-item::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(
+            90deg,
+            var(--color-mocha-500),
+            var(--color-sage-500),
+            var(--color-electric-500)
+        );
+        opacity: 0;
+        transition: opacity 0.3s ease-out;
+    }
+
+    .post-item:hover::before {
+        opacity: 1;
+    }
+
+    /* ============================================================================
+       投稿ヘッダー
+       ============================================================================ */
 
     .post-header {
-        @apply flex items-center mb-4 pb-3 border-b border-gray-100;
+        @apply flex items-center mb-5 pb-4 relative;
+        border-bottom: 1px solid rgba(164, 120, 100, 0.1);
+    }
+
+    .post-header::after {
+        content: "";
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 50px;
+        height: 2px;
+        background: linear-gradient(90deg, var(--color-mocha-500), transparent);
+        border-radius: 1px;
     }
 
     .post-avatar {
-        @apply w-11 h-11 rounded-full object-cover mr-3 border-2 border-gray-200 transition-colors duration-300 hover:border-primary-500;
+        @apply w-12 h-12 rounded-full object-cover mr-4 
+               border-2 border-transparent transition-all duration-300
+               hover:border-mocha-300 hover:shadow-lg;
+        box-shadow: 0 4px 12px rgba(164, 120, 100, 0.2);
+        position: relative;
+    }
+
+    .post-avatar::after {
+        content: "";
+        position: absolute;
+        inset: -2px;
+        border-radius: 50%;
+        background: linear-gradient(
+            45deg,
+            var(--color-mocha-500),
+            var(--color-sage-500)
+        );
+        z-index: -1;
+        opacity: 0;
+        transition: opacity 0.3s ease-out;
+    }
+
+    .post-avatar:hover::after {
+        opacity: 1;
     }
 
     .post-author-info {
@@ -34,176 +159,462 @@
     }
 
     .post-author {
-        @apply font-semibold text-gray-900 text-base block mb-1 hover:text-primary-500 transition-colors duration-200;
+        @apply font-semibold text-neutral-900 text-base block mb-1 
+               hover:text-mocha-600 transition-colors duration-200;
+        text-decoration: none;
+    }
+
+    .post-author:hover {
+        text-decoration: underline;
+        text-decoration-color: var(--color-mocha-500);
+        text-underline-offset: 2px;
     }
 
     .post-meta {
-        @apply text-sm text-gray-500 flex items-center space-x-2;
+        @apply text-sm text-neutral-500 flex items-center flex-wrap gap-3;
     }
 
     .post-meta span {
-        @apply flex items-center space-x-1;
+        @apply flex items-center gap-1;
     }
 
-    /* 投稿詳細 */
+    .post-meta i {
+        @apply text-mocha-400 text-xs;
+    }
+
+    /* ============================================================================
+       投稿内容
+       ============================================================================ */
+
+    .post-content {
+        @apply space-y-4;
+    }
+
+    .post-content h3 {
+        @apply text-xl font-semibold text-neutral-900 mb-2;
+    }
+
+    .post-content p {
+        @apply text-neutral-700 leading-relaxed text-base;
+        text-align: justify;
+    }
+
+    .post-shop-info {
+        @apply bg-gradient-to-r from-mocha-50 to-sage-50 
+               rounded-xl p-4 border border-mocha-100
+               transition-all duration-300 hover:shadow-md;
+    }
+
+    .post-shop-link {
+        @apply inline-flex items-center gap-2 text-mocha-600 
+               font-semibold hover:text-mocha-700 transition-colors duration-200;
+        text-decoration: none;
+    }
+
+    .post-shop-link:hover {
+        text-decoration: underline;
+        text-decoration-color: var(--color-mocha-600);
+        text-underline-offset: 3px;
+        text-decoration-thickness: 2px;
+    }
+
+    .post-shop-link i {
+        @apply text-lg transition-transform duration-200;
+    }
+
+    .post-shop-link:hover i {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .post-budget {
+        @apply inline-flex items-center gap-1 px-3 py-1 
+               bg-gradient-to-r from-coral-100 to-coral-200
+               text-coral-800 font-bold text-sm rounded-full
+               border border-coral-300;
+    }
+
+    .post-budget i {
+        @apply text-coral-600;
+    }
+
+    /* ============================================================================
+       投稿詳細ページ
+       ============================================================================ */
+
     .post-detail {
-        @apply bg-white rounded-xl shadow-lg p-8 mb-8;
+        @apply glass-card p-8 mb-8 relative;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid rgba(164, 120, 100, 0.15);
+        animation: fadeIn 0.8s ease-out;
     }
 
     .post-detail-header {
-        @apply flex items-center mb-5 pb-4 border-b-2 border-gray-100;
+        @apply flex items-center mb-6 pb-5 relative;
+        border-bottom: 2px solid rgba(164, 120, 100, 0.1);
     }
 
-    /* 修正済み: w-15 h-15 → w-16 h-16, border-3 → border-2 */
+    .post-detail-header::after {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 80px;
+        height: 2px;
+        background: linear-gradient(
+            90deg,
+            var(--color-mocha-500),
+            var(--color-sage-500)
+        );
+        border-radius: 1px;
+    }
+
     .post-detail-avatar {
-        @apply w-16 h-16 rounded-full object-cover mr-4 border-2 border-gray-200 transition-colors duration-300 hover:border-primary-500;
+        @apply w-16 h-16 rounded-full object-cover mr-5 
+               border-3 border-transparent;
+        box-shadow: 0 6px 20px rgba(164, 120, 100, 0.25);
+        position: relative;
     }
 
-    .post-detail-author-info {
-        @apply flex-1;
+    .post-detail-avatar::before {
+        content: "";
+        position: absolute;
+        inset: -3px;
+        border-radius: 50%;
+        background: linear-gradient(
+            45deg,
+            var(--color-mocha-500),
+            var(--color-sage-500),
+            var(--color-electric-500)
+        );
+        z-index: -1;
     }
 
     .post-detail-author-info h2 {
-        @apply text-xl font-semibold mb-1;
+        @apply text-2xl font-semibold mb-1;
     }
 
     .post-detail-author-info h2 a {
-        @apply text-gray-900 hover:text-primary-500 transition-colors duration-300;
+        @apply text-neutral-900 hover:text-mocha-600 
+               transition-colors duration-300;
     }
 
     .post-detail-meta {
-        @apply text-gray-500 text-sm;
+        @apply text-neutral-500 text-sm flex items-center gap-4;
     }
 
-    /* 投稿情報セクション */
+    /* ============================================================================
+       投稿情報セクション
+       ============================================================================ */
+
     .post-info,
-    .menus,
-    .memo,
-    .reference,
-    .folders {
-        @apply mb-6 p-5 bg-gray-50 rounded-lg border-l-4 border-primary-500;
+    .post-menus,
+    .post-memo,
+    .post-reference,
+    .post-folders {
+        @apply mb-6 p-5 rounded-xl border-l-4 
+               transition-all duration-300 hover:shadow-md;
+        background: linear-gradient(
+            135deg,
+            rgba(164, 120, 100, 0.02),
+            rgba(135, 169, 107, 0.02)
+        );
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+    }
+
+    .post-info {
+        @apply border-mocha-400 bg-mocha-50/50;
+    }
+
+    .post-menus {
+        @apply border-sage-400 bg-sage-50/50;
+    }
+
+    .post-memo {
+        @apply border-electric-400 bg-electric-50/50;
+    }
+
+    .post-reference {
+        @apply border-coral-400 bg-coral-50/50;
+    }
+
+    .post-folders {
+        @apply border-neutral-400 bg-neutral-50/50;
     }
 
     .post-info h3,
-    .menus h3,
-    .memo h3,
-    .reference h3,
-    .folders h3 {
-        @apply text-gray-900 text-lg mb-4 flex items-center space-x-2;
+    .post-menus h3,
+    .post-memo h3,
+    .post-reference h3,
+    .post-folders h3 {
+        @apply text-neutral-900 text-lg mb-4 flex items-center gap-2 font-semibold;
     }
 
-    /* 訪問ステータスバッジ */
+    .post-info h3 i {
+        @apply text-mocha-500;
+    }
+    .post-menus h3 i {
+        @apply text-sage-500;
+    }
+    .post-memo h3 i {
+        @apply text-electric-500;
+    }
+    .post-reference h3 i {
+        @apply text-coral-500;
+    }
+    .post-folders h3 i {
+        @apply text-neutral-500;
+    }
+
+    /* ============================================================================
+       訪問ステータスバッジ
+       ============================================================================ */
+
     .visit-status-badge {
-        @apply inline-block px-2 py-1 rounded-full text-xs font-semibold ml-2;
+        @apply inline-flex items-center gap-1 px-3 py-1 
+               rounded-full text-xs font-semibold
+               transition-all duration-200 hover:scale-105;
     }
 
     .visit-status-visited {
-        @apply bg-success-100 text-success-800;
+        @apply bg-gradient-to-r from-success-100 to-success-200
+               text-success-800 border border-success-300;
+        box-shadow: 0 2px 8px rgba(34, 197, 94, 0.2);
     }
 
     .visit-status-planned {
-        @apply bg-warning-100 text-warning-800;
+        @apply bg-gradient-to-r from-warning-100 to-warning-200
+               text-warning-800 border border-warning-300;
+        box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
     }
 
-    /* コメントセクション */
-    .comments-section {
-        @apply mt-4 pt-4 border-t border-gray-100 bg-gray-50 p-4 rounded-lg;
+    .visit-status-badge i {
+        @apply text-xs;
     }
 
-    /* 修正済み: border-l-3 → border-l-4 */
-    .comment-item {
-        @apply bg-white p-3 mb-2 rounded border-l-4 border-primary-500 text-sm;
+    /* ============================================================================
+       投稿アクション
+       ============================================================================ */
+
+    .post-actions {
+        @apply flex flex-wrap gap-3 mt-6 pt-4 
+               border-t border-neutral-100;
     }
 
-    .comment-author {
-        @apply font-semibold text-gray-700;
+    .post-actions .btn {
+        @apply glass-btn transition-all duration-200 
+               hover:-translate-y-0.5 hover:shadow-lg;
     }
 
-    .comment-date {
-        @apply text-gray-500 text-xs ml-2;
+    .post-actions .btn-primary {
+        @apply bg-gradient-to-r from-mocha-500 to-mocha-600
+               text-white border-mocha-500 hover:from-mocha-600 hover:to-mocha-700;
     }
 
-    .comment-body {
-        @apply mt-1 leading-relaxed;
+    .post-actions .btn-outline-secondary {
+        @apply border-2 border-sage-400 text-sage-600 
+               hover:bg-sage-500 hover:text-white hover:border-sage-500;
     }
 
-    .view-all-comments {
-        @apply text-center mt-3;
+    /* ============================================================================
+       投稿フィルター・検索
+       ============================================================================ */
+
+    .post-filters {
+        @apply glass-card p-4 mb-6 flex flex-wrap gap-3 items-center;
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
     }
 
-    .view-all-comments a {
-        @apply text-primary-500 hover:text-primary-600 text-sm transition-colors duration-200;
+    .filter-chip {
+        @apply inline-flex items-center gap-2 px-3 py-1
+               bg-neutral-100 hover:bg-mocha-100 
+               text-neutral-700 hover:text-mocha-700
+               rounded-full text-sm font-medium
+               transition-all duration-200 cursor-pointer
+               border border-transparent hover:border-mocha-300;
     }
 
-    /* アクションボタンエリア */
-    .actions {
+    .filter-chip.active {
+        @apply bg-mocha-500 text-white border-mocha-500;
+    }
+
+    .filter-chip i {
+        @apply text-xs;
+    }
+
+    /* ============================================================================
+       投稿統計・メトリクス
+       ============================================================================ */
+
+    .post-stats {
+        @apply flex items-center gap-6 text-sm text-neutral-500 mt-4;
+    }
+
+    .post-stat {
+        @apply flex items-center gap-1 hover:text-neutral-700 
+               transition-colors duration-200 cursor-pointer;
+    }
+
+    .post-stat i {
+        @apply text-mocha-400;
+    }
+
+    .post-stat:hover i {
+        @apply text-mocha-500;
+    }
+
+    /* ============================================================================
+       投稿画像・メディア
+       ============================================================================ */
+
+    .post-image {
+        @apply rounded-xl overflow-hidden mb-4 relative group;
+        aspect-ratio: 16/9;
+    }
+
+    .post-image img {
+        @apply w-full h-full object-cover transition-transform duration-300
+               group-hover:scale-105;
+    }
+
+    .post-image::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            45deg,
+            rgba(164, 120, 100, 0.1),
+            rgba(135, 169, 107, 0.1)
+        );
+        opacity: 0;
+        transition: opacity 0.3s ease-out;
+    }
+
+    .post-image:hover::after {
+        opacity: 1;
+    }
+
+    /* ============================================================================
+       投稿タグ・カテゴリ
+       ============================================================================ */
+
+    .post-tags {
         @apply flex flex-wrap gap-2 mt-4;
     }
 
-    /* コメントセクション（詳細） */
-    .comment-section {
-        @apply mt-8 pt-5 border-t-2 border-gray-100;
-    }
-
-    /* 修正済み: border-l-3 → border-l-4 */
-    .comment {
-        @apply bg-gray-50 p-4 mb-3 rounded border-l-4 border-primary-500;
-    }
-
-    /* 修正済み: border-l-success-500 → border-l-4 border-success-500 */
-    .comment.reply {
-        @apply ml-8 border-l-4 border-success-500 bg-success-50;
-    }
-
-    .comment-form {
-        @apply bg-gray-50 p-4 rounded mb-5;
-    }
-
-    .reply-form {
-        @apply mt-3 hidden bg-white p-3 rounded;
-    }
-
-    .comment-meta {
-        @apply text-xs text-gray-500 mb-1;
-    }
-
-    /* 追加のユーティリティ */
     .post-tag {
-        @apply inline-block bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs mr-1 mb-1 hover:bg-gray-200 transition-colors duration-200;
+        @apply inline-flex items-center gap-1 px-2 py-1
+               bg-gradient-to-r from-neutral-100 to-neutral-200
+               text-neutral-600 text-xs font-medium rounded-md
+               hover:from-mocha-100 hover:to-mocha-200 hover:text-mocha-700
+               transition-all duration-200 cursor-pointer;
     }
 
-    .post-like-btn {
-        @apply flex items-center space-x-1 text-gray-500 hover:text-red-500 transition-colors duration-200;
+    .post-tag i {
+        @apply text-xs;
     }
 
-    .post-like-btn.liked {
-        @apply text-red-500;
-    }
+    /* ============================================================================
+       レスポンシブ対応
+       ============================================================================ */
 
-    .post-share-btn {
-        @apply flex items-center space-x-1 text-gray-500 hover:text-blue-500 transition-colors duration-200;
-    }
-
-    /* レスポンシブ調整 */
     @media (max-width: 768px) {
-        .post-detail-avatar {
-            @apply w-12 h-12;
-        }
-
-        .post-avatar {
-            @apply w-10 h-10;
-        }
-
         .create-post-section {
-            @apply p-6;
+            @apply p-6 mb-6;
+        }
+
+        .create-post-section h2 {
+            @apply text-xl;
+        }
+
+        .post-item {
+            @apply p-4 mb-4;
         }
 
         .post-detail {
             @apply p-6;
         }
 
-        .comment.reply {
-            @apply ml-4;
+        .post-detail-header {
+            @apply flex-col items-start gap-3;
+        }
+
+        .post-detail-avatar {
+            @apply w-12 h-12 mr-0;
+        }
+
+        .post-actions {
+            @apply flex-col;
+        }
+
+        .post-actions .btn {
+            @apply w-full justify-center;
+        }
+
+        .post-filters {
+            @apply flex-col items-stretch gap-2;
+        }
+
+        .filter-chip {
+            @apply justify-center;
+        }
+
+        .post-stats {
+            @apply justify-center;
+        }
+    }
+
+    /* ============================================================================
+       プリファレンス対応
+       ============================================================================ */
+
+    @media (prefers-reduced-motion: reduce) {
+        .post-item,
+        .create-post-section,
+        .post-detail {
+            animation: none;
+        }
+
+        .post-item:hover,
+        .post-actions .btn:hover {
+            transform: none;
+        }
+
+        .post-image img {
+            transform: none;
+        }
+
+        .post-avatar::after,
+        .post-image::after {
+            transition: none;
+        }
+    }
+
+    /* ============================================================================
+       印刷対応
+       ============================================================================ */
+
+    @media print {
+        .post-item,
+        .post-detail {
+            box-shadow: none !important;
+            border: 1px solid #ccc !important;
+            background: white !important;
+        }
+
+        .post-actions,
+        .post-filters,
+        .filter-chip {
+            display: none !important;
+        }
+
+        .post-avatar,
+        .post-detail-avatar {
+            box-shadow: none !important;
         }
     }
 }
