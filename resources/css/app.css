@@ -1,24 +1,30 @@
+/* =============================================================================
+   メインCSS - 2025年モダンデザインシステム
+   ============================================================================= */
+
+/* コンポーネントインポート */
 @import "./components/modern-ui.css";
 @import "./components/glassmorphism.css";
 @import "./components/neumorphism.css";
 @import "./components/animations.css";
-@import "./components/profile.css";
-@import "./components/posts.css";
 @import "./components/forms.css";
-@import "./components/validation.css";
+@import "./components/posts.css";
+@import "./components/profile.css";
+@import "./components/navigation.css"; /* 新規追加 */
 
+/* TailwindCSS */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ============================================================================
-   ベーススタイル - 2025年モダンデザイン対応
-   ============================================================================ */
+/* =============================================================================
+   ベーススタイル
+   ============================================================================= */
 
 @layer base {
-    /* ルート要素の基本設定 */
+    /* ルート変数 */
     :root {
-        /* カスタムプロパティ - 2025年カラーパレット */
+        /* カラーパレット */
         --color-mocha-50: #faf8f6;
         --color-mocha-500: #a47864;
         --color-mocha-900: #5d3e2b;
@@ -30,17 +36,15 @@
         --color-neutral-500: #b8a694;
         --color-neutral-900: #4a3e35;
 
-        /* グラスモーフィズム用プロパティ */
+        /* エフェクト */
         --glass-bg: rgba(255, 255, 255, 0.15);
         --glass-border: rgba(255, 255, 255, 0.2);
         --glass-blur: 10px;
-
-        /* ニューモーフィズム用プロパティ */
         --neu-light: #ffffff;
         --neu-dark: #bebebe;
         --neu-bg: #f0f0f0;
 
-        /* スペーシングシステム */
+        /* スペーシング */
         --spacing-xs: 0.25rem;
         --spacing-sm: 0.5rem;
         --spacing-md: 1rem;
@@ -48,11 +52,31 @@
         --spacing-xl: 2rem;
         --spacing-2xl: 3rem;
 
-        /* アニメーション設定 */
+        /* アニメーション */
         --transition-fast: 0.15s ease-out;
         --transition-base: 0.2s ease-out;
         --transition-slow: 0.3s ease-out;
         --transition-slower: 0.5s ease-out;
+
+        /* タイポグラフィ */
+        --font-size-xs: 0.75rem;
+        --font-size-sm: 0.875rem;
+        --font-size-base: 1rem;
+        --font-size-lg: 1.125rem;
+        --font-size-xl: 1.25rem;
+        --font-size-2xl: 1.5rem;
+        --font-size-3xl: 1.875rem;
+        --font-size-4xl: 2.25rem;
+
+        /* Z-index */
+        --z-dropdown: 1000;
+        --z-sticky: 1020;
+        --z-fixed: 1030;
+        --z-modal-backdrop: 1040;
+        --z-modal: 1050;
+        --z-popover: 1060;
+        --z-tooltip: 1070;
+        --z-toast: 1080;
     }
 
     /* HTML基本設定 */
@@ -61,94 +85,38 @@
         scroll-padding-top: 4rem;
         font-feature-settings: "kern" 1, "liga" 1, "calt" 1, "pnum" 1, "tnum" 0,
             "onum" 1, "lnum" 0, "dlig" 0;
+        -webkit-text-size-adjust: 100%;
+        -moz-text-size-adjust: 100%;
+        text-size-adjust: 100%;
     }
 
     /* Body基本設定 */
     body {
-        @apply antialiased font-ja text-neutral-900 bg-neutral-50;
+        @apply antialiased font-sans text-neutral-900 bg-neutral-50;
         font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
         text-rendering: optimizeLegibility;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         line-height: 1.6;
-    }
-
-    /* 日本語フォントの最適化 */
-    .font-ja {
-        font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN",
-            "Yu Gothic Medium", "Meiryo", "Inter", sans-serif;
-        font-weight: 400;
-        letter-spacing: 0.02em;
-    }
-
-    /* 見出しのタイポグラフィ階層 */
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        @apply font-ja text-neutral-900;
-        font-weight: 600;
-        line-height: 1.3;
-        letter-spacing: -0.02em;
-    }
-
-    h1 {
-        @apply text-3xl lg:text-4xl;
-    }
-    h2 {
-        @apply text-2xl lg:text-3xl;
-    }
-    h3 {
-        @apply text-xl lg:text-2xl;
-    }
-    h4 {
-        @apply text-lg lg:text-xl;
-    }
-    h5 {
-        @apply text-base lg:text-lg;
-    }
-    h6 {
-        @apply text-sm lg:text-base;
-    }
-
-    /* パラグラフの最適化 */
-    p {
-        @apply text-neutral-700 leading-relaxed;
-        margin-bottom: 1em;
-    }
-
-    /* リンクの基本スタイル */
-    a {
-        @apply transition-colors duration-200 text-mocha-600 hover:text-mocha-800;
-        text-decoration: none;
-    }
-
-    a:hover {
-        text-decoration: underline;
-        text-decoration-color: currentColor;
-        text-underline-offset: 0.2em;
-        text-decoration-thickness: 2px;
-    }
-
-    /* フォーカススタイルの統一 */
-    *:focus {
-        @apply outline-none ring-2 ring-mocha-500 ring-offset-2 ring-offset-neutral-50;
-        outline: 2px solid transparent;
-        outline-offset: 2px;
+        min-height: 100vh;
+        position: relative;
     }
 
     /* 選択テキストのスタイル */
     ::selection {
-        @apply bg-mocha-500 text-white;
+        @apply bg-mocha-200 text-mocha-900;
     }
 
     ::-moz-selection {
-        @apply bg-mocha-500 text-white;
+        @apply bg-mocha-200 text-mocha-900;
     }
 
-    /* スクロールバーのカスタマイズ */
+    /* フォーカススタイルの統一 */
+    :focus-visible {
+        @apply outline-none ring-2 ring-mocha-500 ring-offset-2 ring-offset-white;
+    }
+
+    /* スクロールバーのスタイリング */
     ::-webkit-scrollbar {
         width: 8px;
         height: 8px;
@@ -160,351 +128,712 @@
     }
 
     ::-webkit-scrollbar-thumb {
-        @apply bg-neutral-400 hover:bg-neutral-500;
+        @apply bg-neutral-300;
         border-radius: 4px;
-        transition: background-color var(--transition-base);
+
+        &:hover {
+            @apply bg-neutral-400;
+        }
     }
 
-    ::-webkit-scrollbar-corner {
-        @apply bg-neutral-100;
+    /* ダークモード対応 */
+    @media (prefers-color-scheme: dark) {
+        ::-webkit-scrollbar-track {
+            @apply bg-neutral-800;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            @apply bg-neutral-600;
+
+            &:hover {
+                @apply bg-neutral-500;
+            }
+        }
     }
 
-    /* Firefox スクロールバー */
-    * {
-        scrollbar-width: thin;
-        scrollbar-color: theme("colors.neutral.400") theme("colors.neutral.100");
+    /* ヘッダータイポグラフィ */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @apply font-semibold text-neutral-900;
+        line-height: 1.2;
+        margin-bottom: 0.5em;
+
+        &:first-child {
+            margin-top: 0;
+        }
+    }
+
+    h1 {
+        @apply text-4xl md:text-5xl;
+    }
+
+    h2 {
+        @apply text-3xl md:text-4xl;
+    }
+
+    h3 {
+        @apply text-2xl md:text-3xl;
+    }
+
+    h4 {
+        @apply text-xl md:text-2xl;
+    }
+
+    h5 {
+        @apply text-lg md:text-xl;
+    }
+
+    h6 {
+        @apply text-base md:text-lg;
+    }
+
+    /* パラグラフ */
+    p {
+        @apply text-neutral-700;
+        line-height: 1.7;
+        margin-bottom: 1em;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    /* リンク */
+    a {
+        @apply text-mocha-600 hover:text-mocha-700;
+        text-decoration: none;
+        transition: color var(--transition-base);
+
+        &:hover {
+            text-decoration: underline;
+            text-decoration-color: currentColor;
+            text-underline-offset: 2px;
+        }
+    }
+
+    /* リスト */
+    ul,
+    ol {
+        @apply text-neutral-700;
+        margin-bottom: 1em;
+        padding-left: 1.5em;
+    }
+
+    li {
+        margin-bottom: 0.25em;
+    }
+
+    /* コードブロック */
+    code {
+        @apply bg-neutral-100 text-neutral-800 px-1 py-0.5 rounded text-sm font-mono;
+    }
+
+    pre {
+        @apply bg-neutral-900 text-neutral-100 p-4 rounded-lg overflow-x-auto text-sm font-mono;
+        margin-bottom: 1em;
+
+        code {
+            @apply bg-transparent text-inherit p-0;
+        }
+    }
+
+    /* 引用 */
+    blockquote {
+        @apply border-l-4 border-mocha-300 pl-4 py-2 text-neutral-700 italic;
+        margin-bottom: 1em;
+    }
+
+    /* テーブル */
+    table {
+        @apply w-full border-collapse;
+        margin-bottom: 1em;
+    }
+
+    th,
+    td {
+        @apply border border-neutral-200 px-3 py-2 text-left;
+    }
+
+    th {
+        @apply bg-neutral-50 font-semibold text-neutral-900;
+    }
+
+    /* 画像 */
+    img {
+        @apply max-w-full h-auto;
+    }
+
+    /* HR */
+    hr {
+        @apply border-0 border-t border-neutral-200 my-8;
+    }
+}
+
+/* =============================================================================
+   コンポーネントスタイル
+   ============================================================================= */
+
+@layer components {
+    /* Skip Link (アクセシビリティ) */
+    .skip-link {
+        @apply absolute top-0 left-0 bg-mocha-600 text-white px-4 py-2 rounded-br-lg font-medium;
+        transform: translateY(-100%);
+        transition: transform var(--transition-base);
+        z-index: var(--z-toast);
+
+        &:focus {
+            transform: translateY(0);
+        }
+    }
+
+    /* コンテナ */
+    .container {
+        @apply mx-auto px-4 sm:px-6 lg:px-8;
+        max-width: 1280px;
+    }
+
+    .container-narrow {
+        @apply mx-auto px-4 sm:px-6 lg:px-8;
+        max-width: 768px;
+    }
+
+    .container-wide {
+        @apply mx-auto px-4 sm:px-6 lg:px-8;
+        max-width: 1536px;
+    }
+
+    /* ボタンスタイル */
+    .btn-primary {
+        @apply bg-gradient-to-r from-mocha-500 to-mocha-600 text-white hover:from-mocha-600 hover:to-mocha-700 focus:ring-mocha-500 shadow-mocha hover:shadow-lg;
+
+        &:active {
+            @apply scale-95;
+        }
+    }
+
+    .btn-secondary {
+        @apply bg-gradient-to-r from-sage-500 to-sage-600 text-white hover:from-sage-600 hover:to-sage-700 focus:ring-sage-500 shadow-sage hover:shadow-lg;
+
+        &:active {
+            @apply scale-95;
+        }
+    }
+
+    .btn-outline-primary {
+        @apply border-2 border-mocha-500 text-mocha-600 hover:bg-mocha-500 hover:text-white focus:ring-mocha-500;
+
+        &:active {
+            @apply scale-95;
+        }
+    }
+
+    .btn-outline-secondary {
+        @apply border-2 border-neutral-300 text-neutral-700 hover:bg-neutral-50 hover:border-neutral-400 focus:ring-neutral-500;
+
+        &:active {
+            @apply scale-95;
+        }
+    }
+
+    .btn-outline-danger {
+        @apply border-2 border-error-500 text-error-600 hover:bg-error-500 hover:text-white focus:ring-error-500;
+
+        &:active {
+            @apply scale-95;
+        }
+    }
+
+    .btn-ghost {
+        @apply text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 focus:ring-neutral-500;
+
+        &:active {
+            @apply scale-95;
+        }
+    }
+
+    .btn-sm {
+        @apply px-3 py-1.5 text-sm;
+    }
+
+    .btn-lg {
+        @apply px-6 py-3 text-lg;
+    }
+
+    .btn-xl {
+        @apply px-8 py-4 text-xl;
+    }
+
+    /* カードスタイル */
+    .card-glass {
+        @apply bg-white/80 backdrop-blur-sm border border-white/20 shadow-glass;
+    }
+
+    .card-neu {
+        @apply bg-neutral-100 shadow-neu-outset;
+    }
+
+    .card-elevated {
+        @apply bg-white shadow-medium border border-neutral-200;
+
+        &:hover {
+            @apply shadow-hard -translate-y-1;
+        }
+    }
+
+    /* ステータスバッジ */
+    .status-badge {
+        @apply inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium;
+    }
+
+    .status-visited {
+        @apply bg-gradient-to-r from-sage-100 to-sage-200 text-sage-700;
+    }
+
+    .status-planned {
+        @apply bg-gradient-to-r from-coral-100 to-coral-200 text-coral-700;
+    }
+
+    /* 投稿関連 */
+    .post-card {
+        @apply card bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-white/20 transition-all duration-300 hover:shadow-medium hover:bg-white/95 hover:-translate-y-1;
+    }
+
+    .post-card.card-hover {
+        @apply shadow-hard bg-white/100 scale-[1.02];
+    }
+
+    .post-header {
+        @apply border-b border-neutral-100 pb-4 mb-4;
+    }
+
+    .post-shop-link {
+        @apply text-neutral-900 hover:text-mocha-600 transition-colors duration-200 flex items-center gap-2;
+    }
+
+    .post-budget {
+        @apply inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-electric-100 to-electric-200 text-electric-700 text-sm font-medium rounded-full;
+    }
+
+    .post-actions {
+        @apply flex items-center gap-3 pt-4 border-t border-neutral-100;
+    }
+
+    /* フォームスタイル */
+    .form-card {
+        @apply card-glass rounded-2xl p-8 shadow-xl border border-white/20;
+    }
+
+    .form-group {
+        @apply mb-6;
+    }
+
+    .form-label {
+        @apply block text-sm font-semibold text-neutral-700 mb-2 flex items-center;
+    }
+
+    .form-label.required::after {
+        content: " *";
+        @apply text-coral-500;
+    }
+
+    .form-input-base,
+    .form-textarea-base,
+    .form-select-base {
+        @apply input w-full;
+    }
+
+    .form-textarea-base {
+        @apply resize-vertical min-h-[120px];
+    }
+
+    .form-error-state {
+        @apply border-error-500 bg-error-50/50 focus:border-error-500 focus:ring-error-500;
+    }
+
+    .form-error {
+        @apply text-error-600 text-sm mt-2 flex items-center gap-2;
+    }
+
+    .form-help {
+        @apply text-neutral-500 text-sm mt-1;
+    }
+
+    .form-actions {
+        @apply flex items-center gap-4 pt-6 border-t border-neutral-200;
+    }
+
+    /* 文字カウンター */
+    .form-counter {
+        @apply flex items-center justify-between mt-2 text-sm text-neutral-500;
+    }
+
+    .form-counter.warning {
+        @apply text-warning-600;
+    }
+
+    .form-counter.error {
+        @apply text-error-600;
+    }
+
+    .form-counter-progress {
+        @apply w-32 h-1 bg-neutral-200 rounded-full ml-4;
+    }
+
+    .form-counter-fill {
+        @apply h-full bg-gradient-to-r from-mocha-400 to-mocha-500 rounded-full transition-all duration-300;
+    }
+
+    .form-counter.warning .form-counter-fill {
+        @apply from-warning-400 to-warning-500;
+    }
+
+    .form-counter.error .form-counter-fill {
+        @apply from-error-400 to-error-500;
+    }
+
+    /* ラジオボタン・チェックボックス */
+    .radio-label,
+    .checkbox-label {
+        @apply flex items-center gap-3 cursor-pointer p-3 rounded-lg hover:bg-neutral-50 transition-colors duration-200;
+    }
+
+    .radio-input,
+    .checkbox-input {
+        @apply sr-only;
+    }
+
+    .radio-custom {
+        @apply w-5 h-5 border-2 border-neutral-300 rounded-full relative transition-colors duration-200;
+    }
+
+    .radio-input:checked + .radio-custom {
+        @apply border-mocha-500 bg-mocha-500;
+    }
+
+    .radio-input:checked + .radio-custom::after {
+        content: "";
+        @apply absolute top-1/2 left-1/2 w-2 h-2 bg-white rounded-full transform -translate-x-1/2 -translate-y-1/2;
+    }
+
+    .checkbox-custom {
+        @apply w-5 h-5 border-2 border-neutral-300 rounded relative transition-colors duration-200;
+    }
+
+    .checkbox-input:checked + .checkbox-custom {
+        @apply border-mocha-500 bg-mocha-500;
+    }
+
+    .checkbox-input:checked + .checkbox-custom::after {
+        content: "✓";
+        @apply absolute top-1/2 left-1/2 text-white text-xs font-bold transform -translate-x-1/2 -translate-y-1/2;
+    }
+
+    /* プロフィール */
+    .profile-header-card {
+        @apply bg-gradient-to-r from-white/80 to-mocha-50/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-white/20;
+    }
+
+    /* ナビゲーション */
+    .nav-glass {
+        @apply fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-white/20 shadow-glass;
+    }
+
+    .nav-link {
+        @apply text-neutral-700 hover:text-mocha-600 px-3 py-2 rounded-lg transition-colors duration-200;
+
+        &.active {
+            @apply text-mocha-600 bg-mocha-50;
+        }
+    }
+
+    /* メッセージ・アラート */
+    .alert {
+        @apply p-4 rounded-lg border flex items-start gap-3;
+    }
+
+    .alert-success {
+        @apply bg-success-50 border-success-200 text-success-800;
+    }
+
+    .alert-warning {
+        @apply bg-warning-50 border-warning-200 text-warning-800;
+    }
+
+    .alert-error {
+        @apply bg-error-50 border-error-200 text-error-800;
+    }
+
+    .alert-info {
+        @apply bg-electric-50 border-electric-200 text-electric-800;
+    }
+
+    /* ローディング */
+    .loading-spinner {
+        @apply w-5 h-5 border-2 border-neutral-300 border-t-mocha-500 rounded-full animate-spin;
+    }
+
+    .loading-dots {
+        @apply flex items-center gap-1;
+    }
+
+    .loading-dots::before,
+    .loading-dots::after,
+    .loading-dots {
+        @apply w-2 h-2 bg-mocha-500 rounded-full animate-ping;
+    }
+
+    .loading-dots::before {
+        content: "";
+        animation-delay: 0.1s;
+    }
+
+    .loading-dots::after {
+        content: "";
+        animation-delay: 0.2s;
+    }
+
+    /* ツールチップ */
+    .tooltip {
+        @apply absolute z-tooltip bg-neutral-900 text-white text-xs px-2 py-1 rounded pointer-events-none opacity-0 transition-opacity duration-200;
+    }
+
+    .tooltip.show {
+        @apply opacity-100;
+    }
+
+    /* モーダル */
+    .modal-backdrop {
+        @apply fixed inset-0 z-modal-backdrop bg-black/50 backdrop-blur-sm;
+    }
+
+    .modal {
+        @apply fixed inset-0 z-modal flex items-center justify-center p-4;
+    }
+
+    .modal-content {
+        @apply bg-white rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto;
+    }
+
+    /* ドロップダウン */
+    .dropdown {
+        @apply relative;
+    }
+
+    .dropdown-menu {
+        @apply absolute top-full left-0 z-dropdown mt-1 bg-white rounded-lg shadow-medium border border-neutral-200 py-1 min-w-48 opacity-0 scale-95 transition-all duration-200 pointer-events-none;
+    }
+
+    .dropdown.open .dropdown-menu {
+        @apply opacity-100 scale-100 pointer-events-auto;
+    }
+
+    .dropdown-item {
+        @apply block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900 transition-colors duration-200;
+    }
+
+    /* パンくずリスト */
+    .breadcrumb {
+        @apply flex items-center gap-2 text-sm text-neutral-500;
+    }
+
+    .breadcrumb-item {
+        @apply flex items-center gap-2;
+    }
+
+    .breadcrumb-separator {
+        @apply text-neutral-400;
+    }
+
+    .breadcrumb-current {
+        @apply text-neutral-700 font-medium;
+    }
+}
+
+/* =============================================================================
+   ユーティリティ
+   ============================================================================= */
+
+@layer utilities {
+    /* スクロールアニメーション */
+    .animate-on-scroll {
+        @apply opacity-0 transform translate-y-8 transition-all duration-700 ease-out;
+    }
+
+    .animate-on-scroll.visible {
+        @apply opacity-100 translate-y-0;
+    }
+
+    .animate-on-scroll-left {
+        @apply opacity-0 transform -translate-x-8 transition-all duration-700 ease-out;
+    }
+
+    .animate-on-scroll-left.visible {
+        @apply opacity-100 translate-x-0;
+    }
+
+    .animate-on-scroll-right {
+        @apply opacity-0 transform translate-x-8 transition-all duration-700 ease-out;
+    }
+
+    .animate-on-scroll-right.visible {
+        @apply opacity-100 translate-x-0;
+    }
+
+    .animate-on-scroll-scale {
+        @apply opacity-0 transform scale-95 transition-all duration-700 ease-out;
+    }
+
+    .animate-on-scroll-scale.visible {
+        @apply opacity-100 scale-100;
+    }
+
+    /* ホバーエフェクト */
+    .hover-lift {
+        @apply transition-transform duration-300 ease-out hover:-translate-y-1;
+    }
+
+    .hover-scale {
+        @apply transition-transform duration-300 ease-out hover:scale-105;
+    }
+
+    .hover-glow {
+        @apply transition-all duration-300 ease-out hover:shadow-glow;
+    }
+
+    /* テキストエフェクト */
+    .text-gradient {
+        @apply bg-gradient-to-r from-mocha-500 to-sage-500 bg-clip-text text-transparent;
+    }
+
+    .text-gradient-electric {
+        @apply bg-gradient-to-r from-electric-500 to-coral-500 bg-clip-text text-transparent;
+    }
+
+    /* レスポンシブヘルパー */
+    .hidden-mobile {
+        @apply hidden md:block;
+    }
+
+    .mobile-only {
+        @apply block md:hidden;
+    }
+
+    .tablet-only {
+        @apply hidden md:block lg:hidden;
+    }
+
+    .desktop-only {
+        @apply hidden lg:block;
     }
 
     /* 印刷用スタイル */
     @media print {
         .print-hidden {
-            @apply hidden;
+            display: none !important;
         }
+
         .print-visible {
-            @apply block;
-        }
-
-        body {
-            @apply text-black bg-white;
-        }
-
-        a {
-            @apply text-black no-underline;
-        }
-
-        .shadow,
-        .shadow-sm,
-        .shadow-md,
-        .shadow-lg,
-        .shadow-xl {
-            box-shadow: none !important;
-        }
-    }
-
-    /* 高コントラストモード対応 */
-    @media (prefers-contrast: high) {
-        :root {
-            --color-mocha-500: #8b4513;
-            --color-sage-500: #556b2f;
-            --color-electric-500: #0000ff;
-            --color-coral-500: #ff0000;
-        }
-    }
-
-    /* 動きを抑えるユーザー設定への対応 */
-    @media (prefers-reduced-motion) {
-        *,
-        *::before,
-        *::after {
-            animation-duration: 0.01ms !important;
-            animation-iteration-count: 1 !important;
-            transition-duration: 0.01ms !important;
-            scroll-behavior: auto !important;
-        }
-    }
-
-    /* ダークモード基本対応（将来の機能拡張用） */
-    @media (prefers-color-scheme: dark) {
-        .dark-mode-auto {
-            @apply bg-neutral-900 text-neutral-100;
+            display: block !important;
         }
     }
 }
 
-/* ============================================================================
-   コンポーネントレイヤー - 再利用可能なUIパターン
-   ============================================================================ */
+/* =============================================================================
+   アクセシビリティ・プリファレンス対応
+   ============================================================================= */
 
-@layer components {
-    /* コンテナシステム */
-    .container-responsive {
-        @apply container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12;
-        max-width: 1200px;
+/* モーション軽減設定 */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
     }
 
-    .container-narrow {
-        @apply container mx-auto px-4 sm:px-6 lg:px-8;
-        max-width: 800px;
-    }
-
-    .container-wide {
-        @apply container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16;
-        max-width: 1400px;
-    }
-
-    /* グリッドシステム */
-    .grid-auto-fit {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 1.5rem;
-    }
-
-    .grid-auto-fill {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 1.5rem;
-    }
-
-    /* ベントーグリッド（2025年トレンド） */
-    .bento-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1rem;
-        auto-rows: 200px;
-    }
-
-    .bento-item-large {
-        grid-row: span 2;
-        grid-column: span 2;
-    }
-
-    .bento-item-wide {
-        grid-column: span 2;
-    }
-
-    .bento-item-tall {
-        grid-row: span 2;
-    }
-
-    /* カードシステム */
-    .card-base {
-        @apply bg-white rounded-2xl shadow-md transition-all duration-300;
-        border: 1px solid rgba(164, 120, 100, 0.1);
-    }
-
-    .card-hover {
-        @apply hover:shadow-lg hover:-translate-y-1;
-    }
-
-    .card-interactive {
-        @apply card-base card-hover cursor-pointer;
-    }
-
-    /* テキスト省略 */
-    .text-ellipsis-2 {
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
-    .text-ellipsis-3 {
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
-    /* アスペクト比 */
-    .aspect-golden {
-        aspect-ratio: 1.618;
-    }
-
-    .aspect-photo {
-        aspect-ratio: 4/3;
-    }
-
-    .aspect-video-wide {
-        aspect-ratio: 21/9;
-    }
-
-    /* フォーカス可能要素の統一スタイル */
-    .focusable {
-        @apply focus:outline-none focus:ring-2 focus:ring-mocha-500 focus:ring-offset-2;
-        transition: box-shadow var(--transition-base);
-    }
-
-    /* 状態表示 */
-    .status-online {
-        @apply bg-success-500 text-white;
-    }
-
-    .status-offline {
-        @apply bg-neutral-400 text-white;
-    }
-
-    .status-busy {
-        @apply bg-warning-500 text-white;
-    }
-
-    .status-away {
-        @apply bg-coral-500 text-white;
+    .animate-on-scroll,
+    .animate-on-scroll-left,
+    .animate-on-scroll-right,
+    .animate-on-scroll-scale {
+        @apply opacity-100 transform-none;
     }
 }
 
-/* ============================================================================
-   ユーティリティレイヤー - 特殊効果とヘルパー
-   ============================================================================ */
-
-@layer utilities {
-    /* 高度なホバーエフェクト */
-    .hover-lift {
-        @apply transition-all duration-300 ease-out;
-        transform: translateY(0) scale(1);
+/* 高コントラスト設定 */
+@media (prefers-contrast: high) {
+    .btn-primary {
+        @apply bg-mocha-800 border-2 border-mocha-900;
     }
 
-    .hover-lift:hover {
-        transform: translateY(-4px) scale(1.02);
-        box-shadow: 0 10px 25px -5px rgba(164, 120, 100, 0.25);
+    .btn-outline-primary {
+        @apply border-3;
     }
 
-    .hover-glow:hover {
-        box-shadow: 0 0 20px rgba(164, 120, 100, 0.4);
-    }
-
-    /* グラデーション背景 */
-    .bg-gradient-mocha {
-        background: linear-gradient(
-            135deg,
-            var(--color-mocha-500),
-            var(--color-mocha-600)
-        );
-    }
-
-    .bg-gradient-sage {
-        background: linear-gradient(
-            135deg,
-            var(--color-sage-500),
-            var(--color-sage-600)
-        );
-    }
-
-    .bg-gradient-warm {
-        background: linear-gradient(
-            135deg,
-            var(--color-mocha-500),
-            var(--color-coral-500)
-        );
-    }
-
-    .bg-gradient-cool {
-        background: linear-gradient(
-            135deg,
-            var(--color-electric-500),
-            var(--color-sage-500)
-        );
-    }
-
-    /* テキストグラデーション */
-    .text-gradient-mocha {
-        background: linear-gradient(
-            135deg,
-            var(--color-mocha-600),
-            var(--color-mocha-800)
-        );
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    .text-gradient-warm {
-        background: linear-gradient(
-            135deg,
-            var(--color-mocha-600),
-            var(--color-coral-600)
-        );
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    /* パフォーマンス最適化 */
-    .will-change-transform {
-        will-change: transform;
-    }
-
-    .will-change-opacity {
-        will-change: opacity;
-    }
-
-    .will-change-scroll {
-        will-change: scroll-position;
-    }
-
-    /* アクセシビリティヘルパー */
-    .sr-only-focusable:focus {
-        @apply not-sr-only;
-    }
-
-    .skip-link {
-        @apply sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 
-               bg-mocha-600 text-white px-4 py-2 rounded-md z-50;
-    }
-
-    /* 印刷用ユーティリティ */
-    @media print {
-        .print-break-before {
-            break-before: page;
-        }
-
-        .print-break-after {
-            break-after: page;
-        }
-
-        .print-no-break {
-            break-inside: avoid;
-        }
-    }
-
-    /* レスポンシブテキスト */
-    .text-responsive-sm {
-        @apply text-sm sm:text-base md:text-lg;
-    }
-
-    .text-responsive-base {
-        @apply text-base sm:text-lg md:text-xl;
-    }
-
-    .text-responsive-lg {
-        @apply text-lg sm:text-xl md:text-2xl lg:text-3xl;
-    }
-
-    .text-responsive-xl {
-        @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl;
+    .form-input-base,
+    .form-textarea-base,
+    .form-select-base {
+        @apply border-2;
     }
 }
 
-/* ============================================================================
-   レガシーサポート
-   ============================================================================ */
+/* ダークモード設定 */
+@media (prefers-color-scheme: dark) {
+    body {
+        @apply bg-neutral-900 text-neutral-100;
+    }
 
-/* 古いブラウザ対応 */
-@supports not (backdrop-filter: blur(10px)) {
-    .glass {
-        background: rgba(255, 255, 255, 0.9);
+    .card {
+        @apply bg-neutral-800 border-neutral-700;
+    }
+
+    .form-input-base,
+    .form-textarea-base,
+    .form-select-base {
+        @apply bg-neutral-800 border-neutral-600 text-neutral-100;
     }
 }
 
-/* Internet Explorer 11 対応 */
-@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-    .grid-auto-fit {
-        display: -ms-grid;
+/* フォーカス表示の改善 */
+@media (prefers-reduced-motion: no-preference) {
+    :focus-visible {
+        @apply outline-none ring-2 ring-mocha-500 ring-offset-2 ring-offset-white;
+        transition: box-shadow 0.2s ease-out;
     }
 }
 
-/* クリティカルCSSインライン化用マーカー */
-/* CRITICAL_CSS_START */
-.critical-above-fold {
-    /* フォールドより上の重要なスタイル */
+/* レスポンシブ調整 */
+@media (max-width: 768px) {
+    .post-card,
+    .form-card {
+        @apply p-4;
+    }
+
+    .btn-lg {
+        @apply px-4 py-2 text-base;
+    }
+
+    h1 {
+        @apply text-3xl;
+    }
+
+    h2 {
+        @apply text-2xl;
+    }
+
+    h3 {
+        @apply text-xl;
+    }
 }
-/* CRITICAL_CSS_END */
+
+/* 高解像度ディスプレイ対応 */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
+    .text-shadow {
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    }
+}

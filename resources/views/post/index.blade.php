@@ -29,7 +29,7 @@
               </div>
             </div>
             <div class="post-status">
-              <!-- ★修正: 完全にPHP側で条件分岐処理 -->
+              <!-- 完全にPHP側で条件分岐処理 -->
               @if($post->visit_status)
               <span class="status-badge status-visited">
                 <i class="fas fa-check-circle"></i>
@@ -151,13 +151,11 @@
   </div>
 </div>
 
-<!-- ★修正: 投稿データを安全にJavaScriptに渡す（@json使用しない方法） -->
+<!-- JavaScript初期化 -->
 <script>
-  // 投稿の基本情報をdata属性から取得
   document.addEventListener('DOMContentLoaded', function() {
     const postsContainer = document.getElementById('posts-container');
     if (postsContainer) {
-      // 投稿カードの初期化
       initializePostCards();
     }
   });
@@ -177,7 +175,6 @@
         this.classList.remove('card-hover');
       });
 
-      // その他の投稿カード固有の処理
       console.log(`投稿ID ${postId} の初期化完了`);
     });
   }

@@ -53,9 +53,9 @@
         </main>
     </div>
 
-    <!-- ★重要: 基本設定をJavaScriptで取得する関数 -->
+    <!-- JavaScript基本設定 -->
     <script>
-        // ★修正: シンプルな設定オブジェクト（@json使用せず）
+        // アプリケーション設定をJavaScriptで利用可能にする
         window.AppConfig = {
             isAuthenticated: document.body.getAttribute('data-authenticated') === 'true',
             userId: document.body.getAttribute('data-user-id') || null,
@@ -81,7 +81,6 @@
     <!-- スクロールアニメーション初期化 -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // スクロールアニメーション初期化
             initScrollAnimations();
         });
 
@@ -99,7 +98,15 @@
                 });
             }, observerOptions);
 
-            document.querySelectorAll('.animate-on-scroll, .animate-on-scroll-left, .animate-on-scroll-right, .animate-on-scroll-scale').forEach(el => {
+            // スクロールアニメーション対象要素を監視
+            const animationSelectors = [
+                '.animate-on-scroll',
+                '.animate-on-scroll-left',
+                '.animate-on-scroll-right',
+                '.animate-on-scroll-scale'
+            ];
+
+            document.querySelectorAll(animationSelectors.join(', ')).forEach(el => {
                 observer.observe(el);
             });
         }
