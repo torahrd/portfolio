@@ -45,9 +45,7 @@
     </div>
 
     <!-- フォロー申請モーダルを挿入 -->
-    @auth
-    @include('components.follow-requests-modal')
-    @endauth
+    <!-- フォロー申請機能は将来実装予定 -->
 
     <!-- VS Code安全な記述方法 -->
     @verbatim
