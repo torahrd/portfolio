@@ -1,297 +1,316 @@
-<!DOCTYPE html>
-<html lang="ja">
+<x-app-layout>
+  <div class="min-h-screen bg-neutral-50">
+    <!-- メインヘッダー -->
+    <header class="bg-white shadow-sm border-b border-neutral-200 sticky top-0 z-40">
+      <div class="container mx-auto px-4 py-4">
+        <div class="flex items-center justify-between">
+          <!-- ロゴ・タイトル -->
+          <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+              </svg>
+            </div>
+            <h1 class="text-xl md:text-2xl font-bold text-neutral-900">
+              投稿一覧
+            </h1>
+          </div>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="{{ csrf_token() }}">
-  <title>投稿一覧</title>
+          <!-- デスクトップ検索バー -->
+          <div class="hidden md:flex flex-1 max-w-md mx-8">
+            <div class="relative w-full">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg class="h-5 w-5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+              </div>
+              <input
+                type="search"
+                placeholder="店舗名や料理名で検索..."
+                class="w-full pl-10 pr-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200">
+            </div>
+          </div>
 
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <!-- カスタムCSS -->
-  <link rel="stylesheet" href="{{ asset('css/profile.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/posts.css') }}">
-</head>
+          <!-- ユーザーアクション -->
+          <div class="flex items-center space-x-3">
+            @auth
+            <x-atoms.button
+              variant="primary"
+              size="sm"
+              href="{{ route('posts.create') }}"
+              class="hidden sm:inline-flex">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+              </svg>
+              投稿作成
+            </x-atoms.button>
 
-<body>
-  <div class="container mt-4">
-    <!-- メッセージ表示エリア -->
-    <div id="message-area"></div>
+            <a href="{{ route('profile.show', auth()->user()) }}" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-neutral-100 transition-colors duration-200">
+              <img
+                src="{{ auth()->user()->avatar_url ?? '/images/default-avatar.png' }}"
+                alt="{{ auth()->user()->name }}"
+                class="w-8 h-8 rounded-full object-cover ring-2 ring-primary-200">
+              <span class="hidden md:inline text-sm font-medium text-neutral-700">{{ auth()->user()->name }}</span>
+            </a>
+            @else
+            <x-atoms.button variant="ghost" size="sm" href="{{ route('login') }}">
+              ログイン
+            </x-atoms.button>
+            <x-atoms.button variant="primary" size="sm" href="{{ route('register') }}">
+              新規登録
+            </x-atoms.button>
+            @endauth
+          </div>
+        </div>
 
-    <!-- ヘッダー -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h1>
-        <i class="fas fa-utensils text-primary"></i>
-        投稿一覧
-      </h1>
+        <!-- モバイル検索バー -->
+        <div class="md:hidden mt-4">
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg class="h-5 w-5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+            </div>
+            <input
+              type="search"
+              placeholder="店舗名や料理名で検索..."
+              class="w-full pl-10 pr-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="container mx-auto px-4 py-6">
+      <!-- 投稿作成セクション（未ログイン時） -->
+      @guest
+      <div class="bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl p-6 mb-8 text-white">
+        <div class="text-center">
+          <h2 class="text-2xl font-bold mb-2">ようこそ！</h2>
+          <p class="mb-4 opacity-90">お気に入りの店舗を仲間と共有しませんか？</p>
+          <div class="flex flex-col sm:flex-row gap-3 justify-center">
+            <x-atoms.button variant="secondary" href="{{ route('login') }}">
+              ログイン
+            </x-atoms.button>
+            <x-atoms.button variant="ghost" href="{{ route('register') }}" class="text-white border-white hover:bg-white/10">
+              新規登録
+            </x-atoms.button>
+          </div>
+        </div>
+      </div>
+      @endguest
+
+      <!-- タブナビゲーション -->
+      <div class="mb-6">
+        <x-molecules.tab-navigation
+          :tabs="[
+                        ['key' => 'popular', 'label' => '人気', 'active' => true],
+                        ['key' => 'recent', 'label' => '新着', 'active' => false]
+                    ]"
+          active-tab="popular" />
+      </div>
+
+      <!-- 投稿グリッド -->
+      <div id="posts-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        @forelse($posts as $post)
+        <x-molecules.post-card :post="$post" />
+        @empty
+        <!-- 空の状態 -->
+        <div class="col-span-full">
+          <div class="text-center py-12">
+            <svg class="mx-auto h-12 w-12 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 48 48">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M34 40h10v-4a6 6 0 00-10.712-3.714M34 40H14m20 0v-4a9.971 9.971 0 00-.712-3.714M14 40H4v-4a6 6 0 0110.712-3.714M14 40v-4a9.971 9.971 0 01.712-3.714M28 16a4 4 0 11-8 0 4 4 0 018 0zm-4 8a6 6 0 00-6 6v2m12-8a6 6 0 00-6 6v2m0 0V20a6 6 0 00-6 6v2m0 0V20a6 6 0 006-6v2"></path>
+            </svg>
+            <h3 class="mt-2 text-sm font-medium text-neutral-900">投稿がありません</h3>
+            <p class="mt-1 text-sm text-neutral-500">最初の投稿を作成してみましょう！</p>
+            @auth
+            <div class="mt-6">
+              <x-atoms.button variant="primary" href="{{ route('posts.create') }}">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                投稿を作成
+              </x-atoms.button>
+            </div>
+            @endauth
+          </div>
+        </div>
+        @endforelse
+      </div>
+
+      <!-- ページネーション -->
+      @if($posts instanceof \Illuminate\Pagination\LengthAwarePaginator && $posts->hasPages())
+      <div class="mt-8">
+        {{ $posts->links('pagination::tailwind') }}
+      </div>
+      @endif
+
+      <!-- インフィニットスクロール用ローディング -->
+      <div id="loading-trigger" class="text-center py-8 opacity-0 transition-opacity duration-300">
+        <div class="inline-flex items-center space-x-2">
+          <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-500"></div>
+          <span class="text-sm text-neutral-500">読み込み中...</span>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- モバイル用下部ナビゲーション -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-200 z-50">
+    <div class="grid grid-cols-4 h-16">
+      <!-- ホーム -->
+      <a href="{{ route('posts.index') }}" class="flex flex-col items-center justify-center space-y-1 text-primary-500">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+        </svg>
+        <span class="text-xs font-medium">ホーム</span>
+      </a>
+
+      <!-- 検索 -->
+      <button class="flex flex-col items-center justify-center space-y-1 text-neutral-500 hover:text-neutral-700 transition-colors duration-200">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        <span class="text-xs font-medium">検索</span>
+      </button>
+
+      <!-- 投稿作成 -->
       @auth
-      <a href="{{ route('profile.show', auth()->user()) }}" class="btn btn-outline-primary">
-        <i class="fas fa-user"></i>
-        マイプロフィール
+      <a href="{{ route('posts.create') }}" class="flex flex-col items-center justify-center space-y-1 text-neutral-500 hover:text-neutral-700 transition-colors duration-200">
+        <div class="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+          </svg>
+        </div>
+        <span class="text-xs font-medium">投稿</span>
+      </a>
+      @else
+      <a href="{{ route('login') }}" class="flex flex-col items-center justify-center space-y-1 text-neutral-500 hover:text-neutral-700 transition-colors duration-200">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        <span class="text-xs font-medium">投稿</span>
+      </a>
+      @endauth
+
+      <!-- マイページ -->
+      @auth
+      <a href="{{ route('profile.show', auth()->user()) }}" class="flex flex-col items-center justify-center space-y-1 text-neutral-500 hover:text-neutral-700 transition-colors duration-200">
+        <div class="w-6 h-6 rounded-full overflow-hidden ring-2 ring-neutral-200">
+          <img
+            src="{{ auth()->user()->avatar_url ?? '/images/default-avatar.png' }}"
+            alt="{{ auth()->user()->name }}"
+            class="w-full h-full object-cover">
+        </div>
+        <span class="text-xs font-medium">マイページ</span>
+      </a>
+      @else
+      <a href="{{ route('login') }}" class="flex flex-col items-center justify-center space-y-1 text-neutral-500 hover:text-neutral-700 transition-colors duration-200">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+        </svg>
+        <span class="text-xs font-medium">プロフィール</span>
       </a>
       @endauth
     </div>
+  </nav>
 
-    <!-- 投稿作成セクション -->
-    @auth
-    <div class="create-post-section">
-      <h2>新しい店舗を投稿しよう！</h2>
-      <p class="mb-3">あなたのお気に入りの店舗を仲間と共有しませんか？</p>
-      <a href="{{ route('posts.create') }}" class="btn btn-lg">
-        <i class="fas fa-plus"></i>
-        投稿を作成
-      </a>
-    </div>
-    @else
-    <div class="alert alert-info text-center">
-      <h5>ようこそ！</h5>
-      <p class="mb-3">投稿を作成するにはログインが必要です</p>
-      <a href="{{ route('login') }}" class="btn btn-primary me-2">ログイン</a>
-      <a href="{{ route('register') }}" class="btn btn-outline-primary">新規登録</a>
-    </div>
-    @endauth
-
-    <!-- 投稿一覧 -->
-    <div class="posts">
-      @forelse($posts as $post)
-      <div class="post-item">
-        <!-- 投稿者情報ヘッダー -->
-        <div class="post-header">
-          <img src="{{ $post->user->avatar_url }}" alt="{{ $post->user->name }}" class="post-avatar">
-
-          <div class="post-author-info">
-            <a href="{{ route('profile.show', $post->user) }}" class="post-author">
-              {{ $post->user->name }}
-              @if($post->user->is_private)
-              <i class="fas fa-lock text-muted ms-1" title="プライベートアカウント"></i>
-              @endif
-            </a>
-            <div class="post-meta">
-              <i class="fas fa-clock"></i>
-              {{ $post->created_at->diffForHumans() }}
-              @if($post->visit_time)
-              <span class="ms-2">
-                <i class="fas fa-calendar-alt"></i>
-                訪問: {{ \Carbon\Carbon::parse($post->visit_time)->format('Y/m/d') }}
-              </span>
-              @endif
-              <span class="visit-status-badge {{ $post->visit_status ? 'visit-status-visited' : 'visit-status-planned' }}">
-                {{ $post->visit_status ? '訪問済み' : '訪問予定' }}
-              </span>
-            </div>
-          </div>
-
-          <!-- 投稿アクション（自分の投稿の場合） -->
-          @auth
-          @if(auth()->id() === $post->user_id)
-          <div class="dropdown">
-            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
-              <i class="fas fa-ellipsis-v"></i>
-            </button>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="{{ route('posts.edit', $post->id) }}">
-                  <i class="fas fa-edit"></i> 編集
-                </a></li>
-              <li>
-                <hr class="dropdown-divider">
-              </li>
-              <li>
-                <form action="{{ route('posts.destroy', $post->id) }}" method="POST" class="d-inline">
-                  @csrf
-                  @method('DELETE')
-                  <button type="submit" class="dropdown-item text-danger" onclick="return confirm('削除しますか？')">
-                    <i class="fas fa-trash"></i> 削除
-                  </button>
-                </form>
-              </li>
-            </ul>
-          </div>
-          @endif
-          @endauth
-        </div>
-
-        <!-- 投稿コンテンツ -->
-        <div class="post-content">
-          <h3 class="mb-2">
-            <a href="{{ route('posts.show', $post->id) }}" class="text-decoration-none">
-              <a href="{{ route('shops.show', $post->shop->id) }}" class="shop-link">
-                <i class="fas fa-store"></i>
-                {{ $post->shop->name }}
-              </a>
-            </a>
-          </h3>
-
-          <p class="text-muted mb-2">
-            <i class="fas fa-map-marker-alt"></i>
-            <a href="{{ route('shops.show', $post->shop->id) }}" class="shop-link">
-              {{ $post->shop->address }}
-            </a>
-          </p>
-
-          @if($post->budget)
-          <p class="mb-3">
-            <strong>予算:</strong>
-            <span class="budget">
-              {{ App\Helpers\BudgetHelper::formatBudget($post->budget) }}
-            </span>
-          </p>
-          @endif
-
-          @if($post->repeat_menu)
-          <div class="mb-2">
-            <strong><i class="fas fa-redo text-success"></i> リピートメニュー:</strong>
-            {{ $post->repeat_menu }}
-          </div>
-          @endif
-
-          @if($post->interest_menu)
-          <div class="mb-2">
-            <strong><i class="fas fa-star text-warning"></i> 気になるメニュー:</strong>
-            {{ $post->interest_menu }}
-          </div>
-          @endif
-
-          @if($post->memo)
-          <div class="mb-3">
-            <strong><i class="fas fa-sticky-note text-info"></i> メモ:</strong>
-            {{ Str::limit($post->memo, 150) }}
-            @if(strlen($post->memo) > 150)
-            <a href="{{ route('posts.show', $post->id) }}" class="text-primary">続きを読む</a>
-            @endif
-          </div>
-          @endif
-        </div>
-
-        <!-- 最新コメント表示 -->
-        @if($post->comments->count() > 0)
-        <div class="comments-section">
-          <h6><i class="fas fa-comments"></i> 最新のコメント ({{ min($post->comments->count(), 3) }}件表示)</h6>
-          @foreach($post->comments->take(3) as $comment)
-          <div class="comment-item">
-            <div class="d-flex align-items-center">
-              <img src="{{ $comment->user->avatar_url }}" alt="{{ $comment->user->name }}"
-                class="rounded-circle me-2" style="width: 24px; height: 24px;">
-              <span class="comment-author">{{ $comment->user->name }}</span>
-              <span class="comment-date">{{ $comment->created_at->diffForHumans() }}</span>
-            </div>
-            <div class="comment-body">{{ Str::limit($comment->body, 100) }}</div>
-          </div>
-          @endforeach
-
-          @if($post->comments()->count() > 3)
-          <div class="view-all-comments">
-            <a href="{{ route('posts.show', $post->id) }}#comments">
-              すべてのコメントを見る (全{{ $post->comments()->count() }}件)
-            </a>
-          </div>
-          @endif
-        </div>
-        @else
-        <div class="comments-section">
-          <p class="text-muted mb-0">
-            <i class="fas fa-comment-slash"></i>
-            まだコメントがありません
-          </p>
-        </div>
-        @endif
-
-        <!-- アクションボタン -->
-        <div class="actions mt-3">
-          <a href="{{ route('posts.show', $post->id) }}" class="btn btn-primary btn-sm">
-            <i class="fas fa-eye"></i> 詳細を見る
-          </a>
-          @auth
-          @if(auth()->id() === $post->user_id)
-          <a href="{{ route('posts.edit', $post->id) }}" class="btn btn-outline-secondary btn-sm">
-            <i class="fas fa-edit"></i> 編集
-          </a>
-          @endif
-          @endauth
-          <a href="{{ route('shops.show', $post->shop->id) }}" class="btn btn-outline-info btn-sm">
-            <i class="fas fa-store"></i> 店舗詳細
-          </a>
-        </div>
-      </div>
-      @empty
-      <!-- 投稿がない場合 -->
-      <div class="text-center py-5">
-        <i class="fas fa-inbox fa-4x text-muted mb-4"></i>
-        <h3 class="text-muted">まだ投稿がありません</h3>
-        <p class="text-muted mb-4">最初の投稿を作成して、お気に入りの店舗を共有しましょう！</p>
-        @auth
-        <a href="{{ route('posts.create') }}" class="btn btn-primary btn-lg">
-          <i class="fas fa-plus"></i> 投稿を作成
-        </a>
-        @else
-        <a href="{{ route('register') }}" class="btn btn-primary btn-lg">
-          <i class="fas fa-user-plus"></i> 今すぐ登録
-        </a>
-        @endauth
-      </div>
-      @endforelse
-    </div>
-
-    <!-- ページネーション -->
-    @if($posts instanceof \Illuminate\Pagination\LengthAwarePaginator && $posts->hasPages())
-    <div class="d-flex justify-content-center mt-4">
-      {{ $posts->links() }}
-    </div>
-    @endif
-  </div>
-
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- jQuery -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <!-- カスタムJS -->
-  <script src="{{ asset('js/profile.js') }}"></script>
-
+  <!-- JavaScript -->
   <script>
-    $(document).ready(function() {
-      console.log('投稿一覧ページ初期化');
+    document.addEventListener('DOMContentLoaded', function() {
+      // タブ切り替えイベントリスナー
+      document.addEventListener('tabChanged', function(event) {
+        const activeTab = event.detail.activeTab;
+        console.log('Active tab changed to:', activeTab);
 
-      // 投稿アイテムのアニメーション
-      $('.post-item').each(function(index) {
-        $(this).css('animation-delay', (index * 0.1) + 's');
+        // ここでAjaxリクエストを送信して投稿を動的に読み込み
+        // loadPosts(activeTab);
       });
 
-      // コメント表示の切り替え
-      $('.view-all-comments a').on('click', function(e) {
-        e.preventDefault();
-        const href = $(this).attr('href');
-        window.location.href = href;
-      });
+      // インフィニットスクロール
+      const loadingTrigger = document.getElementById('loading-trigger');
+      const postsContainer = document.getElementById('posts-container');
 
-      // 削除確認の改善
-      $('form[action*="destroy"]').on('submit', function(e) {
-        const shopName = $(this).closest('.post-item').find('.shop-link').first().text().trim();
-        if (!confirm(`「${shopName}」の投稿を削除しますか？\n\nこの操作は取り消せません。`)) {
-          e.preventDefault();
-          return false;
+      if (loadingTrigger && 'IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              // ローディング表示
+              loadingTrigger.classList.remove('opacity-0');
+
+              // ここで次のページのデータを読み込み
+              // loadMorePosts();
+
+              setTimeout(() => {
+                loadingTrigger.classList.add('opacity-0');
+              }, 1000);
+            }
+          });
+        }, {
+          rootMargin: '100px'
+        });
+
+        observer.observe(loadingTrigger);
+      }
+
+      // いいねボタンのアニメーション
+      document.addEventListener('click', function(event) {
+        if (event.target.closest('.group\\/like')) {
+          const button = event.target.closest('.group\\/like');
+          const icon = button.querySelector('svg');
+
+          // アニメーション効果
+          icon.classList.add('animate-bounce-subtle');
+          setTimeout(() => {
+            icon.classList.remove('animate-bounce-subtle');
+          }, 600);
         }
       });
 
-      // 画像の遅延読み込み
-      const images = document.querySelectorAll('img[data-src]');
-      if ('IntersectionObserver' in window) {
-        const imageObserver = new IntersectionObserver((entries, observer) => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              const img = entry.target;
-              img.src = img.dataset.src;
-              img.classList.remove('lazy');
-              imageObserver.unobserve(img);
+      // 検索機能
+      const searchInputs = document.querySelectorAll('input[type="search"]');
+      searchInputs.forEach(input => {
+        let searchTimeout;
+
+        input.addEventListener('input', function() {
+          clearTimeout(searchTimeout);
+          const query = this.value.trim();
+
+          searchTimeout = setTimeout(() => {
+            if (query.length >= 2) {
+              console.log('Searching for:', query);
+              // ここで検索APIを呼び出し
+              // performSearch(query);
             }
-          });
+          }, 300);
         });
-
-        images.forEach(img => imageObserver.observe(img));
-      }
+      });
     });
-  </script>
-</body>
 
-</html>
+    // 投稿読み込み関数（実装例）
+    function loadPosts(tab) {
+      const container = document.getElementById('posts-container');
+
+      // ローディング状態表示
+      container.style.opacity = '0.5';
+
+      // Ajax リクエスト（実装時に追加）
+      fetch(`/posts?tab=${tab}`, {
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          // 投稿データを更新
+          container.innerHTML = data.html;
+          container.style.opacity = '1';
+        })
+        .catch(error => {
+          console.error('Error loading posts:', error);
+          container.style.opacity = '1';
+        });
+    }
+  </script>
+</x-app-layout>
