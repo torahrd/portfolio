@@ -2,56 +2,104 @@
 @tailwind components;
 @tailwind utilities;
 
-/* カスタムユーティリティ */
-@layer utilities {
+/* 共通スタイル */
+@layer components {
+    /* シャドウ設定 */
+    .shadow-card {
+        @apply shadow-md;
+    }
+
+    .shadow-card-hover {
+        @apply shadow-lg;
+    }
+
+    /* テキスト省略 */
+    .line-clamp-1 {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+    }
+
     .line-clamp-2 {
+        overflow: hidden;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
-        overflow: hidden;
     }
 
     .line-clamp-3 {
+        overflow: hidden;
         display: -webkit-box;
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
-        overflow: hidden;
     }
 
-    .glass {
-        background: rgba(255, 255, 255, 0.25);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.18);
+    /* アスペクト比 */
+    .aspect-w-16 {
+        position: relative;
+        padding-bottom: calc(9 / 16 * 100%);
     }
 
-    .text-gradient {
-        background: linear-gradient(135deg, #d64045 0%, #c13136 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+    .aspect-w-16 > * {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+    }
+
+    /* フォーカス状態 */
+    .focus-ring {
+        @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+    }
+
+    /* ボタンの基本スタイル */
+    .btn-base {
+        @apply inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus-ring;
+    }
+
+    /* カードの基本スタイル */
+    .card-base {
+        @apply bg-white rounded-xl shadow-card hover:shadow-card-hover transition-shadow duration-300;
+    }
+
+    /* 入力フィールドの基本スタイル */
+    .input-base {
+        @apply block w-full rounded-lg border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-500 transition-colors duration-200;
     }
 }
 
 /* カスタムアニメーション */
-@layer components {
-    .animate-fade-in-up {
-        animation: fadeInUp 0.6s ease-out;
+@layer utilities {
+    .animate-fade-in {
+        animation: fadeIn 0.3s ease-out;
+    }
+
+    .animate-slide-up {
+        animation: slideUp 0.3s ease-out;
     }
 
     .animate-scale-in {
-        animation: scaleIn 0.3s ease-out;
-    }
-
-    .animate-bounce-subtle {
-        animation: bounceSubtle 0.6s ease-in-out;
+        animation: scaleIn 0.2s ease-out;
     }
 }
 
-@keyframes fadeInUp {
+@keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
     }
     to {
         opacity: 1;
@@ -62,7 +110,7 @@
 @keyframes scaleIn {
     from {
         opacity: 0;
-        transform: scale(0.9);
+        transform: scale(0.95);
     }
     to {
         opacity: 1;
@@ -70,36 +118,29 @@
     }
 }
 
-@keyframes bounceSubtle {
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-    25% {
-        transform: translateY(-3px);
-    }
-    50% {
-        transform: translateY(-5px);
-    }
-    75% {
-        transform: translateY(-2px);
-    }
-}
-
 /* スクロールバーのカスタマイズ */
 ::-webkit-scrollbar {
     width: 6px;
+    height: 6px;
 }
 
 ::-webkit-scrollbar-track {
     background: #f1f1f1;
+    border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #d64045;
+    background: #c1c1c1;
     border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #c13136;
+    background: #a8a8a8;
+}
+
+/* プリントスタイル */
+@media print {
+    .no-print {
+        display: none !important;
+    }
 }

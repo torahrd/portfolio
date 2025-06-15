@@ -1,0 +1,68 @@
+/* ==========================================================================
+   フォーム・UI コンポーネント
+   ========================================================================== */
+
+@layer components {
+    /* 基本フォームグループ */
+    .form-group {
+        @apply mb-5;
+    }
+
+    .form-group label {
+        @apply block mb-2 font-semibold text-gray-700 dark:text-gray-300;
+    }
+
+    /* 統一されたフォーム入力要素 */
+    .form-input-base {
+        @apply w-full px-3 py-2 border border-gray-300 rounded-lg
+               focus:outline-none focus:border-primary-500 focus:ring-2 
+               focus:ring-primary-500 focus:ring-opacity-25 
+               transition-all duration-200 
+               disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed;
+    }
+
+    /* テキストエリア専用 */
+    .form-textarea-base {
+        @apply resize-y min-h-20;
+    }
+
+    /* 店舗検索コンテナ */
+    .shop-search-container {
+        @apply relative mb-5 w-full max-w-md;
+    }
+
+    .search-results {
+        @apply absolute top-full left-0 right-0 bg-white border border-gray-300 
+               border-t-0 max-h-48 overflow-y-auto z-50 hidden shadow-lg;
+    }
+
+    .search-result-item {
+        @apply p-3 cursor-pointer border-b border-gray-100 
+               transition-colors duration-200 hover:bg-gray-50;
+    }
+
+    /* リンクスタイル */
+    .shop-link {
+        @apply text-primary-500 font-bold inline-flex items-center space-x-1 
+               transition-colors duration-200 hover:text-primary-600 hover:underline;
+    }
+
+    .shop-icon {
+        @apply text-lg;
+    }
+
+    /* 予算表示 */
+    .budget {
+        @apply text-orange-500 font-bold text-lg;
+    }
+
+    /* セクションタイトル */
+    .section-title {
+        @apply text-xl font-semibold text-gray-900 dark:text-white mb-4;
+    }
+
+    /* ページネーション調整 */
+    .pagination-wrapper {
+        @apply flex justify-center mt-8;
+    }
+}
