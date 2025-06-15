@@ -22,6 +22,8 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
+@stack('scripts')
+
 <body class="font-sans antialiased bg-neutral-50"
     data-authenticated='@json(auth()->check())'
     @auth data-user-id='@json(auth()->id())' @endauth>
