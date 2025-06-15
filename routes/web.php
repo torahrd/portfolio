@@ -19,15 +19,31 @@ use Illuminate\Support\Facades\Route;
 
 // ===== 基本ルート =====
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// ホームルート（認証必要 - 元の設計通り）
+Route::get('/', [PostController::class, 'index'])->middleware(['auth'])->name('home');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// ===== 投稿機能のルート =====
+// ===== コンポーネントで使用される基本ページ =====
+
+// 検索ページ
+Route::get('/search', function () {
+    return view('search.index', ['results' => []]);
+})->name('search');
+
+// 通知ページ（認証必要）
+Route::get('/notifications', function () {
+    return view('notifications.index', ['notifications' => auth()->user()->notifications ?? []]);
+})->middleware(['auth'])->name('notifications.index');
+
+// 設定ページ（認証必要）
+Route::get('/settings', function () {
+    return view('settings.index');
+})->middleware(['auth'])->name('settings');
+
+// ===== 投稿機能のルート（元の認証設定を完全に保持）=====
 
 Route::controller(PostController::class)->middleware(['auth'])->group(function () {
     Route::get('/posts', 'index')->name('posts.index');
