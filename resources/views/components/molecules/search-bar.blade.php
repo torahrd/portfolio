@@ -5,7 +5,10 @@
 'action' => '/search'
 ])
 
-<div class="relative" x-data="searchBar()">
+<div class="relative"
+  x-data="searchBar()"
+  data-initial-value="{{ $value }}"
+  data-suggestions="{{ json_encode($suggestions) }}">
   <form action="{{ $action }}" method="GET" class="relative">
     <div class="relative">
       <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -65,12 +68,20 @@
   </div>
 </div>
 
+@verbatim
 <script>
   function searchBar() {
     return {
-      query: '{{ $value }}',
+      query: '',
       showSuggestions: false,
-      suggestions: @json($suggestions),
+      suggestions: [],
+
+      init() {
+        // データ属性から初期値を取得
+        const element = this.$el;
+        this.query = element.dataset.initialValue || '';
+        this.suggestions = JSON.parse(element.dataset.suggestions || '[]');
+      },
 
       updateSuggestions() {
         // 実装例：リアルタイム検索候補取得
@@ -90,3 +101,4 @@
     }
   }
 </script>
+@endverbatim

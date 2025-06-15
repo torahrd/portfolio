@@ -4,7 +4,13 @@
 'showForm' => true
 ])
 
-<div x-data="commentSection()" class="space-y-6">
+<div x-data="commentSection()"
+  data-post-id="{{ $post->id }}"
+  data-csrf-token="{{ csrf_token() }}"
+  data-comments-store-url="{{ route('comments.store') }}"
+  data-comments-like-base-url="/comments/"
+  data-comments-delete-base-url="/comments/"
+  class="space-y-6">
   <!-- コメント一覧 -->
   <div class="space-y-4">
     @forelse($comments as $comment)
@@ -76,8 +82,7 @@
                 <x-atoms.button
                   variant="primary"
                   size="sm"
-                  type="submit"
-                  :disabled="!$comment->user">
+                  type="submit">
                   返信
                 </x-atoms.button>
               </div>
@@ -148,8 +153,7 @@
       <div class="flex items-center justify-end">
         <x-atoms.button
           variant="primary"
-          type="submit"
-          :disabled="!auth()->user()">
+          type="submit">
           コメント投稿
         </x-atoms.button>
       </div>
@@ -170,6 +174,7 @@
   @endif
 </div>
 
+@verbatim
 <script>
   function commentSection() {
     return {
@@ -177,22 +182,27 @@
       replyContent: '',
       showReplyForm: null,
 
+      init() {
+        // データ属性から設定値を取得
+        this.postId = this.$el.dataset.postId;
+        this.csrfToken = this.$el.dataset.csrfToken;
+        this.commentsStoreUrl = this.$el.dataset.commentsStoreUrl;
+        this.commentsLikeBaseUrl = this.$el.dataset.commentsLikeBaseUrl;
+        this.commentsDeleteBaseUrl = this.$el.dataset.commentsDeleteBaseUrl;
+      },
+
       async submitComment() {
         if (!this.commentContent.trim()) return;
 
         try {
-          const response = await fetch('{{ route("comments.store") }}', {
+          const response = await fetch(this.commentsStoreUrl, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+              'X-CSRF-TOKEN': this.csrfToken
             },
             body: JSON.stringify({
-              post_id: {
-                {
-                  $post - > id
-                }
-              },
+              post_id: this.postId,
               content: this.commentContent
             })
           });
@@ -201,6 +211,8 @@
             this.commentContent = '';
             // ページをリロードまたは動的にコメントを追加
             window.location.reload();
+          } else {
+            console.error('コメントの投稿に失敗しました');
           }
         } catch (error) {
           console.error('コメントの投稿に失敗しました:', error);
@@ -211,18 +223,14 @@
         if (!this.replyContent.trim()) return;
 
         try {
-          const response = await fetch('{{ route("comments.store") }}', {
+          const response = await fetch(this.commentsStoreUrl, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+              'X-CSRF-TOKEN': this.csrfToken
             },
             body: JSON.stringify({
-              post_id: {
-                {
-                  $post - > id
-                }
-              },
+              post_id: this.postId,
               parent_id: commentId,
               content: this.replyContent
             })
@@ -232,6 +240,8 @@
             this.replyContent = '';
             this.showReplyForm = null;
             window.location.reload();
+          } else {
+            console.error('返信の投稿に失敗しました');
           }
         } catch (error) {
           console.error('返信の投稿に失敗しました:', error);
@@ -240,15 +250,18 @@
 
       async toggleLike(commentId) {
         try {
-          const response = await fetch(`/comments/${commentId}/like`, {
+          const response = await fetch(`${this.commentsLikeBaseUrl}${commentId}/like`, {
             method: 'POST',
             headers: {
-              'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+              'X-CSRF-TOKEN': this.csrfToken
             }
           });
 
           if (response.ok) {
             // いいね数の更新など
+            window.location.reload();
+          } else {
+            console.error('いいねの更新に失敗しました');
           }
         } catch (error) {
           console.error('いいねの更新に失敗しました:', error);
@@ -259,15 +272,17 @@
         if (!confirm('コメントを削除しますか？')) return;
 
         try {
-          const response = await fetch(`/comments/${commentId}`, {
+          const response = await fetch(`${this.commentsDeleteBaseUrl}${commentId}`, {
             method: 'DELETE',
             headers: {
-              'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+              'X-CSRF-TOKEN': this.csrfToken
             }
           });
 
           if (response.ok) {
             window.location.reload();
+          } else {
+            console.error('コメントの削除に失敗しました');
           }
         } catch (error) {
           console.error('コメントの削除に失敗しました:', error);
@@ -276,3 +291,4 @@
     }
   }
 </script>
+@endverbatim
