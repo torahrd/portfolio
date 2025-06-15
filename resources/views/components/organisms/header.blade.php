@@ -1,87 +1,148 @@
 @props([
-'title' => '',
 'showSearch' => true,
-'showBack' => false,
-'backUrl' => null
+'transparent' => false
 ])
 
-<header class="bg-white shadow-sm border-b border-neutral-200 sticky top-0 z-40">
-  <div class="container mx-auto px-4 py-4">
-    <div class="flex items-center justify-between">
-      <!-- 左側: ロゴ・タイトル・戻るボタン -->
-      <div class="flex items-center space-x-3">
-        @if($showBack)
-        <x-atoms.icon-button
-          variant="ghost"
-          size="md"
-          href="{{ $backUrl ?: 'javascript:history.back()' }}">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-          </svg>
-        </x-atoms.icon-button>
-        @endif
-
-        <div class="flex items-center space-x-3">
+<header class="sticky top-0 z-50 transition-all duration-300 {{ $transparent ? 'bg-transparent' : 'bg-white border-b border-neutral-200' }} backdrop-blur-sm">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <!-- ロゴ -->
+      <div class="flex items-center">
+        <a href="{{ route('home') }}" class="flex items-center space-x-2">
           <div class="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
-            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
-            </svg>
+            <span class="text-white font-bold text-lg">T+</span>
           </div>
-          <h1 class="text-xl md:text-2xl font-bold text-neutral-900">
-            {{ $title ?: config('app.name') }}
-          </h1>
-        </div>
+          <span class="hidden sm:block text-xl font-bold text-neutral-900">Tabelog+</span>
+        </a>
       </div>
 
-      <!-- 中央: デスクトップ検索バー -->
+      <!-- 検索バー（デスクトップ） -->
       @if($showSearch)
-      <div class="hidden md:flex flex-1 max-w-md mx-8">
-        <x-atoms.input
-          type="search"
-          placeholder="店舗名や料理名で検索..."
-          :icon="'<svg class=\'h-5 w-5\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z\'></path></svg>'" />
+      <div class="hidden md:block flex-1 max-w-2xl mx-8">
+        <x-molecules.search-bar />
       </div>
       @endif
 
-      <!-- 右側: ユーザーアクション -->
-      <div class="flex items-center space-x-3">
+      <!-- ナビゲーション -->
+      <div class="flex items-center space-x-4">
         @auth
-        <x-atoms.button
-          variant="primary"
-          size="sm"
-          href="{{ route('posts.create') }}"
-          class="hidden sm:inline-flex">
-          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-          </svg>
-          投稿作成
+        <!-- 通知 -->
+        <div class="relative" x-data="{ open: false }">
+          <x-atoms.icon-button
+            variant="ghost"
+            size="md"
+            x-on:click="open = !open"
+            class="relative">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4 17h5l-5 5v-5z"></path>
+            </svg>
+            @if(auth()->user()->unreadNotifications->count() > 0)
+            <span class="absolute -top-1 -right-1 bg-primary-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+              {{ min(auth()->user()->unreadNotifications->count(), 99) }}
+            </span>
+            @endif
+          </x-atoms.icon-button>
+
+          <!-- 通知ドロップダウン -->
+          <div
+            x-show="open"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-75"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-95"
+            x-on:click.outside="open = false"
+            class="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-neutral-200 py-1 z-50">
+            <div class="px-4 py-3 border-b border-neutral-200">
+              <h3 class="text-sm font-semibold text-neutral-900">通知</h3>
+            </div>
+
+            <div class="max-h-96 overflow-y-auto">
+              @forelse(auth()->user()->notifications->take(5) as $notification)
+              <div class="px-4 py-3 border-b border-neutral-100 last:border-b-0">
+                <x-molecules.notification-card :notification="$notification" :show-actions="false" />
+              </div>
+              @empty
+              <div class="px-4 py-8 text-center text-neutral-500">
+                <p class="text-sm">新しい通知はありません</p>
+              </div>
+              @endforelse
+            </div>
+
+            @if(auth()->user()->notifications->count() > 5)
+            <div class="px-4 py-3 border-t border-neutral-200">
+              <a href="{{ route('notifications.index') }}" class="text-sm text-primary-500 hover:text-primary-600 font-medium">
+                すべての通知を見る
+              </a>
+            </div>
+            @endif
+          </div>
+        </div>
+
+        <!-- 投稿作成 -->
+        <x-atoms.button variant="primary" href="{{ route('posts.create') }}" size="sm">
+          投稿
         </x-atoms.button>
 
-        <a href="{{ route('profile.show', auth()->user()) }}" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-neutral-100 transition-colors duration-200">
-          <img
-            src="{{ auth()->user()->avatar_url ?? '/images/default-avatar.png' }}"
-            alt="{{ auth()->user()->name }}"
-            class="w-8 h-8 rounded-full object-cover ring-2 ring-primary-200">
-          <span class="hidden md:inline text-sm font-medium text-neutral-700">{{ auth()->user()->name }}</span>
-        </a>
+        <!-- ユーザーメニュー -->
+        <div class="relative" x-data="{ open: false }">
+          <button
+            x-on:click="open = !open"
+            class="flex items-center space-x-2 p-1 rounded-full hover:bg-neutral-100 transition-colors duration-200">
+            <x-atoms.avatar
+              :src="auth()->user()->avatar_url"
+              :alt="auth()->user()->name"
+              size="sm" />
+            <svg class="w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+
+          <!-- ユーザーメニュードロップダウン -->
+          <div
+            x-show="open"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-75"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-95"
+            x-on:click.outside="open = false"
+            class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-neutral-200 py-1 z-50">
+            <a href="{{ route('profile.show', auth()->user()) }}" class="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors duration-200">
+              プロフィール
+            </a>
+            <a href="{{ route('settings') }}" class="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors duration-200">
+              設定
+            </a>
+            <hr class="my-1 border-neutral-200">
+            <form method="POST" action="{{ route('logout') }}">
+              @csrf
+              <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors duration-200">
+                ログアウト
+              </button>
+            </form>
+          </div>
+        </div>
         @else
-        <x-atoms.button variant="ghost" size="sm" href="{{ route('login') }}">
-          ログイン
-        </x-atoms.button>
-        <x-atoms.button variant="primary" size="sm" href="{{ route('register') }}">
-          新規登録
-        </x-atoms.button>
+        <!-- ゲストユーザー -->
+        <div class="flex items-center space-x-3">
+          <x-atoms.button variant="ghost" href="{{ route('login') }}" size="sm">
+            ログイン
+          </x-atoms.button>
+          <x-atoms.button variant="primary" href="{{ route('register') }}" size="sm">
+            新規登録
+          </x-atoms.button>
+        </div>
         @endauth
       </div>
     </div>
 
     <!-- モバイル検索バー -->
     @if($showSearch)
-    <div class="md:hidden mt-4">
-      <x-atoms.input
-        type="search"
-        placeholder="店舗名や料理名で検索..."
-        :icon="'<svg class=\'h-5 w-5\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z\'></path></svg>'" />
+    <div class="md:hidden pb-4">
+      <x-molecules.search-bar />
     </div>
     @endif
   </div>

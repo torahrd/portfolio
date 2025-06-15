@@ -1,94 +1,92 @@
 @props([
 'shop',
-'showFavoriteButton' => true,
+'showActions' => true,
 'compact' => false
 ])
 
-<div class="bg-white rounded-xl shadow-card p-4 {{ $compact ? 'space-y-3' : 'space-y-4' }}">
-  <!-- ヘッダー -->
-  <div class="flex items-start justify-between">
+<div class="bg-white rounded-xl shadow-card p-6 hover:shadow-card-hover transition-shadow duration-300">
+  <!-- ヘッダー部分 -->
+  <div class="flex items-start justify-between mb-4">
     <div class="flex-1">
-      <h3 class="text-lg font-semibold text-neutral-900 mb-1">
-        {{ $shop->name }}
+      <h3 class="text-xl font-bold text-neutral-900 mb-2">
+        <a href="{{ route('shops.show', $shop) }}" class="hover:text-primary-500 transition-colors duration-200">
+          {{ $shop->name }}
+        </a>
       </h3>
 
-      <!-- 営業ステータス -->
-      @if(isset($shop->is_open_now))
-      <x-atoms.badge
-        :variant="$shop->is_open_now ? 'open' : 'closed'"
-        :icon="$shop->is_open_now ? '🟢' : '🔴'">
-        {{ $shop->is_open_now ? '営業中' : '営業時間外' }}
-      </x-atoms.badge>
-      @else
-      <x-atoms.badge variant="unknown" icon="❓">
-        営業時間不明
+      @if($shop->category)
+      <x-atoms.badge variant="info" size="sm">
+        {{ $shop->category }}
       </x-atoms.badge>
       @endif
     </div>
 
-    @if($showFavoriteButton)
-    <x-atoms.icon-button
-      variant="favorite"
-      size="md"
-      data-shop-id="{{ $shop->id }}"
-      class="favorite-btn">
-      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-        <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
-      </svg>
-    </x-atoms.icon-button>
+    @if($showActions)
+    <div class="flex items-center space-x-2">
+      <x-atoms.icon-button variant="ghost" size="sm">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+        </svg>
+      </x-atoms.icon-button>
+
+      <x-atoms.icon-button variant="ghost" size="sm">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
+        </svg>
+      </x-atoms.icon-button>
+    </div>
     @endif
   </div>
 
-  <!-- 基本情報 -->
-  <div class="space-y-2 text-sm text-neutral-600">
-    <!-- 住所 -->
+  <!-- 店舗情報 -->
+  <div class="space-y-3 text-sm text-neutral-600">
+    @if($shop->address)
     <div class="flex items-start space-x-2">
       <svg class="w-4 h-4 mt-0.5 text-neutral-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
       </svg>
-      <span class="flex-1">{{ $shop->address }}</span>
-    </div>
-
-    <!-- 平均予算 -->
-    @if($shop->average_budget)
-    <div class="flex items-center space-x-2">
-      <svg class="w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-      </svg>
-      <span>平均予算: {{ $shop->formatted_average_budget }}</span>
+      <span>{{ $shop->address }}</span>
     </div>
     @endif
 
-    <!-- お気に入り数 -->
+    @if($shop->phone)
     <div class="flex items-center space-x-2">
-      <svg class="w-4 h-4 text-neutral-400" fill="currentColor" viewBox="0 0 20 20">
-        <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+      <svg class="w-4 h-4 text-neutral-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
       </svg>
-      <span><span id="favorites-count-{{ $shop->id }}">{{ $shop->favorites_count ?? 0 }}</span>人がお気に入り</span>
+      <span>{{ $shop->phone }}</span>
     </div>
+    @endif
+
+    @if($shop->operating_hours)
+    <div class="flex items-start space-x-2">
+      <svg class="w-4 h-4 mt-0.5 text-neutral-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      <div>
+        <span>{{ $shop->operating_hours }}</span>
+        @if($shop->is_open)
+        <x-atoms.badge variant="open" size="xs" class="ml-2">営業中</x-atoms.badge>
+        @else
+        <x-atoms.badge variant="closed" size="xs" class="ml-2">営業時間外</x-atoms.badge>
+        @endif
+      </div>
+    </div>
+    @endif
   </div>
 
-  @if(!$compact)
-  <!-- アクションボタン -->
-  <div class="flex space-x-2 pt-2 border-t border-neutral-100">
-    <x-atoms.button
-      variant="primary"
-      size="sm"
-      href="{{ route('shops.show', $shop) }}"
-      class="flex-1">
-      詳細を見る
-    </x-atoms.button>
+  <!-- 評価とレビュー数 -->
+  @if($shop->rating || $shop->reviews_count)
+  <div class="flex items-center justify-between mt-4 pt-4 border-t border-neutral-200">
+    @if($shop->rating)
+    <x-atoms.rating :rating="$shop->rating" size="sm" />
+    @endif
 
-    @if($shop->reservation_url)
-    <x-atoms.button
-      variant="secondary"
-      size="sm"
-      href="{{ $shop->reservation_url }}"
-      target="_blank"
-      class="flex-1">
-      予約する
-    </x-atoms.button>
+    @if($shop->reviews_count)
+    <span class="text-sm text-neutral-500">
+      {{ $shop->reviews_count }}件のレビュー
+    </span>
     @endif
   </div>
   @endif

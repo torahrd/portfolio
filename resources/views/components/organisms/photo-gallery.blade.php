@@ -1,165 +1,157 @@
 @props([
-    'photos' => [],
-    'title' => '写真ギャラリー',
-    'columns' => 3
+'photos' => [],
+'initialIndex' => 0,
+'showThumbnails' => true
 ])
 
-<div class="bg-white rounded-xl shadow-card p-4">
-    <h3 class="text-lg font-semibold text-neutral-900 mb-4">{{ $title }}</h3>
-    
-    @if(count($photos) > 0)
-        <div class="grid grid-cols-2 md:grid-cols-{{ $columns }} gap-2 md:gap-4">
-            @foreach($photos as $index => $photo)
-                <div class="group cursor-pointer relative overflow-hidden rounded-lg bg-neutral-200 aspect-square">
-                    <img 
-                        src="{{ $photo['url'] ?? $photo }}" 
-                        alt="{{ $photo['alt'] ?? "画像 " . ($index + 1) }}"
-                        class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                        loading="lazy"
-                        onclick="openPhotoModal({{ $index }})"
-                    >
-                    
-                    <!-- ホバーオーバーレイ -->
-                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
-                        <svg class="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-        
-        @if(count($photos) > 6)
-            <div class="mt-4 text-center">
-                <button class="text-primary-500 hover:text-primary-600 font-medium transition-colors duration-200">
-                    すべての写真を見る ({{ count($photos) }}枚)
-                </button>
-            </div>
-        @endif
-    @else
-        <!-- 空の状態 -->
-        <div class="text-center py-8">
-            <svg class="mx-auto h-12 w-12 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 48 48">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"></path>
-            </svg>
-            <h3 class="mt-2 text-sm font-medium text-neutral-900">写真がありません</h3>
-            <p class="mt-1 text-sm text-neutral-500">まだ写真が投稿されていません</p>
-        </div>
-    @endif
-</div>
-
-<!-- 写真モーダル -->
-<div id="photo-modal" class="fixed inset-0 bg-black/90 z-50 hidden flex items-center justify-center p-4">
-    <div class="relative max-w-4xl max-h-full">
-        <!-- 閉じるボタン -->
-        <button 
-            onclick="closePhotoModal()"
-            class="absolute top-4 right-4 text-white hover:text-neutral-300 transition-colors duration-200 z-10"
-        >
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-        </button>
-        
-        <!-- 前へボタン -->
-        <button 
-            id="photo-prev"
-            onclick="previousPhoto()"
-            class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white hover:text-neutral-300 transition-colors duration-200"
-        >
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-            </svg>
-        </button>
-        
-        <!-- 次へボタン -->
-        <button 
-            id="photo-next"
-            onclick="nextPhoto()"
-            class="absolute right-4 top-1/2 transform -translate-y-1/2 text-white hover:text-neutral-300 transition-colors duration-200"
-        >
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-        </button>
-        
-        <!-- 画像 -->
-        <img 
-            id="modal-photo"
-            src=""
-            alt=""
-            class="max-w-full max-h-full object-contain rounded-lg"
-        >
-        
-        <!-- 画像カウンター -->
-        <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white bg-black/50 px-3 py-1 rounded-full text-sm">
-            <span id="photo-counter">1 / 1</span>
-        </div>
+<div x-data="photoGallery({{ json_encode($photos) }}, {{ $initialIndex }})" class="relative">
+  <!-- メイン画像表示 -->
+  <div class="relative bg-black rounded-xl overflow-hidden">
+    <div class="aspect-w-16 aspect-h-9">
+      <img
+        :src="currentPhoto.url"
+        :alt="currentPhoto.alt || 'ギャラリー画像'"
+        class="w-full h-full object-contain"
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100" />
     </div>
+
+    <!-- 前へ・次へボタン -->
+    <template x-if="photos.length > 1">
+      <div>
+        <button
+          x-on:click="previousPhoto()"
+          x-show="currentIndex > 0"
+          class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all duration-200">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+        </button>
+
+        <button
+          x-on:click="nextPhoto()"
+          x-show="currentIndex < photos.length - 1"
+          class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all duration-200">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+      </div>
+    </template>
+
+    <!-- 画像カウンター -->
+    <template x-if="photos.length > 1">
+      <div class="absolute top-4 right-4 bg-black bg-opacity-50 text-white px-3 py-1 rounded-full text-sm">
+        <span x-text="currentIndex + 1"></span> / <span x-text="photos.length"></span>
+      </div>
+    </template>
+
+    <!-- フルスクリーンボタン -->
+    <button
+      x-on:click="toggleFullscreen()"
+      class="absolute top-4 left-4 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all duration-200">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+      </svg>
+    </button>
+  </div>
+
+  <!-- サムネイル表示 -->
+  <template x-if="showThumbnails && photos.length > 1">
+    <div class="mt-4 flex space-x-2 overflow-x-auto pb-2">
+      <template x-for="(photo, index) in photos" :key="index">
+        <button
+          x-on:click="setCurrentIndex(index)"
+          class="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all duration-200"
+          :class="currentIndex === index ? 'border-primary-500' : 'border-transparent hover:border-neutral-300'">
+          <img
+            :src="photo.thumbnail || photo.url"
+            :alt="photo.alt || 'サムネイル'"
+            class="w-full h-full object-cover" />
+        </button>
+      </template>
+    </div>
+  </template>
 </div>
 
 <script>
-let currentPhotoIndex = 0;
-const photos = @json($photos);
+  function photoGallery(photos, initialIndex = 0) {
+    return {
+      photos: photos,
+      currentIndex: initialIndex,
+      showThumbnails: true,
 
-function openPhotoModal(index) {
-    currentPhotoIndex = index;
-    const modal = document.getElementById('photo-modal');
-    const modalPhoto = document.getElementById('modal-photo');
-    const counter = document.getElementById('photo-counter');
-    
-    const photo = photos[index];
-    modalPhoto.src = photo.url || photo;
-    modalPhoto.alt = photo.alt || `画像 ${index + 1}`;
-    counter.textContent = `${index + 1} / ${photos.length}`;
-    
-    modal.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-    
-    updateNavigationButtons();
-}
+      get currentPhoto() {
+        return this.photos[this.currentIndex] || {};
+      },
 
-function closePhotoModal() {
-    const modal = document.getElementById('photo-modal');
-    modal.classList.add('hidden');
-    document.body.style.overflow = '';
-}
+      nextPhoto() {
+        if (this.currentIndex < this.photos.length - 1) {
+          this.currentIndex++;
+        }
+      },
 
-function previousPhoto() {
-    if (currentPhotoIndex > 0) {
-        openPhotoModal(currentPhotoIndex - 1);
+      previousPhoto() {
+        if (this.currentIndex > 0) {
+          this.currentIndex--;
+        }
+      },
+
+      setCurrentIndex(index) {
+        if (index >= 0 && index < this.photos.length) {
+          this.currentIndex = index;
+        }
+      },
+
+      toggleFullscreen() {
+        // フルスクリーン機能の実装
+        const element = this.$el.querySelector('img');
+        if (element.requestFullscreen) {
+          element.requestFullscreen();
+        } else if (element.webkitRequestFullscreen) {
+          element.webkitRequestFullscreen();
+        } else if (element.msRequestFullscreen) {
+          element.msRequestFullscreen();
+        }
+      },
+
+      init() {
+        // キーボードナビゲーション
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowLeft') {
+            this.previousPhoto();
+          } else if (e.key === 'ArrowRight') {
+            this.nextPhoto();
+          } else if (e.key === 'Escape') {
+            // フルスクリーン終了など
+          }
+        });
+
+        // タッチイベント（スワイプ）
+        let startX = 0;
+        let endX = 0;
+
+        const handleTouchStart = (e) => {
+          startX = e.touches[0].clientX;
+        };
+
+        const handleTouchEnd = (e) => {
+          endX = e.changedTouches[0].clientX;
+          const diff = startX - endX;
+
+          if (Math.abs(diff) > 50) { // 50px以上のスワイプで反応
+            if (diff > 0) {
+              this.nextPhoto(); // 左スワイプで次の画像
+            } else {
+              this.previousPhoto(); // 右スワイプで前の画像
+            }
+          }
+        };
+
+        this.$el.addEventListener('touchstart', handleTouchStart);
+        this.$el.addEventListener('touchend', handleTouchEnd);
+      }
     }
-}
-
-function nextPhoto() {
-    if (currentPhotoIndex < photos.length - 1) {
-        openPhotoModal(currentPhotoIndex + 1);
-    }
-}
-
-function updateNavigationButtons() {
-    const prevBtn = document.getElementById('photo-prev');
-    const nextBtn = document.getElementById('photo-next');
-    
-    prevBtn.style.display = currentPhotoIndex === 0 ? 'none' : 'block';
-    nextBtn.style.display = currentPhotoIndex === photos.length - 1 ? 'none' : 'block';
-}
-
-// ESCキーで閉じる
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        closePhotoModal();
-    } else if (e.key === 'ArrowLeft') {
-        previousPhoto();
-    } else if (e.key === 'ArrowRight') {
-        nextPhoto();
-    }
-});
-
-// モーダル背景クリックで閉じる
-document.getElementById('photo-modal').addEventListener('click', function(e) {
-    if (e.target === this) {
-        closePhotoModal();
-    }
-});
+  }
 </script>

@@ -1,0 +1,165 @@
+/* ==========================================================================
+   投稿関連コンポーネント
+   ========================================================================== */
+
+@layer components {
+    /* 投稿作成セクション */
+    .create-post-section {
+        @apply bg-gradient-to-br from-blue-500 to-purple-600 text-white p-8 rounded-xl mb-8 text-center;
+    }
+
+    .create-post-section h2 {
+        @apply text-2xl font-light mb-4;
+    }
+
+    .create-post-section .btn {
+        @apply bg-white bg-opacity-20 border-2 border-white border-opacity-30 text-white px-8 py-3 font-semibold transition-all duration-300 hover:bg-opacity-30 hover:border-opacity-50 hover:-translate-y-1;
+    }
+
+    /* 投稿アイテム */
+    .post-item {
+        @apply bg-white border border-gray-200 rounded-lg p-5 mb-5 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1;
+    }
+
+    .post-header {
+        @apply flex items-center mb-4 pb-3 border-b border-gray-100;
+    }
+
+    .post-avatar {
+        @apply w-11 h-11 rounded-full object-cover mr-3 border-2 border-gray-200 transition-colors duration-300 hover:border-primary-500;
+    }
+
+    .post-author-info {
+        @apply flex-1;
+    }
+
+    .post-author {
+        @apply font-semibold text-gray-900 text-base block mb-1 hover:text-primary-500 transition-colors duration-200;
+    }
+
+    .post-meta {
+        @apply text-sm text-gray-500 flex items-center space-x-2;
+    }
+
+    .post-meta span {
+        @apply flex items-center space-x-1;
+    }
+
+    /* 投稿詳細 */
+    .post-detail {
+        @apply bg-white rounded-xl shadow-lg p-8 mb-8;
+    }
+
+    .post-detail-header {
+        @apply flex items-center mb-5 pb-4 border-b-2 border-gray-100;
+    }
+
+    .post-detail-avatar {
+        @apply w-15 h-15 rounded-full object-cover mr-4 border-3 border-gray-200 transition-colors duration-300 hover:border-primary-500;
+    }
+
+    .post-detail-author-info {
+        @apply flex-1;
+    }
+
+    .post-detail-author-info h2 {
+        @apply text-xl font-semibold mb-1;
+    }
+
+    .post-detail-author-info h2 a {
+        @apply text-gray-900 hover:text-primary-500 transition-colors duration-300;
+    }
+
+    .post-detail-meta {
+        @apply text-gray-500 text-sm;
+    }
+
+    /* 投稿情報セクション */
+    .post-info,
+    .menus,
+    .memo,
+    .reference,
+    .folders {
+        @apply mb-6 p-5 bg-gray-50 rounded-lg border-l-4 border-primary-500;
+    }
+
+    .post-info h3,
+    .menus h3,
+    .memo h3,
+    .reference h3,
+    .folders h3 {
+        @apply text-gray-900 text-lg mb-4 flex items-center space-x-2;
+    }
+
+    /* 訪問ステータスバッジ */
+    .visit-status-badge {
+        @apply inline-block px-2 py-1 rounded-full text-xs font-semibold ml-2;
+    }
+
+    .visit-status-visited {
+        @apply bg-success-100 text-success-800;
+    }
+
+    .visit-status-planned {
+        @apply bg-warning-100 text-warning-800;
+    }
+
+    /* コメントセクション */
+    .comments-section {
+        @apply mt-4 pt-4 border-t border-gray-100 bg-gray-50 p-4 rounded-lg;
+    }
+
+    .comment-item {
+        @apply bg-white p-3 mb-2 rounded border-l-3 border-primary-500 text-sm;
+    }
+
+    .comment-author {
+        @apply font-semibold text-gray-700;
+    }
+
+    .comment-date {
+        @apply text-gray-500 text-xs ml-2;
+    }
+
+    .comment-body {
+        @apply mt-1 leading-relaxed;
+    }
+
+    .view-all-comments {
+        @apply text-center mt-3;
+    }
+
+    .view-all-comments a {
+        @apply text-primary-500 hover:text-primary-600 text-sm transition-colors duration-200;
+    }
+
+    /* アクションボタンエリア */
+    .actions {
+        @apply flex flex-wrap gap-2 mt-4;
+    }
+
+    /* コメントセクション（詳細） */
+    .comment-section {
+        @apply mt-8 pt-5 border-t-2 border-gray-100;
+    }
+
+    .comment {
+        @apply bg-gray-50 p-4 mb-3 rounded border-l-3 border-primary-500;
+    }
+
+    .comment.reply {
+        @apply ml-8 border-l-success-500 bg-success-50;
+    }
+
+    .comment-form {
+        @apply bg-gray-50 p-4 rounded mb-5;
+    }
+
+    .reply-form {
+        @apply mt-3 hidden bg-white p-3 rounded;
+    }
+
+    .comment-meta {
+        @apply text-xs text-gray-500 mb-1;
+    }
+}
