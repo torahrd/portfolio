@@ -1,5 +1,5 @@
 @props([
-'businessHours',
+'business_hours', // ★修正：businessHours → business_hours
 'compact' => false
 ])
 
@@ -16,11 +16,12 @@ $today = now()->dayOfWeek;
         営業時間
     </h3>
 
-    @if($businessHours->count() > 0)
+    {{-- ★修正：$businessHours → $business_hours --}}
+    @if($business_hours && $business_hours->count() > 0)
     <div class="space-y-2">
         @foreach($dayNames as $dayIndex => $dayName)
         @php
-        $hours = $businessHours->where('day', $dayIndex)->first();
+        $hours = $business_hours->where('day', $dayIndex)->first();
         $isToday = $today === $dayIndex;
         @endphp
         <div class="flex items-center justify-between py-2 px-3 rounded-lg {{ $isToday ? 'bg-primary-50 border border-primary-200' : 'hover:bg-neutral-50' }} transition-colors duration-200">

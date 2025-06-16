@@ -6,14 +6,15 @@
   <div class="relative h-64 md:h-96 overflow-hidden">
     <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent z-10"></div>
 
-    <!-- 背景画像（デフォルト画像を使用） -->
-    <div class="absolute inset-0 bg-primary-500">
-      <img src="{{ $shop->featured_image ?? '/images/default-shop-hero.jpg' }}"
-        alt="{{ $shop->name }}"
-        class="w-full h-full object-cover"
-        x-data="{ parallax: 0 }"
-        x-init="window.addEventListener('scroll', () => parallax = window.pageYOffset * 0.5)"
-        :style="`transform: translateY(${parallax}px)`">
+    <!-- 背景画像（デフォルトのグラデーション背景） -->
+    <div class="absolute inset-0 bg-gradient-to-br from-primary-500 to-primary-600">
+      {{-- 画像がある場合のコード（将来の拡張用）
+            @if($shop->featured_image)
+                <img src="{{ $shop->featured_image }}"
+      alt="{{ $shop->name }}"
+      class="w-full h-full object-cover">
+      @endif
+      --}}
     </div>
 
     <!-- ヒーローコンテンツ -->
@@ -21,7 +22,7 @@
       <div class="max-w-7xl mx-auto">
         <h1 class="text-3xl md:text-4xl font-bold text-white mb-3">{{ $shop->name }}</h1>
         <div class="flex items-center space-x-4 mb-2">
-          @if(isset($shop->today_business_hours))
+          @if($shop->today_business_hours)
           <x-atoms.badge :variant="$shop->is_open_now ? 'success' : 'error'" size="sm">
             {{ $shop->is_open_now ? '営業中' : '営業時間外' }}
           </x-atoms.badge>
@@ -29,7 +30,7 @@
           <x-atoms.badge variant="warning" size="sm">営業時間不明</x-atoms.badge>
           @endif
 
-          @if($shop->category)
+          @if($shop->category ?? false)
           <span class="text-white/80 text-sm">{{ $shop->category }}</span>
           @endif
         </div>
@@ -139,7 +140,8 @@
             <x-molecules.shop-info-card :shop="$shop" :show-actions="false" />
 
             <!-- 営業時間カード -->
-            <x-molecules.business-hours-card :business-hours="$shop->business_hours" />
+            {{-- ★修正：business_hours（アンダースコア）を使用 --}}
+            <x-molecules.business-hours-card :business_hours="$shop->business_hours" />
           </div>
         </div>
 
@@ -148,7 +150,36 @@
           @if($shop->recent_posts->count() > 0)
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach($shop->recent_posts as $post)
-            <x-molecules.post-card :post="$post" />
+            {{-- ★注意：post-cardコンポーネントが存在するか確認 --}}
+            <div class="bg-white rounded-xl shadow-card p-6 hover:shadow-card-hover transition-shadow duration-300">
+              <div class="mb-4">
+                <h4 class="text-lg font-semibold text-neutral-900 mb-2">
+                  <a href="{{ route('posts.show', $post) }}" class="hover:text-primary-500 transition-colors duration-200">
+                    {{ $post->user->name }}さんの投稿
+                  </a>
+                </h4>
+                <p class="text-sm text-neutral-600">{{ $post->created_at->format('Y年m月d日') }}</p>
+              </div>
+
+              @if($post->repeat_menu)
+              <p class="text-sm text-neutral-700 mb-2">
+                <strong>リピートメニュー:</strong> {{ $post->repeat_menu }}
+              </p>
+              @endif
+
+              @if($post->memo)
+              <p class="text-sm text-neutral-600">
+                {{ Str::limit($post->memo, 100) }}
+              </p>
+              @endif
+
+              <div class="mt-4">
+                <a href="{{ route('posts.show', $post) }}"
+                  class="text-primary-600 hover:text-primary-700 text-sm font-medium">
+                  詳細を見る →
+                </a>
+              </div>
+            </div>
             @endforeach
           </div>
           @else
@@ -180,7 +211,7 @@
   </div>
 
   <!-- フローティング予約ボタン -->
-  @if($shop->reservation_url)
+  @if($shop->reservation_url ?? false)
   <div class="fixed bottom-20 md:bottom-8 right-4 z-40">
     <a href="{{ $shop->reservation_url }}"
       target="_blank"

@@ -7,6 +7,7 @@ use App\Models\Shop;
 use App\Http\Requests\ShopSearchRequest;
 use App\Http\Requests\ShopStoreRequest;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class ShopController extends Controller
 {
@@ -25,6 +26,15 @@ class ShopController extends Controller
                     ->orderBy('created_at', 'desc')
                     ->limit(5);
             }
+        ]);
+
+        // ★デバッグ情報を追加★
+        Log::info('Shop data loaded:', [
+            'shop_id' => $shop->id,
+            'shop_name' => $shop->name,
+            'business_hours_count' => $shop->business_hours->count(),
+            'posts_count' => $shop->posts->count(),
+            'recent_posts_count' => $shop->recent_posts->count(),
         ]);
 
         // 現在のユーザーがお気に入りしているかチェック
