@@ -1,587 +1,259 @@
-<!DOCTYPE html>
-<html lang="ja">
+@extends('layouts.app')
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="{{ csrf_token() }}">
-  <title>{{ $shop->name }} - 店舗詳細</title>
-  <style>
-    /* レスポンシブデザイン対応のCSS */
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-    }
+@section('content')
+<div class="min-h-screen bg-neutral-50">
+  <!-- ヒーローイメージセクション -->
+  <div class="relative h-64 md:h-96 overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent z-10"></div>
 
-    .shop-header {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 30px;
-      flex-wrap: wrap;
-    }
-
-    .shop-title {
-      font-size: 2.5rem;
-      font-weight: bold;
-      color: #333;
-      margin: 0;
-    }
-
-    .favorite-btn {
-      background: none;
-      border: 2px solid #ffc107;
-      padding: 8px 15px;
-      border-radius: 25px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 16px;
-      min-width: 120px;
-      justify-content: center;
-    }
-
-    .favorite-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
-    }
-
-    .favorite-btn.favorited {
-      background: #ffc107;
-      color: #fff;
-      border-color: #ffc107;
-    }
-
-    .favorite-btn.not-favorited {
-      background: #fff;
-      color: #ffc107;
-      border-color: #ffc107;
-    }
-
-    .favorite-star {
-      font-size: 20px;
-      transition: transform 0.2s ease;
-    }
-
-    .favorite-btn:hover .favorite-star {
-      transform: scale(1.2);
-    }
-
-    .favorite-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .status-indicators {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
-
-    .status-badge {
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-weight: bold;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .status-open {
-      background: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
-    }
-
-    .status-closed {
-      background: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-    }
-
-    .status-unknown {
-      background: #e2e3e5;
-      color: #6c757d;
-      border: 1px solid #d6d8db;
-    }
-
-    .info-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 30px;
-      margin-bottom: 40px;
-    }
-
-    .info-card {
-      background: #fff;
-      border: 1px solid #dee2e6;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .info-card h3 {
-      margin: 0 0 15px 0;
-      color: #495057;
-      font-size: 1.3rem;
-      border-bottom: 2px solid #007bff;
-      padding-bottom: 8px;
-    }
-
-    .business-hours-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .business-hours-table th,
-    .business-hours-table td {
-      padding: 8px 12px;
-      text-align: left;
-      border-bottom: 1px solid #dee2e6;
-    }
-
-    .business-hours-table th {
-      background: #f8f9fa;
-      font-weight: bold;
-      width: 30%;
-    }
-
-    .today-highlight {
-      background: #fff3cd !important;
-      font-weight: bold;
-      color: #856404;
-    }
-
-    .posts-section {
-      margin-top: 40px;
-    }
-
-    .post-item {
-      background: #f8f9fa;
-      border: 1px solid #dee2e6;
-      border-radius: 8px;
-      padding: 15px;
-      margin-bottom: 15px;
-    }
-
-    .post-meta {
-      font-size: 0.9rem;
-      color: #6c757d;
-      margin-bottom: 8px;
-    }
-
-    .post-content {
-      color: #495057;
-    }
-
-    .back-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 20px;
-      background: #6c757d;
-      color: #fff;
-      text-decoration: none;
-      border-radius: 5px;
-      transition: background 0.3s ease;
-    }
-
-    .back-btn:hover {
-      background: #5a6268;
-    }
-
-    .message {
-      padding: 10px 15px;
-      border-radius: 5px;
-      margin: 10px 0;
-      border: 1px solid;
-    }
-
-    .message.success {
-      background: #d4edda;
-      color: #155724;
-      border-color: #c3e6cb;
-    }
-
-    .message.error {
-      background: #f8d7da;
-      color: #721c24;
-      border-color: #f5c6cb;
-    }
-
-    /* レスポンシブ対応 */
-    @media (max-width: 768px) {
-      .container {
-        padding: 10px;
-      }
-
-      .shop-header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .shop-title {
-        font-size: 2rem;
-      }
-
-      .status-indicators {
-        justify-content: center;
-      }
-
-      .info-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-      }
-    }
-  </style>
-</head>
-
-<body>
-  <div class="container">
-    <!-- メッセージ表示エリア -->
-    <div id="message-area"></div>
-
-    <!-- 店舗ヘッダー -->
-    <div class="shop-header">
-      <h1 class="shop-title">{{ $shop->name }}</h1>
-
-      @auth
-      <button id="favorite-btn" class="favorite-btn {{ $isFavorited ? 'favorited' : 'not-favorited' }}"
-        data-shop-id="{{ $shop->id }}"
-        data-favorited="{{ $isFavorited ? 'true' : 'false' }}">
-        <span class="favorite-star">{{ $isFavorited ? '★' : '☆' }}</span>
-        <span class="favorite-text">{{ $isFavorited ? 'お気に入り済み' : 'お気に入り' }}</span>
-        <span class="favorite-count">({{ $shop->favorites_count }})</span>
-      </button>
-      @else
-      <a href="{{ route('login') }}" class="favorite-btn not-favorited">
-        <span class="favorite-star">☆</span>
-        <span class="favorite-text">ログインしてお気に入り</span>
-        <span class="favorite-count">({{ $shop->favorites_count }})</span>
-      </a>
-      @endauth
+    <!-- 背景画像（デフォルト画像を使用） -->
+    <div class="absolute inset-0 bg-primary-500">
+      <img src="{{ $shop->featured_image ?? '/images/default-shop-hero.jpg' }}"
+        alt="{{ $shop->name }}"
+        class="w-full h-full object-cover"
+        x-data="{ parallax: 0 }"
+        x-init="window.addEventListener('scroll', () => parallax = window.pageYOffset * 0.5)"
+        :style="`transform: translateY(${parallax}px)`">
     </div>
 
-    <!-- ステータス表示 -->
-    <div class="status-indicators">
-      @if($shop->today_business_hours)
-      <div class="status-badge {{ $shop->is_open_now ? 'status-open' : 'status-closed' }}">
-        <span>{{ $shop->is_open_now ? '🟢' : '🔴' }}</span>
-        {{ $shop->open_status }}
-      </div>
-      @else
-      <div class="status-badge status-unknown">
-        <span>❓</span>
-        営業時間不明
-      </div>
-      @endif
-    </div>
+    <!-- ヒーローコンテンツ -->
+    <div class="absolute bottom-0 left-0 right-0 p-6 z-20">
+      <div class="max-w-7xl mx-auto">
+        <h1 class="text-3xl md:text-4xl font-bold text-white mb-3">{{ $shop->name }}</h1>
+        <div class="flex items-center space-x-4 mb-2">
+          @if(isset($shop->today_business_hours))
+          <x-atoms.badge :variant="$shop->is_open_now ? 'success' : 'error'" size="sm">
+            {{ $shop->is_open_now ? '営業中' : '営業時間外' }}
+          </x-atoms.badge>
+          @else
+          <x-atoms.badge variant="warning" size="sm">営業時間不明</x-atoms.badge>
+          @endif
 
-    <!-- 店舗情報グリッド -->
-    <div class="info-grid">
-      <!-- 基本情報 -->
-      <div class="info-card">
-        <h3>📍 基本情報</h3>
-        <p><strong>住所:</strong> {{ $shop->address }}</p>
-        @if($shop->reservation_url)
-        <p><strong>予約URL:</strong> <a href="{{ $shop->reservation_url }}" target="_blank">{{ $shop->reservation_url }}</a></p>
-        @endif
-        <p><strong>お気に入り数:</strong> <span id="favorites-count">{{ $shop->favorites_count }}</span>人</p>
-        @if($shop->average_budget)
-        <p><strong>平均予算:</strong> {{ $shop->formatted_average_budget }}</p>
-        @else
-        <p><strong>平均予算:</strong> 予算情報なし</p>
-        @endif
-      </div>
-
-      <!-- 営業時間 -->
-      <div class="info-card">
-        <h3>🕒 営業時間</h3>
-        @if($shop->business_hours->count() > 0)
-        <table class="business-hours-table">
-          <thead>
-            <tr>
-              <th>曜日</th>
-              <th>営業時間</th>
-            </tr>
-          </thead>
-          <tbody>
-            @foreach($dayNames as $dayIndex => $dayName)
-            @php
-            $hours = $shop->business_hours->where('day', $dayIndex)->first();
-            $isToday = now()->dayOfWeek === $dayIndex;
-            @endphp
-            <tr class="{{ $isToday ? 'today-highlight' : '' }}">
-              <th>{{ $dayName }}曜日 {{ $isToday ? '(今日)' : '' }}</th>
-              <td>
-                @if($hours)
-                {{ \Carbon\Carbon::parse($hours->open_time)->format('H:i') }} -
-                {{ \Carbon\Carbon::parse($hours->close_time)->format('H:i') }}
-                @else
-                定休日
-                @endif
-              </td>
-            </tr>
-            @endforeach
-          </tbody>
-        </table>
-        @else
-        <p>営業時間情報がありません</p>
-        @endif
-      </div>
-    </div>
-
-    <!-- 最近の投稿 -->
-    <div class="posts-section">
-      <div class="info-card">
-        <h3>📝 最近の投稿 ({{ $shop->recent_posts->count() }}件)</h3>
-        @if($shop->recent_posts->count() > 0)
-        @foreach($shop->recent_posts as $post)
-        <div class="post-item">
-          <div class="post-meta">
-            <strong>{{ $post->user->name }}</strong>さん -
-            {{ $post->created_at->format('Y年m月d日') }}
-            @if($post->visit_time)
-            (訪問: {{ \Carbon\Carbon::parse($post->visit_time)->format('Y年m月d日') }})
-            @endif
-          </div>
-          <div class="post-content">
-            @if($post->repeat_menu)
-            <p><strong>リピートメニュー:</strong> {{ $post->repeat_menu }}</p>
-            @endif
-            @if($post->interest_menu)
-            <p><strong>気になるメニュー:</strong> {{ $post->interest_menu }}</p>
-            @endif
-            @if($post->memo)
-            <p><strong>メモ:</strong> {{ Str::limit($post->memo, 100) }}</p>
-            @endif
-            <p>
-              <a href="{{ route('posts.show', $post->id) }}" class="post-link">
-                詳細を見る →
-              </a>
-            </p>
-          </div>
+          @if($shop->category)
+          <span class="text-white/80 text-sm">{{ $shop->category }}</span>
+          @endif
         </div>
-        @endforeach
-        @else
-        <p>まだ投稿がありません。</p>
+
+        @if($shop->address)
+        <div class="flex items-center text-white/90 text-sm">
+          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+          {{ $shop->address }}
+        </div>
         @endif
       </div>
-    </div>
-
-    <!-- 戻るボタン -->
-    <div style="margin-top: 30px;">
-      <a href="javascript:history.back()" class="back-btn">
-        ← 戻る
-      </a>
     </div>
   </div>
 
-  <!-- jQuery読み込み -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- アクションバー（スティッキー） -->
+  <div class="bg-white border-b border-neutral-200 sticky top-16 z-30 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-6">
+          <!-- お気に入りボタン（ハート形） -->
+          @auth
+          <button id="favorite-btn"
+            class="flex items-center space-x-2 favorite-button transition-all duration-200 hover:scale-105"
+            data-shop-id="{{ $shop->id }}"
+            data-favorited="{{ $isFavorited ? 'true' : 'false' }}">
+            <div class="relative">
+              <svg class="w-7 h-7 {{ $isFavorited ? 'text-red-500 fill-current' : 'text-neutral-400' }} transition-colors duration-200"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+              </svg>
+            </div>
+            <div>
+              <span class="text-sm font-medium text-neutral-700 favorite-count">{{ $shop->favorites_count }}</span>
+              <span class="text-xs text-neutral-500 block">お気に入り</span>
+            </div>
+          </button>
+          @else
+          <a href="{{ route('login') }}"
+            class="flex items-center space-x-2 transition-all duration-200 hover:scale-105">
+            <div class="relative">
+              <svg class="w-7 h-7 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+              </svg>
+            </div>
+            <div>
+              <span class="text-sm font-medium text-neutral-700">{{ $shop->favorites_count }}</span>
+              <span class="text-xs text-neutral-500 block">お気に入り</span>
+            </div>
+          </a>
+          @endauth
 
-  <script>
-    $(document).ready(function() {
-      // CSRFトークンの設定（最重要）
-      $.ajaxSetup({
-        headers: {
-          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-      });
+          <!-- 平均予算 -->
+          @if($shop->average_budget)
+          <div class="text-sm">
+            <span class="text-neutral-600">平均予算</span>
+            <span class="font-semibold ml-1 text-primary-600">¥{{ number_format($shop->average_budget) }}</span>
+          </div>
+          @endif
+        </div>
 
-      // ★修正: お気に入りボタンのクリックイベント★
-      $('#favorite-btn').on('click', function(e) {
+        <!-- 共有ボタン -->
+        <button class="flex items-center space-x-2 text-neutral-600 hover:text-neutral-900 transition-colors duration-200">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
+          </svg>
+          <span class="text-sm">共有</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- メインコンテンツ -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- タブナビゲーション -->
+    <div x-data="{ activeTab: 'info' }" class="mb-8">
+      <div class="border-b border-neutral-200">
+        <nav class="-mb-px flex space-x-8">
+          <button @click="activeTab = 'info'"
+            :class="activeTab === 'info' ? 'border-primary-500 text-primary-600' : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'"
+            class="py-3 px-1 border-b-2 font-medium text-sm transition-colors duration-200">
+            基本情報
+          </button>
+          <button @click="activeTab = 'posts'"
+            :class="activeTab === 'posts' ? 'border-primary-500 text-primary-600' : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'"
+            class="py-3 px-1 border-b-2 font-medium text-sm transition-colors duration-200">
+            投稿 ({{ $shop->recent_posts->count() }})
+          </button>
+          <button @click="activeTab = 'photos'"
+            :class="activeTab === 'photos' ? 'border-primary-500 text-primary-600' : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'"
+            class="py-3 px-1 border-b-2 font-medium text-sm transition-colors duration-200">
+            写真
+          </button>
+        </nav>
+      </div>
+
+      <!-- タブコンテンツ -->
+      <div class="mt-6">
+        <!-- 基本情報タブ -->
+        <div x-show="activeTab === 'info'" x-transition>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- 店舗情報カード -->
+            <x-molecules.shop-info-card :shop="$shop" :show-actions="false" />
+
+            <!-- 営業時間カード -->
+            <x-molecules.business-hours-card :business-hours="$shop->business_hours" />
+          </div>
+        </div>
+
+        <!-- 投稿タブ -->
+        <div x-show="activeTab === 'posts'" x-transition>
+          @if($shop->recent_posts->count() > 0)
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach($shop->recent_posts as $post)
+            <x-molecules.post-card :post="$post" />
+            @endforeach
+          </div>
+          @else
+          <div class="text-center py-12">
+            <svg class="mx-auto h-16 w-16 text-neutral-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10m0 0V6a2 2 0 00-2-2H9a2 2 0 00-2 2v2m10 0v10a2 2 0 01-2 2H9a2 2 0 01-2-2V8m10 0H7"></path>
+            </svg>
+            <h3 class="text-lg font-medium text-neutral-900 mb-2">まだ投稿がありません</h3>
+            <p class="text-neutral-600 mb-6">この店舗への最初の投稿をしてみませんか？</p>
+            @auth
+            <x-atoms.button variant="primary" href="{{ route('posts.create') }}">
+              投稿を作成
+            </x-atoms.button>
+            @else
+            <x-atoms.button variant="primary" href="{{ route('login') }}">
+              ログインして投稿
+            </x-atoms.button>
+            @endauth
+          </div>
+          @endif
+        </div>
+
+        <!-- 写真タブ -->
+        <div x-show="activeTab === 'photos'" x-transition>
+          <x-molecules.shop-gallery :posts="$shop->recent_posts" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- フローティング予約ボタン -->
+  @if($shop->reservation_url)
+  <div class="fixed bottom-20 md:bottom-8 right-4 z-40">
+    <a href="{{ $shop->reservation_url }}"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="bg-primary-500 text-white px-6 py-3 rounded-full shadow-lg hover:bg-primary-600 hover:shadow-xl transition-all duration-200 flex items-center space-x-2 hover:scale-105">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+      </svg>
+      <span class="font-medium">予約する</span>
+    </a>
+  </div>
+  @endif
+</div>
+
+<!-- JavaScript -->
+@verbatim
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // CSRFトークンの設定
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    // お気に入りボタンの処理
+    const favoriteBtn = document.getElementById('favorite-btn');
+    if (favoriteBtn) {
+      favoriteBtn.addEventListener('click', function(e) {
         e.preventDefault();
 
-        const $btn = $(this);
-        const shopId = $btn.data('shop-id');
+        const shopId = this.dataset.shopId;
+        const isFavorited = this.dataset.favorited === 'true';
+        const heartIcon = this.querySelector('svg');
+        const countElement = this.querySelector('.favorite-count');
 
-        // ★重要: 現在の状態をボタンのクラスから判定★
-        const isFavorited = $btn.hasClass('favorited');
+        // アニメーション開始
+        heartIcon.classList.add('scale-125');
+        setTimeout(() => heartIcon.classList.remove('scale-125'), 300);
 
-        // 連続クリック防止
-        if ($btn.prop('disabled')) return;
-
-        console.log('★デバッグ: お気に入りボタンクリック★', {
-          shopId: shopId,
-          isFavorited: isFavorited,
-          buttonClasses: $btn.attr('class'),
-          dataFavorited: $btn.data('favorited'),
-          method: isFavorited ? 'DELETE' : 'POST'
-        });
-
-        // ボタンを無効化
-        $btn.prop('disabled', true);
-
-        // リクエスト設定
-        const url = `/shops/${shopId}/favorite`;
-        const method = isFavorited ? 'DELETE' : 'POST';
-
-        $.ajax({
-          url: url,
-          type: method,
-          dataType: 'json',
-          timeout: 10000,
-          success: function(response) {
-            console.log('★成功レスポンス★', response);
-
-            if (response.success) {
-              // ★修正: ボタンの状態を確実に更新★
-              updateFavoriteButton($btn, response.is_favorited, response.favorites_count);
-
-              // 成功メッセージを表示
-              showMessage(response.message, 'success');
-            } else {
-              showMessage(response.message || 'エラーが発生しました', 'error');
+        // AJAX リクエスト
+        fetch(`/shops/${shopId}/favorite`, {
+            method: isFavorited ? 'DELETE' : 'POST',
+            headers: {
+              'X-CSRF-TOKEN': csrfToken,
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
             }
-          },
-          error: function(xhr, status, error) {
-            console.error('★AJAXエラー★', {
-              status: xhr.status,
-              statusText: xhr.statusText,
-              responseText: xhr.responseText,
-              error: error
-            });
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              // 状態を更新
+              this.dataset.favorited = data.is_favorited;
 
-            // ★修正: 409エラーの特別処理★
-            if (xhr.status === 409) {
-              // 409エラーの場合、レスポンスから正しい状態を取得
-              try {
-                const errorResponse = JSON.parse(xhr.responseText);
-                console.log('★409エラー処理★', errorResponse);
-
-                if (errorResponse.is_favorited !== undefined) {
-                  // レスポンスの状態に基づいてボタンを更新
-                  updateFavoriteButton($btn, errorResponse.is_favorited, errorResponse.favorites_count || 0);
-                  showMessage('お気に入り状態を同期しました', 'success');
-                  return;
-                }
-              } catch (e) {
-                console.error('409エラーレスポンス解析失敗', e);
+              // ハートの色を変更
+              if (data.is_favorited) {
+                heartIcon.classList.add('text-red-500', 'fill-current');
+                heartIcon.classList.remove('text-neutral-400');
+              } else {
+                heartIcon.classList.remove('text-red-500', 'fill-current');
+                heartIcon.classList.add('text-neutral-400');
               }
+
+              // カウントを更新
+              countElement.textContent = data.favorite_count;
             }
-
-            // その他のエラー処理
-            let errorMessage = 'エラーが発生しました';
-
-            switch (xhr.status) {
-              case 401:
-                errorMessage = 'ログインが必要です';
-                window.location.href = '/login';
-                return;
-              case 403:
-                errorMessage = '権限がありません';
-                break;
-              case 404:
-                errorMessage = '店舗が見つかりません';
-                break;
-              case 419:
-                errorMessage = 'セッションが期限切れです。ページを更新してください。';
-                setTimeout(() => location.reload(), 2000);
-                break;
-              case 422:
-                if (xhr.responseJSON && xhr.responseJSON.errors) {
-                  errorMessage = Object.values(xhr.responseJSON.errors).flat().join(' ');
-                } else {
-                  errorMessage = 'リクエストデータが無効です';
-                }
-                break;
-              case 500:
-                errorMessage = 'サーバーエラーが発生しました';
-                break;
-              default:
-                if (xhr.responseJSON && xhr.responseJSON.message) {
-                  errorMessage = xhr.responseJSON.message;
-                } else {
-                  errorMessage = `エラー (${xhr.status}): ${error}`;
-                }
-            }
-
-            showMessage(errorMessage, 'error');
-          },
-          complete: function() {
-            // ボタンを再有効化
-            $btn.prop('disabled', false);
-          }
-        });
-      });
-
-      /**
-       * ★修正: お気に入りボタンの状態を確実に更新★
-       */
-      function updateFavoriteButton($btn, isFavorited, favoritesCount) {
-        console.log('★ボタン更新開始★', {
-          isFavorited,
-          favoritesCount,
-          beforeClasses: $btn.attr('class')
-        });
-
-        // ★重要: data属性とクラスの両方を更新★
-        $btn.data('favorited', isFavorited);
-
-        // クラスを更新
-        if (isFavorited) {
-          $btn.removeClass('not-favorited').addClass('favorited');
-          $btn.find('.favorite-star').text('★');
-          $btn.find('.favorite-text').text('お気に入り済み');
-        } else {
-          $btn.removeClass('favorited').addClass('not-favorited');
-          $btn.find('.favorite-star').text('☆');
-          $btn.find('.favorite-text').text('お気に入り');
-        }
-
-        // お気に入り数を更新
-        $btn.find('.favorite-count').text(`(${favoritesCount})`);
-        $('#favorites-count').text(favoritesCount);
-
-        console.log('★ボタン更新完了★', {
-          afterClasses: $btn.attr('class'),
-          dataFavorited: $btn.data('favorited')
-        });
-      }
-
-      /**
-       * メッセージを表示
-       */
-      function showMessage(message, type) {
-        const $messageArea = $('#message-area');
-        const messageClass = type === 'success' ? 'success' : 'error';
-
-        const $messageDiv = $(`<div class="message ${messageClass}">${message}</div>`);
-
-        // 既存のメッセージを削除して新しいメッセージを表示
-        $messageArea.empty().append($messageDiv);
-
-        // 3秒後に自動で消去
-        setTimeout(() => {
-          $messageDiv.fadeOut(300, function() {
-            $(this).remove();
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            // エラーアニメーション
+            this.classList.add('animate-pulse');
+            setTimeout(() => this.classList.remove('animate-pulse'), 1000);
           });
-        }, 3000);
-
-        // ページトップにスクロール
-        $('html, body').animate({
-          scrollTop: 0
-        }, 300);
-      }
-
-      // ★追加: ページ読み込み時の状態確認★
-      console.log('★初期状態確認★', {
-        shopId: $('#favorite-btn').data('shop-id'),
-        dataFavorited: $('#favorite-btn').data('favorited'),
-        hasClass: {
-          favorited: $('#favorite-btn').hasClass('favorited'),
-          notFavorited: $('#favorite-btn').hasClass('not-favorited')
-        }
       });
-    });
-  </script>
-</body>
-
-</html>
+    }
+  });
+</script>
+@endverbatim
+@endsection
