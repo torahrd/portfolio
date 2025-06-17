@@ -30,5 +30,12 @@ $sizes[$size] ?? $sizes['md']
 @endphp
 
 <span {{ $attributes->merge(['class' => implode(' ', $classes)]) }}>
+  {{-- ★修正：HtmlStringオブジェクトの適切な処理 --}}
+  @if(isset($slot) && method_exists($slot, 'isEmpty') && !$slot->isEmpty())
   {{ $slot }}
+  @elseif(isset($slot) && !empty(trim($slot)))
+  {{ $slot }}
+  @else
+  Badge
+  @endif
 </span>
