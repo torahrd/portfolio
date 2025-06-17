@@ -189,7 +189,13 @@ $elementProps = $href ? ['href' => $href] : [];
   </div>
   @endif
 
-  @if($slot && !$slot->isEmpty())
+  {{-- ★修正：$slotの適切な処理 --}}
+  @if(isset($slot) && method_exists($slot, 'isEmpty') && !$slot->isEmpty())
+  <!-- カードボディ -->
+  <div class="card-body {{ ($header || $icon || $title || $subtitle) ? 'pt-0' : '' }} {{ $footer ? 'pb-0' : '' }} {{ $padding === 'none' ? 'p-6' : '' }}">
+    {{ $slot }}
+  </div>
+  @elseif(isset($slot) && !empty(trim($slot)))
   <!-- カードボディ -->
   <div class="card-body {{ ($header || $icon || $title || $subtitle) ? 'pt-0' : '' }} {{ $footer ? 'pb-0' : '' }} {{ $padding === 'none' ? 'p-6' : '' }}">
     {{ $slot }}

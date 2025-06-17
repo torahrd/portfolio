@@ -7,15 +7,7 @@
     <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent z-10"></div>
 
     <!-- 背景画像（デフォルトのグラデーション背景） -->
-    <div class="absolute inset-0 bg-gradient-to-br from-primary-500 to-primary-600">
-      {{-- 画像がある場合のコード（将来の拡張用）
-            @if($shop->featured_image)
-                <img src="{{ $shop->featured_image }}"
-      alt="{{ $shop->name }}"
-      class="w-full h-full object-cover">
-      @endif
-      --}}
-    </div>
+    <div class="absolute inset-0 bg-gradient-to-br from-primary-500 to-primary-600"></div>
 
     <!-- ヒーローコンテンツ -->
     <div class="absolute bottom-0 left-0 right-0 p-6 z-20">
@@ -140,7 +132,6 @@
             <x-molecules.shop-info-card :shop="$shop" :show-actions="false" />
 
             <!-- 営業時間カード -->
-            {{-- ★修正：business_hours（アンダースコア）を使用 --}}
             <x-molecules.business-hours-card :business_hours="$shop->business_hours" />
           </div>
         </div>
@@ -150,7 +141,6 @@
           @if($shop->recent_posts->count() > 0)
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach($shop->recent_posts as $post)
-            {{-- ★注意：post-cardコンポーネントが存在するか確認 --}}
             <div class="bg-white rounded-xl shadow-card p-6 hover:shadow-card-hover transition-shadow duration-300">
               <div class="mb-4">
                 <h4 class="text-lg font-semibold text-neutral-900 mb-2">
@@ -190,10 +180,12 @@
             <h3 class="text-lg font-medium text-neutral-900 mb-2">まだ投稿がありません</h3>
             <p class="text-neutral-600 mb-6">この店舗への最初の投稿をしてみませんか？</p>
             @auth
+            {{-- ★修正：修正済みx-atoms.buttonコンポーネントを使用 --}}
             <x-atoms.button variant="primary" href="{{ route('posts.create') }}">
               投稿を作成
             </x-atoms.button>
             @else
+            {{-- ★修正：修正済みx-atoms.buttonコンポーネントを使用 --}}
             <x-atoms.button variant="primary" href="{{ route('login') }}">
               ログインして投稿
             </x-atoms.button>
