@@ -6,7 +6,7 @@
   <div class="relative h-64 md:h-96 overflow-hidden">
     <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent z-10"></div>
 
-    <!-- 背景画像（デフォルトのグラデーション背景） -->
+    <!-- 背景画像（グラデーション背景） -->
     <div class="absolute inset-0 bg-gradient-to-br from-primary-500 to-primary-600"></div>
 
     <!-- ヒーローコンテンツ -->
@@ -20,10 +20,6 @@
           </x-atoms.badge>
           @else
           <x-atoms.badge variant="warning" size="sm">営業時間不明</x-atoms.badge>
-          @endif
-
-          @if($shop->category ?? false)
-          <span class="text-white/80 text-sm">{{ $shop->category }}</span>
           @endif
         </div>
 
@@ -40,23 +36,19 @@
     </div>
   </div>
 
-  <!-- アクションバー（スティッキー） -->
+  <!-- アクションバー（星形ボタン対応） -->
   <div class="bg-white border-b border-neutral-200 sticky top-16 z-30 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-6">
-          <!-- お気に入りボタン（ハート形） -->
+          <!-- お気に入りボタン（星形のまま） -->
           @auth
           <button id="favorite-btn"
-            class="flex items-center space-x-2 favorite-button transition-all duration-200 hover:scale-105"
+            class="flex items-center space-x-2 favorite-button transition-all duration-200 hover:scale-105 {{ $isFavorited ? 'favorited' : 'not-favorited' }}"
             data-shop-id="{{ $shop->id }}"
             data-favorited="{{ $isFavorited ? 'true' : 'false' }}">
             <div class="relative">
-              <svg class="w-7 h-7 {{ $isFavorited ? 'text-red-500 fill-current' : 'text-neutral-400' }} transition-colors duration-200"
-                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-              </svg>
+              <span class="favorite-star text-2xl">{{ $isFavorited ? '★' : '☆' }}</span>
             </div>
             <div>
               <span class="text-sm font-medium text-neutral-700 favorite-count">{{ $shop->favorites_count }}</span>
@@ -67,10 +59,7 @@
           <a href="{{ route('login') }}"
             class="flex items-center space-x-2 transition-all duration-200 hover:scale-105">
             <div class="relative">
-              <svg class="w-7 h-7 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-              </svg>
+              <span class="text-2xl text-neutral-400">☆</span>
             </div>
             <div>
               <span class="text-sm font-medium text-neutral-700">{{ $shop->favorites_count }}</span>
@@ -87,14 +76,6 @@
           </div>
           @endif
         </div>
-
-        <!-- 共有ボタン -->
-        <button class="flex items-center space-x-2 text-neutral-600 hover:text-neutral-900 transition-colors duration-200">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
-          </svg>
-          <span class="text-sm">共有</span>
-        </button>
       </div>
     </div>
   </div>
@@ -174,22 +155,8 @@
           </div>
           @else
           <div class="text-center py-12">
-            <svg class="mx-auto h-16 w-16 text-neutral-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10m0 0V6a2 2 0 00-2-2H9a2 2 0 00-2 2v2m10 0v10a2 2 0 01-2 2H9a2 2 0 01-2-2V8m10 0H7"></path>
-            </svg>
             <h3 class="text-lg font-medium text-neutral-900 mb-2">まだ投稿がありません</h3>
             <p class="text-neutral-600 mb-6">この店舗への最初の投稿をしてみませんか？</p>
-            @auth
-            {{-- ★修正：修正済みx-atoms.buttonコンポーネントを使用 --}}
-            <x-atoms.button variant="primary" href="{{ route('posts.create') }}">
-              投稿を作成
-            </x-atoms.button>
-            @else
-            {{-- ★修正：修正済みx-atoms.buttonコンポーネントを使用 --}}
-            <x-atoms.button variant="primary" href="{{ route('login') }}">
-              ログインして投稿
-            </x-atoms.button>
-            @endauth
           </div>
           @endif
         </div>
@@ -201,24 +168,9 @@
       </div>
     </div>
   </div>
-
-  <!-- フローティング予約ボタン -->
-  @if($shop->reservation_url ?? false)
-  <div class="fixed bottom-20 md:bottom-8 right-4 z-40">
-    <a href="{{ $shop->reservation_url }}"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="bg-primary-500 text-white px-6 py-3 rounded-full shadow-lg hover:bg-primary-600 hover:shadow-xl transition-all duration-200 flex items-center space-x-2 hover:scale-105">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-      </svg>
-      <span class="font-medium">予約する</span>
-    </a>
-  </div>
-  @endif
 </div>
 
-<!-- JavaScript -->
+<!-- JavaScript（星形ボタン対応） -->
 @verbatim
 <script>
   document.addEventListener('DOMContentLoaded', function() {
@@ -233,12 +185,12 @@
 
         const shopId = this.dataset.shopId;
         const isFavorited = this.dataset.favorited === 'true';
-        const heartIcon = this.querySelector('svg');
+        const starElement = this.querySelector('.favorite-star');
         const countElement = this.querySelector('.favorite-count');
 
         // アニメーション開始
-        heartIcon.classList.add('scale-125');
-        setTimeout(() => heartIcon.classList.remove('scale-125'), 300);
+        starElement.style.transform = 'scale(1.3)';
+        setTimeout(() => starElement.style.transform = 'scale(1)', 300);
 
         // AJAX リクエスト
         fetch(`/shops/${shopId}/favorite`, {
@@ -255,13 +207,16 @@
               // 状態を更新
               this.dataset.favorited = data.is_favorited;
 
-              // ハートの色を変更
+              // 星の表示を変更
+              starElement.textContent = data.is_favorited ? '★' : '☆';
+
+              // クラスを更新
               if (data.is_favorited) {
-                heartIcon.classList.add('text-red-500', 'fill-current');
-                heartIcon.classList.remove('text-neutral-400');
+                this.classList.remove('not-favorited');
+                this.classList.add('favorited');
               } else {
-                heartIcon.classList.remove('text-red-500', 'fill-current');
-                heartIcon.classList.add('text-neutral-400');
+                this.classList.remove('favorited');
+                this.classList.add('not-favorited');
               }
 
               // カウントを更新
@@ -271,8 +226,8 @@
           .catch(error => {
             console.error('Error:', error);
             // エラーアニメーション
-            this.classList.add('animate-pulse');
-            setTimeout(() => this.classList.remove('animate-pulse'), 1000);
+            this.style.animation = 'pulse 1s';
+            setTimeout(() => this.style.animation = '', 1000);
           });
       });
     }
