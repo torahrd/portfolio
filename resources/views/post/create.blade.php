@@ -353,7 +353,7 @@
 
       init() {
         // サーバーから渡された最近の店舗データを設定
-        @if(isset($recentShops) && $recentShops - > isNotEmpty())
+        @if(isset($recentShops) && $recentShops -> isNotEmpty())
         this.recentShops = @json($recentShops);
         @endif
 
