@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Carbon\Carbon;
 
 use App\Models\Business_hours;
@@ -22,15 +24,42 @@ class Shop extends Model
     protected $fillable = [
         'name',
         'address',
-        'reservation_url',
+        'phone',
+        'website',
+        'description',
+        'category',
+        'latitude',
+        'longitude',
+        'created_by',
+    ];
+
+    protected $casts = [
+        'latitude' => 'decimal:8',
+        'longitude' => 'decimal:8',
     ];
 
     /**
-     * 投稿との関連
+     * この店舗を作成したユーザー
      */
-    public function posts()
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * この店舗の投稿
+     */
+    public function posts(): HasMany
     {
         return $this->hasMany(Post::class);
+    }
+
+    /**
+     * 最近の投稿
+     */
+    public function recentPosts(): HasMany
+    {
+        return $this->posts()->latest()->limit(10);
     }
 
     /**

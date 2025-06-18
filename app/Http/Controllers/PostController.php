@@ -32,18 +32,36 @@ class PostController extends Controller
         return view('post.index', compact('posts'));
     }
 
+    /**
+     * Show the form for creating a new resource.
+     */
     public function create()
     {
-        $recentShops = auth()->user()->posts()
-            ->with('shop')
-            ->latest()
-            ->take(5)
-            ->get()
-            ->pluck('shop')
-            ->unique('id')
-            ->values();
+        try {
+            // 最近投稿した店舗を取得
+            $recentShops = auth()->user()->posts()
+                ->with('shop')
+                ->latest()
+                ->take(5)
+                ->get()
+                ->pluck('shop')
+                ->filter() // nullを除外
+                ->unique('id')
+                ->values()
+                ->map(function ($shop) {
+                    return [
+                        'id' => $shop->id,
+                        'name' => $shop->name,
+                        'address' => $shop->address,
+                    ];
+                });
 
-        return view('post.create', compact('recentShops'));
+            return view('posts.create', compact('recentShops'));
+        } catch (\Exception $e) {
+            // エラーが発生した場合は空の配列を渡す
+            $recentShops = collect([]);
+            return view('post.create', compact('recentShops'));
+        }
     }
 
     public function store(Request $request, Post $post)
