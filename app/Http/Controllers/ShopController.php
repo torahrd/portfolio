@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Shop;
+use App\Models\User;
 use App\Http\Requests\ShopSearchRequest;
 use App\Http\Requests\ShopStoreRequest;
 use Illuminate\Support\Facades\Cache;
@@ -47,52 +48,110 @@ class ShopController extends Controller
     }
 
     /**
-     * 店舗検索（AJAX専用）- 既存機能
+     * 店舗検索（AJAX対応）
      */
-    public function search(ShopSearchRequest $request)
+    public function search(Request $request)
     {
-        // 1. AJAXリクエストかチェック
-        if (!$request->ajax()) {
-            return response()->json(['error' => 'AJAX request required'], 400);
-        }
-
-        // 2. バリデーション済みデータを取得
-        $query = $request->validated()['query'];
-        $cacheKey = 'shop_search_' . md5($query);
-
-        // 3. データベースから部分一致で検索
-        $shops = Cache::remember($cacheKey, 300, function () use ($query) {
-            return Shop::where('name', 'LIKE', "%{$query}%")
-                ->select('id', 'name', 'address')
-                ->orderBy('name')
-                ->limit(10)
-                ->get();
-        });
-
-        // 4. 結果を返す
-        return response()->json([
-            'shops' => $shops,
-            'has_results' => $shops->count() > 0
+        $request->validate([
+            'q' => 'required|string|min:2|max:100'
         ]);
+
+        try {
+            $query = $request->get('q');
+
+            $shops = Shop::where('name', 'LIKE', "%{$query}%")
+                ->orWhere('address', 'LIKE', "%{$query}%")
+                ->limit(10)
+                ->get()
+                ->map(function ($shop) {
+                    return [
+                        'id' => $shop->id,
+                        'name' => $shop->name,
+                        'address' => $shop->address,
+                    ];
+                });
+
+            return response()->json([
+                'success' => true,
+                'shops' => $shops
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => '店舗検索に失敗しました',
+                'shops' => []
+            ], 500);
+        }
+    }
+
+
+    /**
+     * 新規店舗作成（AJAX対応）
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'address' => 'required|string|max:500',
+        ]);
+
+        try {
+            $shop = Shop::create([
+                'name' => $request->name,
+                'address' => $request->address,
+                'created_by' => auth()->id(),
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => '店舗が作成されました',
+                'shop' => [
+                    'id' => $shop->id,
+                    'name' => $shop->name,
+                    'address' => $shop->address,
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => '店舗の作成に失敗しました'
+            ], 500);
+        }
     }
 
     /**
-     * 新しい店舗を作成（AJAX専用）- 既存機能
+     * 最近投稿された店舗を取得（投稿作成画面用）
      */
-    public function store(ShopStoreRequest $request)
+    public function recent(Request $request)
     {
-        // 1. AJAXリクエストかチェック
-        if (!$request->ajax()) {
-            return response()->json(['error' => 'AJAX request required'], 400);
+        try {
+            $recentShops = auth()->user()->posts()
+                ->with('shop')
+                ->latest()
+                ->take(5)
+                ->get()
+                ->pluck('shop')
+                ->filter() // nullを除外
+                ->unique('id')
+                ->values()
+                ->map(function ($shop) {
+                    return [
+                        'id' => $shop->id,
+                        'name' => $shop->name,
+                        'address' => $shop->address,
+                    ];
+                });
+
+            return response()->json([
+                'success' => true,
+                'shops' => $recentShops
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => '最近の店舗取得に失敗しました',
+                'shops' => []
+            ], 500);
         }
-
-        // 2. 新しい店舗を作成
-        $shop = Shop::create($request->validated());
-
-        // 3. 作成結果を返す
-        return response()->json([
-            'success' => true,
-            'shop' => $shop
-        ]);
     }
 }

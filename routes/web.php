@@ -71,10 +71,15 @@ Route::controller(CommentController::class)->middleware(['auth'])->group(functio
 // ===== 店舗機能のルート =====
 
 Route::middleware(['auth'])->group(function () {
+    // 最近の店舗取得（投稿作成画面用）
+    Route::get('/shops/recent', [ShopController::class, 'recent'])->name('shops.recent');
+    // 既存の店舗検索ルートを確認・追加
     Route::get('/shops/search', [ShopController::class, 'search'])
         ->name('shops.search')
         ->middleware('throttle:60,1');
+    // 新規店舗作成（既存のルートを確認）
     Route::post('/shops', [ShopController::class, 'store'])->name('shops.store');
+    // 店舗詳細（既存）
     Route::get('/shops/{shop}', [ShopController::class, 'show'])->name('shops.show');
 });
 

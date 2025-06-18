@@ -98,7 +98,7 @@
           </div>
 
           <div class="flex justify-end mt-6">
-            <x-atoms.button variant="primary" type="button" @click="currentStep = 2" :disabled="images.length === 0">
+            <x-atoms.button variant="primary" type="button" @click="currentStep = 2" x-bind:disabled="images.length === 0">
               次へ
             </x-atoms.button>
           </div>
@@ -170,7 +170,7 @@
             <p class="text-sm text-neutral-600" x-text="selectedShop?.address"></p>
           </div>
 
-          <input type="hidden" name="post[shop_id]" x-bind:value="selectedShop?.id">
+          <input type="hidden" name="post[shop_id]" x-bind:value="selectedShop?.id || ''">
 
           <div class="flex justify-between mt-6">
             <x-atoms.button variant="ghost" type="button" @click="currentStep = 1">
@@ -352,8 +352,10 @@
       showCreateShopModal: false,
 
       init() {
-        // 最近の店舗データを取得
-        this.loadRecentShops();
+        // サーバーから渡された最近の店舗データを設定
+        @if(isset($recentShops) && $recentShops - > isNotEmpty())
+        this.recentShops = @json($recentShops);
+        @endif
 
         // ドロップゾーンのイベントリスナー
         document.querySelectorAll('[data-drop-zone]').forEach(zone => {
@@ -361,17 +363,6 @@
           zone.addEventListener('dragover', (e) => e.preventDefault());
           zone.addEventListener('dragenter', (e) => e.preventDefault());
         });
-      },
-
-      async loadRecentShops() {
-        try {
-          const response = await fetch('/api/shops/recent');
-          const data = await response.json();
-          this.recentShops = data.shops || [];
-        } catch (error) {
-          console.error('最近の店舗取得エラー:', error);
-          this.recentShops = [];
-        }
       },
 
       handleDrop(e) {

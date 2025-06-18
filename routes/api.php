@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\FollowRequestController;
+use App\Http\Controllers\ShopController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,4 +28,20 @@ Route::middleware('auth')->group(function () {
     // フォロー申請の一括処理
     Route::post('/follow-requests/mark-read', [FollowRequestController::class, 'markAsRead'])
         ->name('api.follow-requests.mark-read');
+});
+
+
+// 認証が必要なAPI
+Route::middleware(['auth:sanctum'])->group(function () {
+    // 最近の店舗取得（投稿作成画面用）
+    Route::get('/shops/recent', [ShopController::class, 'recent'])->name('api.shops.recent');
+});
+
+// 認証が必要な店舗関連API（web.phpにも追加）
+Route::middleware(['auth'])->group(function () {
+    // 店舗検索（投稿作成画面用）
+    Route::get('/shops/search', [ShopController::class, 'search'])->name('api.shops.search');
+
+    // 新規店舗作成
+    Route::post('/shops', [ShopController::class, 'store'])->name('api.shops.store');
 });

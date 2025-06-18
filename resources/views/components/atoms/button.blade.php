@@ -1,5 +1,7 @@
+{{-- resources/views/components/atoms/button.blade.php --}}
+
 @props([
-'variant' => 'ghost',
+'variant' => 'primary',
 'size' => 'md',
 'disabled' => false,
 'href' => null,
@@ -9,17 +11,22 @@
 
 @php
 $classes = [
-'base' => 'inline-flex items-center justify-center rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2',
+'base' => 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 border',
 
 // サイズ
-'sm' => 'w-8 h-8 text-sm',
-'md' => 'w-10 h-10 text-base',
-'lg' => 'w-12 h-12 text-lg',
+'xs' => 'px-2.5 py-1.5 text-xs min-h-[32px]',
+'sm' => 'px-3 py-2 text-sm min-h-[36px]',
+'md' => 'px-4 py-2.5 text-sm min-h-[40px]',
+'lg' => 'px-5 py-3 text-base min-h-[44px]',
+'xl' => 'px-6 py-3.5 text-lg min-h-[48px]',
 
 // バリアント
-'ghost' => 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 focus:ring-neutral-500',
-'primary' => 'bg-primary-500 text-white hover:bg-primary-600 focus:ring-primary-500 shadow-md hover:shadow-lg',
-'secondary' => 'bg-white text-neutral-700 border border-neutral-300 hover:bg-neutral-50 focus:ring-neutral-500',
+'primary' => 'bg-primary-500 text-white border-primary-500 hover:bg-primary-600 hover:border-primary-600 focus:ring-primary-500 shadow-sm hover:shadow-md',
+'secondary' => 'bg-white text-neutral-700 border-neutral-300 hover:bg-neutral-50 hover:border-neutral-400 focus:ring-neutral-500 shadow-sm',
+'ghost' => 'bg-transparent text-neutral-600 border-transparent hover:text-neutral-900 hover:bg-neutral-100 focus:ring-neutral-500',
+'danger' => 'bg-red-500 text-white border-red-500 hover:bg-red-600 hover:border-red-600 focus:ring-red-500 shadow-sm hover:shadow-md',
+'warning' => 'bg-yellow-500 text-white border-yellow-500 hover:bg-yellow-600 hover:border-yellow-600 focus:ring-yellow-500 shadow-sm hover:shadow-md',
+'success' => 'bg-green-500 text-white border-green-500 hover:bg-green-600 hover:border-green-600 focus:ring-green-500 shadow-sm hover:shadow-md',
 
 // 無効状態
 'disabled' => 'opacity-50 cursor-not-allowed pointer-events-none'
@@ -28,23 +35,25 @@ $classes = [
 $buttonClasses = collect([
 $classes['base'],
 $classes[$size] ?? $classes['md'],
-$classes[$variant] ?? $classes['ghost'],
+$classes[$variant] ?? $classes['primary'],
 $disabled ? $classes['disabled'] : ''
-])->implode(' ');
+])->filter()->implode(' ');
 @endphp
 
 @if($href && !$disabled)
 <a href="{{ $href }}" {{ $attributes->merge(['class' => $buttonClasses]) }}>
   @if($icon)
-  {!! $icon !!}
-  @elseif(isset($slot) && method_exists($slot, 'isEmpty') && !$slot->isEmpty())
+  <span class="flex-shrink-0 mr-2">
+    {!! $icon !!}
+  </span>
+  @endif
+
+  @if(isset($slot) && method_exists($slot, 'isEmpty') && !$slot->isEmpty())
   {{ $slot }}
   @elseif(isset($slot) && !empty(trim($slot)))
   {{ $slot }}
   @else
-  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-  </svg>
+  Button
   @endif
 </a>
 @else
@@ -52,16 +61,19 @@ $disabled ? $classes['disabled'] : ''
   type="{{ $type }}"
   {{ $disabled ? 'disabled' : '' }}
   {{ $attributes->merge(['class' => $buttonClasses]) }}>
+
   @if($icon)
-  {!! $icon !!}
-  @elseif(isset($slot) && method_exists($slot, 'isEmpty') && !$slot->isEmpty())
+  <span class="flex-shrink-0 mr-2">
+    {!! $icon !!}
+  </span>
+  @endif
+
+  @if(isset($slot) && method_exists($slot, 'isEmpty') && !$slot->isEmpty())
   {{ $slot }}
   @elseif(isset($slot) && !empty(trim($slot)))
   {{ $slot }}
   @else
-  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-  </svg>
+  Button
   @endif
 </button>
 @endif
