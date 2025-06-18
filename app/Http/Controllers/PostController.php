@@ -13,10 +13,7 @@ class PostController extends Controller
 {
     public function index(Post $post)
     {
-        // ❌ 修正前（N+1問題が発生）
-        // return view('post.index')->with('posts', $post->get());
-
-        // ✅ 修正後（Eager Loadingで最適化）
+        // Eager Loadingで最適化
         $posts = Post::with([
             'shop:id,name,address',        // 店舗情報（必要な列のみ）
             'user:id,name',                // ユーザー情報（必要な列のみ）
@@ -56,7 +53,8 @@ class PostController extends Controller
                     ];
                 });
 
-            return view('posts.create', compact('recentShops'));
+            // ★修正: posts.create → post.create に変更
+            return view('post.create', compact('recentShops'));
         } catch (\Exception $e) {
             // エラーが発生した場合は空の配列を渡す
             $recentShops = collect([]);
@@ -68,10 +66,13 @@ class PostController extends Controller
     {
         $input = $request['post'];
         $input['user_id'] = Auth::user()->id;
+
         // フォルダIDを取得して除外
         $folderId = $input['folder_id'] ?? null;
         unset($input['folder_id']);
+
         $post->fill($input)->save();
+
         // フォルダの関連付け（単一フォルダ）
         if ($folderId) {
             // 自分のフォルダかチェック
@@ -80,6 +81,7 @@ class PostController extends Controller
                 $post->folders()->attach($folderId);
             }
         }
+
         return redirect('/posts');
     }
 
@@ -91,9 +93,7 @@ class PostController extends Controller
     public function edit(Post $post, Shop $shop)
     {
         $user = Auth::user();
-
         $folders = $user->folders;
-
         $shops = $shop->get();
 
         return view('post.edit', compact('folders', 'shops', 'post'));
@@ -112,6 +112,6 @@ class PostController extends Controller
         $this->authorize('delete', $post);
 
         $post->delete();
-        return redirect('/posts')->with('succes', '削除しました');
+        return redirect('/posts')->with('success', '削除しました');
     }
 }
