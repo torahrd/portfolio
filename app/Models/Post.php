@@ -33,9 +33,10 @@ class Post extends Model
         return $this->belongsTo(User::class);
     }
 
+    // ★修正: shop::class → Shop::class に変更
     public function shop()
     {
-        return $this->belongsTo(shop::class);
+        return $this->belongsTo(Shop::class);
     }
 
     public function images()
@@ -55,6 +56,6 @@ class Post extends Model
 
     public function favorite_users()
     {
-        return $this->belongsToMany(User::class, 'favoties', 'post_id', 'user_id')->withTimestamps();
+        return $this->belongsToMany(User::class, 'favorites', 'post_id', 'user_id')->withTimestamps();
     }
 }
