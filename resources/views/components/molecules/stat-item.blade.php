@@ -1,69 +1,63 @@
+{{-- resources/views/components/molecules/stat-item.blade.php --}}
+
 @props([
 'title',
 'value',
-'change' => null,
-'changeType' => 'neutral', // 'positive', 'negative', 'neutral'
 'icon' => null,
-'href' => null
+'href' => null,
+'variant' => 'default'
 ])
 
 @php
-$changeClasses = [
-'positive' => 'text-success-600',
-'negative' => 'text-error-600',
-'neutral' => 'text-neutral-600'
+$variants = [
+'default' => 'bg-white hover:bg-neutral-50',
+'primary' => 'bg-primary-50 hover:bg-primary-100',
+'success' => 'bg-green-50 hover:bg-green-100',
+'warning' => 'bg-yellow-50 hover:bg-yellow-100',
+'error' => 'bg-red-50 hover:bg-red-100',
 ];
 
-$changeClass = $changeClasses[$changeType] ?? $changeClasses['neutral'];
+$classes = [
+'bg-white rounded-xl shadow-card p-6 transition-all duration-300',
+$variants[$variant] ?? $variants['default'],
+$href ? 'hover:shadow-card-hover cursor-pointer' : ''
+];
+
+$containerClasses = implode(' ', array_filter($classes));
 @endphp
 
-<div class="bg-white rounded-xl shadow-card p-6 hover:shadow-card-hover transition-shadow duration-300">
-  @if($href)
-  <a href="{{ $href }}" class="block">
-    @endif
-
-    <div class="flex items-center">
-      @if($icon)
-      <div class="flex-shrink-0">
-        <div class="w-8 h-8 bg-primary-100 rounded-lg flex items-center justify-center">
+@if($href)
+<a href="{{ $href }}" {{ $attributes->merge(['class' => $containerClasses]) }}>
+  <div class="flex items-center justify-between">
+    <div class="flex-1">
+      <div class="flex items-center space-x-3 mb-2">
+        @if($icon)
+        <div class="flex-shrink-0">
           {!! $icon !!}
         </div>
+        @endif
+        <h3 class="text-sm font-medium text-neutral-600">{{ $title }}</h3>
       </div>
-      @endif
-
-      <div class="{{ $icon ? 'ml-4' : '' }} flex-1 min-w-0">
-        <dl>
-          <dt class="text-sm font-medium text-neutral-600 truncate">
-            {{ $title }}
-          </dt>
-          <dd class="flex items-baseline">
-            <div class="text-2xl font-bold text-neutral-900">
-              {{ $value }}
-            </div>
-
-            @if($change)
-            <div class="ml-2 flex items-baseline text-sm font-semibold {{ $changeClass }}">
-              @if($changeType === 'positive')
-              <svg class="self-center flex-shrink-0 h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-              </svg>
-              @elseif($changeType === 'negative')
-              <svg class="self-center flex-shrink-0 h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 012 0v7.586l2.293-2.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-              </svg>
-              @endif
-              <span class="sr-only">
-                {{ $changeType === 'positive' ? '増加' : ($changeType === 'negative' ? '減少' : '変化') }}
-              </span>
-              {{ $change }}
-            </div>
-            @endif
-          </dd>
-        </dl>
-      </div>
+      <p class="text-3xl font-bold text-neutral-900">{{ is_numeric($value) ? number_format($value) : $value }}</p>
     </div>
 
-    @if($href)
-  </a>
-  @endif
+    <div class="flex-shrink-0 ml-4">
+      <svg class="w-5 h-5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+      </svg>
+    </div>
+  </div>
+</a>
+@else
+<div {{ $attributes->merge(['class' => $containerClasses]) }}>
+  <div class="flex items-center space-x-3 mb-2">
+    @if($icon)
+    <div class="flex-shrink-0">
+      {!! $icon !!}
+    </div>
+    @endif
+    <h3 class="text-sm font-medium text-neutral-600">{{ $title }}</h3>
+  </div>
+  <p class="text-3xl font-bold text-neutral-900">{{ is_numeric($value) ? number_format($value) : $value }}</p>
 </div>
+@endif
