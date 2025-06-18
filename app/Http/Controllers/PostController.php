@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Post;
 use App\Models\Folder;
 use App\Models\Shop;
+use App\Models\User;
 
 class PostController extends Controller
 {
@@ -31,15 +32,18 @@ class PostController extends Controller
         return view('post.index', compact('posts'));
     }
 
-    public function create(Shop $shop)
+    public function create()
     {
-        $user = Auth::user();
+        $recentShops = auth()->user()->posts()
+            ->with('shop')
+            ->latest()
+            ->take(5)
+            ->get()
+            ->pluck('shop')
+            ->unique('id')
+            ->values();
 
-        $folders = $user->folders;
-
-        $shops = $shop->get();
-
-        return view('post.create', compact('folders', 'shops'));
+        return view('post.create', compact('recentShops'));
     }
 
     public function store(Request $request, Post $post)
