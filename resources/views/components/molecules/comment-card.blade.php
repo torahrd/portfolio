@@ -5,29 +5,30 @@
 ])
 
 @php
-$levelClass = $level > 0 ? 'ml-' . min($level * 4, 16) : '';
+$levelClass = $level > 0 ? 'ml-4' : '';
+$commentId = $comment->id;
 @endphp
 
 <div class="comment-card {{ $levelClass }}">
-    <div class="flex space-x-3 p-4 {{ $level > 0 ? 'bg-neutral-50' : 'bg-white' }} rounded-lg">
+    <div class="flex space-x-3 p-4 bg-white rounded-lg border border-neutral-200 mb-4">
         <!-- アバター -->
-        <x-atoms.avatar
-            :src="$comment->user->avatar_url"
-            :alt="$comment->user->name"
-            size="sm" />
+        <div class="w-8 h-8 bg-neutral-300 rounded-full overflow-hidden">
+            @if($comment->user->avatar_url)
+            <img src="{{ $comment->user->avatar_url }}" alt="{{ $comment->user->name }}" class="w-full h-full object-cover">
+            @else
+            <div class="w-full h-full flex items-center justify-center text-neutral-600">
+                {{ substr($comment->user->name, 0, 1) }}
+            </div>
+            @endif
+        </div>
 
         <div class="flex-1 min-w-0">
             <!-- ヘッダー -->
             <div class="flex items-center space-x-2 mb-2">
                 <a href="{{ route('profile.show', $comment->user) }}"
-                    class="font-medium text-neutral-900 hover:text-primary-600 transition-colors duration-200">
+                    class="font-medium text-neutral-900 hover:text-primary-600">
                     {{ $comment->user->name }}
                 </a>
-
-                @if($comment->parent)
-                <span class="text-neutral-400 text-sm">→</span>
-                <span class="text-neutral-600 text-sm">{{ $comment->parent->user->name }}さんへの返信</span>
-                @endif
 
                 <span class="text-neutral-500 text-xs">
                     {{ $comment->created_at->diffForHumans() }}
@@ -35,15 +36,14 @@ $levelClass = $level > 0 ? 'ml-' . min($level * 4, 16) : '';
             </div>
 
             <!-- コメント本文 -->
-            <div class="prose prose-sm max-w-none">
-                {!! $comment->body_with_mentions !!}
+            <div class="text-sm text-neutral-700 mb-3">
+                {{ $comment->body }}
             </div>
 
             <!-- アクション -->
-            <div class="flex items-center space-x-4 mt-3">
+            <div class="flex items-center space-x-4">
                 @auth
-                <button onclick="toggleReplyForm({{ $comment->id }})"
-                    class="text-neutral-500 hover:text-primary-600 text-sm font-medium transition-colors duration-200">
+                <button class="text-neutral-500 hover:text-primary-600 text-sm">
                     返信
                 </button>
                 @endauth
@@ -57,53 +57,13 @@ $levelClass = $level > 0 ? 'ml-' . min($level * 4, 16) : '';
                     @csrf
                     @method('DELETE')
                     <button type="submit"
-                        class="text-neutral-500 hover:text-red-600 text-sm font-medium transition-colors duration-200">
+                        class="text-neutral-500 hover:text-red-600 text-sm">
                         削除
                     </button>
                 </form>
                 @endif
                 @endauth
             </div>
-
-            <!-- 返信フォーム -->
-            @auth
-            <div id="reply-form-{{ $comment->id }}"
-                class="reply-form mt-4 hidden">
-                <form action="{{ route('comments.store', $post->id) }}"
-                    method="POST"
-                    class="space-y-3">
-                    @csrf
-                    <input type="hidden" name="parent_id" value="{{ $comment->id }}">
-
-                    <div class="flex space-x-3">
-                        <x-atoms.avatar
-                            :src="auth()->user()->avatar_url"
-                            :alt="auth()->user()->name"
-                            size="sm" />
-
-                        <div class="flex-1">
-                            <textarea name="body"
-                                rows="2"
-                                placeholder="{{ $comment->user->name }}さんに返信..."
-                                class="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 resize-none"
-                                required></textarea>
-
-                            <div class="flex items-center justify-end space-x-2 mt-2">
-                                <button type="button"
-                                    onclick="toggleReplyForm({{ $comment->id }})"
-                                    class="px-3 py-1 text-sm text-neutral-600 hover:text-neutral-800 transition-colors duration-200">
-                                    キャンセル
-                                </button>
-                                <button type="submit"
-                                    class="px-4 py-1 bg-primary-500 text-white text-sm rounded-lg hover:bg-primary-600 transition-colors duration-200">
-                                    返信
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            @endauth
         </div>
     </div>
 </div>
