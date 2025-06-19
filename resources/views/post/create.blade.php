@@ -89,8 +89,7 @@
         <button
           type="button"
           @click="nextStep"
-          class="px-6 py-3 bg-red-500 text-white rounded-md hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
-          :disabled="images.length === 0">
+          class="px-6 py-3 bg-red-500 text-white rounded-md hover:bg-red-600">
           次へ
         </button>
       </div>
@@ -149,17 +148,24 @@
       },
 
       nextStep() {
+        console.log('次のステップへ進む');
+        console.log('選択された画像数:', this.images.length);
+
+        // 写真の有無に関わらず次へ進む
         if (this.images.length === 0) {
-          alert('少なくとも1枚の写真を追加してください。');
-          return;
+          console.log('写真なしで次へ進みます');
+          // 確認メッセージを表示（オプション）
+          if (confirm('写真なしで投稿を続けますか？')) {
+            // 次のページへ遷移またはステップを進める
+            // 例: window.location.href = '/posts/create#step2';
+            // または、同じページ内で次のステップを表示
+            this.currentStep = 2;
+          }
+        } else {
+          console.log('写真ありで次へ進みます', this.images);
+          // 次のステップへ
+          this.currentStep = 2;
         }
-
-        // ここで次のステップに進む処理
-        // 例: フォームデータを保存してから次のページへ
-        console.log('次のステップへ進む', this.images);
-
-        // 実際の実装では、画像をFormDataに追加して送信するか、
-        // セッションに保存してから次のページへリダイレクト
       }
     };
   }
