@@ -34,8 +34,7 @@
           <!-- ユーザーアクション -->
           <div class="flex items-center space-x-3">
             @auth
-            <x-atoms.button
-              variant="primary"
+            <x-atoms.button-primary
               size="sm"
               href="{{ route('posts.create') }}"
               class="hidden sm:inline-flex">
@@ -43,7 +42,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
               </svg>
               投稿作成
-            </x-atoms.button>
+            </x-atoms.button-primary>
 
             <a href="{{ route('profile.show', auth()->user()) }}" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-neutral-100 transition-colors duration-200">
               <img
@@ -53,12 +52,12 @@
               <span class="hidden md:inline text-sm font-medium text-neutral-700">{{ auth()->user()->name }}</span>
             </a>
             @else
-            <x-atoms.button variant="ghost" size="sm" href="{{ route('login') }}">
+            <x-atoms.button-secondary size="sm" href="{{ route('login') }}">
               ログイン
-            </x-atoms.button>
-            <x-atoms.button variant="primary" size="sm" href="{{ route('register') }}">
+            </x-atoms.button-secondary>
+            <x-atoms.button-primary size="sm" href="{{ route('register') }}">
               新規登録
-            </x-atoms.button>
+            </x-atoms.button-primary>
             @endauth
           </div>
         </div>
@@ -89,12 +88,12 @@
           <h2 class="text-2xl font-bold mb-2">ようこそ！</h2>
           <p class="mb-4 opacity-90">お気に入りの店舗を仲間と共有しませんか？</p>
           <div class="flex flex-col sm:flex-row gap-3 justify-center">
-            <x-atoms.button variant="secondary" href="{{ route('login') }}">
+            <x-atoms.button-secondary href="{{ route('login') }}">
               ログイン
-            </x-atoms.button>
-            <x-atoms.button variant="ghost" href="{{ route('register') }}" class="text-white border-white hover:bg-white/10">
+            </x-atoms.button-secondary>
+            <x-atoms.button-secondary href="{{ route('register') }}" class="text-white border-white hover:bg-white/10">
               新規登録
-            </x-atoms.button>
+            </x-atoms.button-secondary>
           </div>
         </div>
       </div>
@@ -125,12 +124,12 @@
             <p class="mt-1 text-sm text-neutral-500">最初の投稿を作成してみましょう！</p>
             @auth
             <div class="mt-6">
-              <x-atoms.button variant="primary" href="{{ route('posts.create') }}">
+              <x-atoms.button-primary href="{{ route('posts.create') }}">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
                 投稿を作成
-              </x-atoms.button>
+              </x-atoms.button-primary>
             </div>
             @endauth
           </div>

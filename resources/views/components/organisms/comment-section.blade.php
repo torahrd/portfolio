@@ -140,20 +140,18 @@
           size="sm" />
 
         <div class="flex-1">
-          <textarea
-            x-model="commentContent"
-            placeholder="コメントを入力..."
-            class="w-full p-3 border border-neutral-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200"
-            rows="3"></textarea>
+          <x-atoms.input-text
+            name="comment"
+            placeholder="コメントを入力してください..."
+            class="w-full" />
         </div>
       </div>
 
       <div class="flex items-center justify-end">
-        <x-atoms.button
-          variant="primary"
+        <x-atoms.button-primary
           type="submit">
           コメント投稿
-        </x-atoms.button>
+        </x-atoms.button-primary>
       </div>
     </form>
   </div>
@@ -161,12 +159,12 @@
   <div class="bg-neutral-50 rounded-xl p-6 text-center">
     <p class="text-neutral-600 mb-4">コメントを投稿するにはログインが必要です</p>
     <div class="flex items-center justify-center space-x-3">
-      <x-atoms.button variant="primary" href="{{ route('login') }}" size="sm">
+      <x-atoms.button-primary href="{{ route('login') }}" size="sm">
         ログイン
-      </x-atoms.button>
-      <x-atoms.button variant="secondary" href="{{ route('register') }}" size="sm">
+      </x-atoms.button-primary>
+      <x-atoms.button-secondary href="{{ route('register') }}" size="sm">
         新規登録
-      </x-atoms.button>
+      </x-atoms.button-secondary>
     </div>
   </div>
   @endif

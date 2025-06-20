@@ -40,9 +40,9 @@
         <!-- 訪問ステータス -->
         <div class="flex items-center justify-between p-3 bg-neutral-50 rounded-lg">
             <span class="text-sm font-medium text-neutral-700">訪問ステータス</span>
-            <x-atoms.badge :variant="$post->visit_status ? 'success' : 'warning'" size="sm">
+            <x-atoms.badge-success size="sm">
                 {{ $post->visit_status ? '訪問済み' : '訪問予定' }}
-            </x-atoms.badge>
+            </x-atoms.badge-success>
         </div>
 
         <!-- メニュー情報 -->

@@ -6,9 +6,9 @@
         <h1 class="text-3xl font-bold text-neutral-900">通知</h1>
 
         @if(auth()->user()->unreadNotifications->count() > 0)
-        <x-atoms.button variant="ghost" size="sm">
+        <x-atoms.button-secondary size="sm">
           すべて既読にする
-        </x-atoms.button>
+        </x-atoms.button-secondary>
         @endif
       </div>
 
@@ -27,9 +27,9 @@
           <h3 class="text-xl font-semibold text-neutral-900 mb-2">通知はありません</h3>
           <p class="text-neutral-600 mb-6">新しい通知があるとここに表示されます</p>
 
-          <x-atoms.button variant="primary" href="{{ route('posts.index') }}">
+          <x-atoms.button-primary href="{{ route('posts.index') }}">
             投稿を見る
-          </x-atoms.button>
+          </x-atoms.button-primary>
         </div>
         @endforelse
       </div>
@@ -37,9 +37,9 @@
       <!-- ページネーション（将来の拡張用） -->
       @if(auth()->user()->notifications->count() > 20)
       <div class="mt-8 flex justify-center">
-        <x-atoms.button variant="secondary">
+        <x-atoms.button-secondary>
           さらに読み込む
-        </x-atoms.button>
+        </x-atoms.button-secondary>
       </div>
       @endif
     </div>

@@ -20,9 +20,9 @@
                 class="w-full" />
             </div>
             <div>
-              <x-atoms.button variant="primary" type="submit" class="w-full md:w-auto">
+              <x-atoms.button-primary type="submit" class="w-full md:w-auto">
                 検索
-              </x-atoms.button>
+              </x-atoms.button-primary>
             </div>
           </div>
         </form>
@@ -50,10 +50,10 @@
         <div class="bg-white rounded-xl shadow-card p-6">
           <h3 class="text-lg font-semibold text-neutral-900 mb-4">人気のカテゴリ</h3>
           <div class="space-y-2">
-            <x-atoms.badge variant="primary" class="mr-2">ラーメン</x-atoms.badge>
-            <x-atoms.badge variant="primary" class="mr-2">寿司</x-atoms.badge>
-            <x-atoms.badge variant="primary" class="mr-2">イタリアン</x-atoms.badge>
-            <x-atoms.badge variant="primary" class="mr-2">カフェ</x-atoms.badge>
+            <x-atoms.badge-info class="mr-2">ラーメン</x-atoms.badge-info>
+            <x-atoms.badge-info class="mr-2">寿司</x-atoms.badge-info>
+            <x-atoms.badge-info class="mr-2">イタリアン</x-atoms.badge-info>
+            <x-atoms.badge-info class="mr-2">カフェ</x-atoms.badge-info>
           </div>
         </div>
 
@@ -61,10 +61,10 @@
         <div class="bg-white rounded-xl shadow-card p-6">
           <h3 class="text-lg font-semibold text-neutral-900 mb-4">人気のエリア</h3>
           <div class="space-y-2">
-            <x-atoms.badge variant="secondary" class="mr-2">渋谷</x-atoms.badge>
-            <x-atoms.badge variant="secondary" class="mr-2">新宿</x-atoms.badge>
-            <x-atoms.badge variant="secondary" class="mr-2">銀座</x-atoms.badge>
-            <x-atoms.badge variant="secondary" class="mr-2">表参道</x-atoms.badge>
+            <x-atoms.badge-success class="mr-2">渋谷</x-atoms.badge-success>
+            <x-atoms.badge-success class="mr-2">新宿</x-atoms.badge-success>
+            <x-atoms.badge-success class="mr-2">銀座</x-atoms.badge-success>
+            <x-atoms.badge-success class="mr-2">表参道</x-atoms.badge-success>
           </div>
         </div>
 
