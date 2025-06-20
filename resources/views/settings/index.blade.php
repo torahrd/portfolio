@@ -63,16 +63,16 @@
               <div>
                 <h3 class="text-lg font-medium text-neutral-900">{{ auth()->user()->name }}</h3>
                 <p class="text-neutral-600">{{ auth()->user()->email }}</p>
-                <x-atoms.button variant="secondary" size="sm" class="mt-2">
+                <x-atoms.button-secondary size="sm" class="mt-2">
                   写真を変更
-                </x-atoms.button>
+                </x-atoms.button-secondary>
               </div>
             </div>
 
             <div class="flex justify-end">
-              <x-atoms.button variant="primary" href="{{ route('profile.edit') }}">
+              <x-atoms.button-primary href="{{ route('profile.edit') }}">
                 プロフィールを編集
-              </x-atoms.button>
+              </x-atoms.button-primary>
             </div>
           </div>
 

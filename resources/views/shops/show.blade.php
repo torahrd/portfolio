@@ -15,11 +15,11 @@
         <h1 class="text-3xl md:text-4xl font-bold text-white mb-3">{{ $shop->name }}</h1>
         <div class="flex items-center space-x-4 mb-2">
           @if($shop->today_business_hours)
-          <x-atoms.badge :variant="$shop->is_open_now ? 'success' : 'error'" size="sm">
+          <x-atoms.badge-success size="sm">
             {{ $shop->is_open_now ? '営業中' : '営業時間外' }}
-          </x-atoms.badge>
+          </x-atoms.badge-success>
           @else
-          <x-atoms.badge variant="warning" size="sm">営業時間不明</x-atoms.badge>
+          <x-atoms.badge-warning size="sm">営業時間不明</x-atoms.badge-warning>
           @endif
         </div>
 
