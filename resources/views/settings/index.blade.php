@@ -150,13 +150,13 @@
             <h2 class="text-xl font-semibold text-neutral-900 mb-4">アカウント設定</h2>
 
             <div class="space-y-4">
-              <x-atoms.button variant="secondary" class="w-full justify-start">
+              <x-atoms.button-secondary class="w-full justify-start">
                 パスワードを変更
-              </x-atoms.button>
+              </x-atoms.button-secondary>
 
-              <x-atoms.button variant="secondary" class="w-full justify-start">
+              <x-atoms.button-secondary class="w-full justify-start">
                 データをエクスポート
-              </x-atoms.button>
+              </x-atoms.button-secondary>
 
               <hr class="my-6">
 
@@ -164,9 +164,9 @@
                 <h3 class="text-sm font-medium text-error-800 mb-2">危険な操作</h3>
                 <p class="text-sm text-error-600 mb-4">以下の操作は元に戻すことができません。</p>
 
-                <x-atoms.button variant="ghost" class="text-error-600 hover:text-error-700 hover:bg-error-100">
+                <x-atoms.button-secondary class="text-error-600 hover:text-error-700 hover:bg-error-100">
                   アカウントを削除
-                </x-atoms.button>
+                </x-atoms.button-secondary>
               </div>
             </div>
           </div>

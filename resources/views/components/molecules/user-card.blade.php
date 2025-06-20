@@ -53,13 +53,13 @@
     @if($showActions && Auth::id() !== $user->id)
     <div class="flex-shrink-0">
       @if($user->is_following ?? false)
-      <x-atoms.button variant="secondary" size="sm">
+      <x-atoms.button-secondary size="sm">
         フォロー中
-      </x-atoms.button>
+      </x-atoms.button-secondary>
       @else
-      <x-atoms.button variant="primary" size="sm">
+      <x-atoms.button-primary size="sm">
         フォロー
-      </x-atoms.button>
+      </x-atoms.button-primary>
       @endif
     </div>
     @endif
