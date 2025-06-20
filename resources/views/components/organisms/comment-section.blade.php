@@ -72,19 +72,17 @@
                 class="w-full p-3 border border-neutral-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200"
                 rows="2"></textarea>
               <div class="flex items-center justify-end space-x-2">
-                <x-atoms.button
-                  variant="ghost"
+                <x-atoms.button-secondary
                   size="sm"
                   type="button"
                   x-on:click="showReplyForm = null; replyContent = ''">
                   キャンセル
-                </x-atoms.button>
-                <x-atoms.button
-                  variant="primary"
+                </x-atoms.button-secondary>
+                <x-atoms.button-primary
                   size="sm"
                   type="submit">
                   返信
-                </x-atoms.button>
+                </x-atoms.button-primary>
               </div>
             </form>
           </div>

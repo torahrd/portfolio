@@ -57,12 +57,12 @@
 
                     <!-- 認証ボタン -->
                     <div class="flex items-center space-x-3">
-                        <x-atoms.button variant="ghost" href="{{ route('login') }}" size="sm">
+                        <x-atoms.button-secondary href="{{ route('login') }}" size="sm">
                             ログイン
-                        </x-atoms.button>
-                        <x-atoms.button variant="primary" href="{{ route('register') }}" size="sm">
+                        </x-atoms.button-secondary>
+                        <x-atoms.button-primary href="{{ route('register') }}" size="sm">
                             新規登録
-                        </x-atoms.button>
+                        </x-atoms.button-primary>
                     </div>
                 </div>
             </div>

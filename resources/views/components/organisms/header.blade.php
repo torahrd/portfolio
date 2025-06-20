@@ -28,8 +28,7 @@
         @auth
         <!-- 通知 -->
         <div class="relative" x-data="{ open: false }">
-          <x-atoms.icon-button
-            variant="ghost"
+          <x-atoms.button-icon
             size="md"
             x-on:click="open = !open"
             class="relative">
@@ -41,7 +40,7 @@
               {{ min(auth()->user()->unreadNotifications->count(), 99) }}
             </span>
             @endif
-          </x-atoms.icon-button>
+          </x-atoms.button-icon>
 
           <!-- 通知ドロップダウン -->
           <div
@@ -81,9 +80,9 @@
         </div>
 
         <!-- 投稿作成 -->
-        <x-atoms.button variant="primary" href="{{ route('posts.create') }}" size="sm">
+        <x-atoms.button-primary href="{{ route('posts.create') }}" size="sm">
           投稿
-        </x-atoms.button>
+        </x-atoms.button-primary>
 
         <!-- ユーザーメニュー -->
         <div class="relative" x-data="{ open: false }">
@@ -128,12 +127,12 @@
         @else
         <!-- ゲストユーザー -->
         <div class="flex items-center space-x-3">
-          <x-atoms.button variant="ghost" href="{{ route('login') }}" size="sm">
+          <x-atoms.button-secondary href="{{ route('login') }}" size="sm">
             ログイン
-          </x-atoms.button>
-          <x-atoms.button variant="primary" href="{{ route('register') }}" size="sm">
+          </x-atoms.button-secondary>
+          <x-atoms.button-primary href="{{ route('register') }}" size="sm">
             新規登録
-          </x-atoms.button>
+          </x-atoms.button-primary>
         </div>
         @endauth
       </div>
