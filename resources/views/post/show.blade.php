@@ -175,13 +175,8 @@
 
         <!-- コメント一覧 -->
         <div class="space-y-4">
-          @forelse($post->comments()->parentComments()->with(['user'])->orderBy('created_at', 'desc')->get() as $comment)
-          <x-molecules.comment-card :comment="$comment" :post="$post" />
-
-          <!-- 子コメント -->
-          @foreach($comment->children()->with('user')->orderBy('created_at', 'asc')->get() as $childComment)
-          <x-molecules.comment-card :comment="$childComment" :post="$post" :level="1" />
-          @endforeach
+          @forelse($post->comments()->parentComments()->with(['user', 'children.user'])->orderBy('created_at', 'desc')->get() as $comment)
+          <x-molecules.comment-card :comment="$comment" :post="$post" :level="0" />
           @empty
           <div class="text-center py-8 text-neutral-500">
             <svg class="w-16 h-16 mx-auto mb-4 text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">

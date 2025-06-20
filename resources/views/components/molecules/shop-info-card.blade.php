@@ -1,11 +1,16 @@
+{{-- 店舗カードコンポーネント
+  props:
+    - shop: 店舗データ（必須）
+    - showActions: アクションボタン表示（デフォルトtrue）
+--}}
+
 @props([
 'shop',
 'showActions' => true,
-'compact' => false
 ])
 
 <div class="bg-white rounded-xl shadow-card p-6 hover:shadow-card-hover transition-shadow duration-300">
-  <!-- ヘッダー部分 -->
+  <!-- ヘッダー: 店名とカテゴリ -->
   <div class="flex items-start justify-between mb-4">
     <div class="flex-1">
       <h3 class="text-xl font-bold text-neutral-900 mb-2">
@@ -23,14 +28,15 @@
 
     @if($showActions)
     <div class="flex items-center space-x-2">
-      <x-atoms.button-icon size="sm">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+      <!-- 星型アイコン（お気に入り） -->
+      <x-atoms.button-icon size="sm" aria-label="お気に入り">
+        <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
         </svg>
       </x-atoms.button-icon>
-
-      <x-atoms.button-icon size="sm">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <!-- シェアアイコン -->
+      <x-atoms.button-icon size="sm" aria-label="シェア">
+        <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
         </svg>
       </x-atoms.button-icon>
@@ -38,7 +44,7 @@
     @endif
   </div>
 
-  <!-- 店舗情報 -->
+  <!-- 店舗情報: 住所・電話・営業時間 -->
   <div class="space-y-3 text-sm text-neutral-600">
     @if($shop->address)
     <div class="flex items-start space-x-2">
