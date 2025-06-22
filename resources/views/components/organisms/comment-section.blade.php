@@ -17,8 +17,7 @@
     <div class="bg-white rounded-xl p-4 shadow-sm border border-neutral-200">
       <div class="flex items-start space-x-3">
         <x-atoms.avatar
-          :src="$comment->user->avatar_url"
-          :alt="$comment->user->name"
+          :user="$comment->user"
           size="sm" />
 
         <div class="flex-1 min-w-0">
@@ -94,8 +93,7 @@
             <div class="bg-neutral-50 rounded-lg p-3">
               <div class="flex items-start space-x-2">
                 <x-atoms.avatar
-                  :src="$reply->user->avatar_url"
-                  :alt="$reply->user->name"
+                  :user="$reply->user"
                   size="xs" />
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center space-x-2 mb-1">
@@ -135,8 +133,7 @@
     <form x-on:submit.prevent="submitComment()" class="space-y-4">
       <div class="flex items-start space-x-3">
         <x-atoms.avatar
-          :src="auth()->user()->avatar_url"
-          :alt="auth()->user()->name"
+          :user="auth()->user()"
           size="sm" />
 
         <div class="flex-1">

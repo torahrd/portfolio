@@ -130,11 +130,11 @@ class User extends Authenticatable
     }
 
     // ===== 新規追加：アクセサー =====
-    public function getAvatarUrlAttribute(): string
+    public function getAvatarUrlAttribute(): ?string
     {
         return $this->avatar
             ? Storage::url('avatars/' . $this->avatar)
-            : 'https://via.placeholder.com/120x120/cccccc/ffffff?text=No+Image';
+            : null;
     }
 
     // ===== 新規追加：フォロー状態チェックメソッド =====
