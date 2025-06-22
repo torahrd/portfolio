@@ -9,21 +9,6 @@
 - [ ] なし
 
 ### 🟢 通常タスク
-- [x] **Phase 9: UIの微調整（完了）**
-  - [x] **comment-card.blade.php**のリファクタリング完了
-    - [x] ユーザー情報表示をpost-card.blade.phpと統一
-    - [x] アクションボタン部分を`x-molecules.comment-actions`として分離
-    - [x] 返信フォーム部分を`x-molecules.comment-reply-form`として分離
-  - [x] **shop-info-card.blade.php**のリファクタリング完了
-    - [x] アクションボタン部分を`x-molecules.shop-actions`として分離
-    - [x] 店舗情報行を`x-molecules.shop-info-row`として分離
-  - [x] **shops/show.blade.php**のレイアウト・機能修正
-    - [x] `Undefined variable $slot`エラーを解決
-    - [x] お気に入り件数の非同期更新に対応
-  - [x] ヘッダーが複数重なっている問題を修正
-  - [x] 同様のリファクタリング箇所の検索と修正
-
-### ⚪ 低優先タスク
 - [ ] **Phase 10: CSSファイルの統合と整理（一時停止中）**
 - [ ] **Phase 11: JavaScriptの簡略化（一時停止中）**
 - [ ] **Phase 12: 最終確認とクリーンアップ（一時停止中）**
@@ -31,11 +16,11 @@
 
 ## 完了済みタスク（最新）
 
-### Phase 8: Moleculesコンポーネントのリファクタリング（2024年12月完了）
-- [x] **post-actions.blade.php**の作成と実装
-- [x] **visit-status-badge.blade.php**の作成と実装
-- [x] **x-atoms.avatarコンポーネント**の機能改善
-- [x] **その他の改善**（`getInitial()`関数の分離など）
+### Phase 9: UIの微調整（完了）
+- [x] 複数コンポーネントのリファクタリングとそれに伴う不具合修正
+
+### Phase 8: Moleculesコンポーネントのリファクタリング
+- [x] 複数Moleculesコンポーネントのリファクタリング
 
 ### 過去の完了タスク
 詳細は `src/todo-archive.md` を参照してください。
