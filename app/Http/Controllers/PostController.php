@@ -16,7 +16,7 @@ class PostController extends Controller
         // Eager Loadingで最適化
         $posts = Post::with([
             'shop:id,name,address',        // 店舗情報（必要な列のみ）
-            'user:id,name',                // ユーザー情報（必要な列のみ）
+            'user:id,name,avatar,is_private',                // ユーザー情報（必要な列のみ）
             'comments' => function ($query) {
                 $query->with('user:id,name')  // コメントのユーザー情報
                     ->orderBy('created_at', 'desc')

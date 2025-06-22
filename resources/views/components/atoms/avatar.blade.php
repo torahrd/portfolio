@@ -1,38 +1,55 @@
 @props([
-'src' => null,
-'alt' => 'User Avatar',
-'size' => 'md',
-'online' => false
+'user' => null,
+'size' => 'default', // 'small', 'default', 'large'
+'online' => false,
 ])
 
 @php
-$sizes = [
-'xs' => 'w-6 h-6',
-'sm' => 'w-8 h-8',
-'md' => 'w-10 h-10',
-'lg' => 'w-12 h-12',
-'xl' => 'w-16 h-16',
-'2xl' => 'w-20 h-20',
+$sizeClasses = [
+'small' => 'w-8 h-8',
+'default' => 'w-10 h-10',
+'large' => 'w-12 h-12',
 ];
 
+$fontSizeClasses = [
+'small' => 'text-sm',
+'default' => 'text-lg',
+'large' => 'text-xl',
+];
+
+$avatarSize = $sizeClasses[$size] ?? $sizeClasses['default'];
+$fontSize = $fontSizeClasses[$size] ?? $fontSizeClasses['default'];
+
+$initialsColors = [
+'bg-red-500', 'bg-orange-500', 'bg-amber-500', 'bg-yellow-500',
+'bg-lime-500', 'bg-green-500', 'bg-emerald-500', 'bg-teal-500',
+'bg-cyan-500', 'bg-sky-500', 'bg-blue-500', 'bg-indigo-500',
+'bg-violet-500', 'bg-purple-500', 'bg-fuchsia-500', 'bg-pink-500', 'bg-rose-500'
+];
+$initialsColor = $user ? $initialsColors[$user->id % count($initialsColors)] : 'bg-neutral-200';
+
 $avatarClasses = [
-'relative inline-block rounded-full overflow-hidden bg-neutral-200',
-$sizes[$size] ?? $sizes['md']
+'relative inline-block rounded-full overflow-hidden',
+$avatarSize
 ];
 @endphp
 
+@if($user)
 <div {{ $attributes->merge(['class' => implode(' ', $avatarClasses)]) }}>
-  @if($src)
-  <img src="{{ $src }}" alt="{{ $alt }}" class="w-full h-full object-cover">
-  @else
-  <div class="w-full h-full flex items-center justify-center bg-neutral-300 text-neutral-600">
-    <svg class="w-1/2 h-1/2" fill="currentColor" viewBox="0 0 20 20">
-      <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
-    </svg>
-  </div>
-  @endif
+  <a href="{{ route('profile.show', $user) }}" class="block w-full h-full">
+    @if ($user->avatar_url)
+    <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="w-full h-full object-cover">
+    @else
+    <div class="w-full h-full flex items-center justify-center {{ $initialsColor }}">
+      <span class="font-bold text-white {{ $fontSize }}">
+        {{ \App\Helpers\getInitial($user->name) }}
+      </span>
+    </div>
+    @endif
+  </a>
 
   @if($online)
   <span class="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full bg-green-400 ring-2 ring-white"></span>
   @endif
 </div>
+@endif

@@ -18,28 +18,16 @@ $commentId = $comment->id;
 @endphp
 
 <div id="comment-{{ $commentId }}" class="comment-card {{ $levelClass }}" x-data="{ showReply: false }">
-    <div class="flex space-x-3 p-4">
-        <!-- アバター（プロフィールリンク付き） -->
-        <a href="{{ route('profile.show', $comment->user) }}" class="flex-shrink-0" aria-label="{{ $comment->user->name }}のプロフィールへ">
-            <div class="w-10 h-10 bg-neutral-200 rounded-full overflow-hidden">
-                @if($comment->user->avatar)
-                <img src="{{ $comment->user->avatar_url }}" alt="{{ $comment->user->name }} のアバター" class="w-full h-full object-cover">
-                @else
-                <div class="w-full h-full flex items-center justify-center text-neutral-500 font-bold text-lg">
-                    {{ substr($comment->user->name, 0, 1) }}
-                </div>
-                @endif
-            </div>
-        </a>
+    <div class="flex items-start space-x-4 p-4">
+        <!-- アバター -->
+        <x-atoms.avatar :user="$comment->user" size="default" :showPrivateIcon="true" />
 
         <div class="flex-1 min-w-0">
-            <!-- ヘッダー: ユーザー名と投稿時間 -->
+            <!-- ユーザー名と投稿時間 -->
             <div class="flex items-center space-x-2 mb-1">
-                <a href="{{ route('profile.show', $comment->user) }}"
-                    class="font-medium text-sm text-neutral-800 hover:underline">
+                <a href="{{ route('profile.show', $comment->user) }}" class="font-medium text-sm text-neutral-800 hover:underline">
                     {{ $comment->user->name }}
                 </a>
-
                 <span class="text-neutral-500 text-xs">
                     {{ $comment->created_at->diffForHumans() }}
                 </span>

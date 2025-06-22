@@ -57,8 +57,7 @@
 
             <div class="flex items-center space-x-6 mb-6">
               <x-atoms.avatar
-                :src="auth()->user()->avatar_url"
-                :alt="auth()->user()->name"
+                :user="auth()->user()"
                 size="xl" />
               <div>
                 <h3 class="text-lg font-medium text-neutral-900">{{ auth()->user()->name }}</h3>
