@@ -37,17 +37,12 @@
 
     <!-- 投稿者情報 -->
     <div class="flex items-center space-x-3">
-      <div class="flex-shrink-0">
-        <img
-          src="{{ $post->user->avatar_url ?? '/images/default-avatar.png' }}"
-          alt="{{ $post->user->name }}"
-          class="w-8 h-8 rounded-full object-cover ring-2 ring-neutral-200">
-      </div>
+      <x-atoms.avatar :user="$post->user" size="small" />
       <div class="flex-1 min-w-0">
         <p class="text-sm font-medium text-neutral-900 truncate">
           <a href="{{ route('profile.show', $post->user) }}" class="hover:text-primary-500 transition-colors duration-200">
             {{ $post->user->name }}
-            @if($post->user->is_private ?? false)
+            @if($post->user->is_private)
             <svg class="inline w-3 h-3 ml-1 text-neutral-400" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path>
             </svg>

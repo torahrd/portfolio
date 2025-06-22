@@ -18,10 +18,17 @@
   - [x] 過去のQ&A（AJAX vs リダイレクト）を追記
 
 ### 🟢 通常タスク
-- [ ] **Phase 5: Moleculesコンポーネントのリファクタリング（一時停止中）**
-  - [ ] `shop-card.blade.php` の作成と実装
-  - [ ] `notification-item.blade.php` の作成と実装
+- [~] **Phase 5: Moleculesコンポーネントのリファクタリング（進行中）**
+  - [x] `author-info.blade.php` の作成と実装
+    - [x] 投稿者情報（アバター、名前、投稿時間、プライベートアイコン）を表示するコンポーネントを作成
+    - [x] サイズ調整機能（small, default, large）を実装
+    - [x] `post-card.blade.php`で使用するように修正
+    - [x] `comment-card.blade.php`でも使用するように修正（再利用性の実証）
+  - [ ] `post-actions.blade.php` の作成と実装（次のステップ）
+  - [ ] `visit-status-badge.blade.php` の作成と実装
   - [ ] 他のMoleculesコンポーネントの特定とリファクタリング
+- [ ] **Phase 9: UIの微調整（新規）**
+  - [ ] ヘッダーが複数重なっている問題を修正する
 
 ### ⚪ 低優先タスク
 - [ ] **Phase 6: CSSファイルの統合と整理（一時停止中）**

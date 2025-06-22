@@ -18,28 +18,21 @@ $commentId = $comment->id;
 @endphp
 
 <div id="comment-{{ $commentId }}" class="comment-card {{ $levelClass }}" x-data="{ showReply: false }">
-    <div class="flex space-x-3 p-4">
-        <!-- アバター（プロフィールリンク付き） -->
-        <a href="{{ route('profile.show', $comment->user) }}" class="flex-shrink-0" aria-label="{{ $comment->user->name }}のプロフィールへ">
-            <div class="w-10 h-10 bg-neutral-200 rounded-full overflow-hidden">
-                @if($comment->user->avatar)
-                <img src="{{ $comment->user->avatar_url }}" alt="{{ $comment->user->name }} のアバター" class="w-full h-full object-cover">
-                @else
-                <div class="w-full h-full flex items-center justify-center text-neutral-500 font-bold text-lg">
-                    {{ substr($comment->user->name, 0, 1) }}
-                </div>
-                @endif
-            </div>
-        </a>
+    <div class="flex items-start space-x-4 p-4">
+        <!-- アバター -->
+        <x-atoms.avatar :user="$comment->user" size="default" />
 
         <div class="flex-1 min-w-0">
-            <!-- ヘッダー: ユーザー名と投稿時間 -->
+            <!-- ユーザー名と投稿時間 -->
             <div class="flex items-center space-x-2 mb-1">
-                <a href="{{ route('profile.show', $comment->user) }}"
-                    class="font-medium text-sm text-neutral-800 hover:underline">
+                <a href="{{ route('profile.show', $comment->user) }}" class="font-medium text-sm text-neutral-800 hover:underline">
                     {{ $comment->user->name }}
+                    @if($comment->user->is_private)
+                    <svg class="inline w-3 h-3 ml-1 text-neutral-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path>
+                    </svg>
+                    @endif
                 </a>
-
                 <span class="text-neutral-500 text-xs">
                     {{ $comment->created_at->diffForHumans() }}
                 </span>
