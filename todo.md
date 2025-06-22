@@ -48,10 +48,14 @@
     - [x] アクションボタン部分を`x-molecules.comment-actions`として分離
     - [x] 返信フォーム部分を`x-molecules.comment-reply-form`として分離
     - [x] 動作確認完了
-  - [ ] **shop-info-card.blade.php**のリファクタリング
-    - [ ] アクションボタン部分を`x-molecules.shop-actions`として分離
+  - [~] **shop-info-card.blade.php**のリファクタリング（進行中）
+    - [x] アクションボタン部分を`x-molecules.shop-actions`として分離
     - [ ] 店舗情報行を`x-molecules.shop-info-row`として分離
     - [ ] 動作確認
+  - [x] **shops/show.blade.php**のレイアウト修正
+    - [x] `Undefined variable $slot`エラーを解決（@extends → x-app-layoutコンポーネントに変更）
+    - [x] お気に入り件数の非同期更新に対応
+    - [x] 動作確認完了
   - [ ] ヘッダーが複数重なっている問題を修正する
   - [ ] 同様のリファクタリング箇所の検索と修正
 
