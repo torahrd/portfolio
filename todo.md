@@ -6,94 +6,40 @@
 - [ ] なし
 
 ### 🟡 重要タスク
-- [x] **Phase 3: コメント機能の非同期化実装**
-  - [x] Phase 3.1: サーバーサイドの準備（CommentController確認・修正）
-  - [x] CommentControllerの実装確認（既に非同期対応済み）
-  - [x] JavaScriptコードの再追加（app.js）
-  - [x] Phase 3.2: フロントエンド実装（JavaScript追加）
-  - [x] Phase 3.3: 動作確認
-
-- [x] **Phase 4: 開発ナレッジベースの作成**
-  - [x] `docs/knowledge-base.md` ファイルを作成
-  - [x] 過去のQ&A（AJAX vs リダイレクト）を追記
-
-- [x] **Phase 5: ルールファイルのメタデータ更新**
-  - [x] `.cursor/rules/laravel-backend.mdc` のメタデータ追加（AutoAttached）
-  - [x] `.cursor/rules/tailwind-frontend.mdc` のメタデータ追加（AutoAttached）
-  - [x] `.cursor/rules/error-handling.mdc` のメタデータ追加（AgentRequested）
-  - [x] `.cursor/rules/task-management.mdc` のメタデータ追加（AgentRequested）
-  - [x] `.cursor/rules/knowledge-management.mdc` のメタデータ追加（AgentRequested）
-  - [x] `.cursor/rules/qa-knowledge.mdc` のメタデータ追加（AgentRequested）
-
-- [x] **Phase 6: ルールファイルの問題解決と最適化**
-  - [x] error-handling.mdcの内容確認（段階的実装の強化セクションが存在することを確認）
-  - [x] knowledge-management.mdcの役割重複問題の特定
-  - [x] 新しいルールファイル `.cursor/rules/qa-knowledge.mdc` の作成
-  - [x] error-handling.mdcの最適化（段階的実装の強化、初心者向け解説の充実）
-  - [x] knowledge-management.mdcの最適化（技術的ナレッジベース管理に特化）
-  - [x] ルールファイル間の連携方法の明確化
-
-- [x] **Phase 7: ルールファイルの矛盾修正と参照関係の統一**
-  - [x] 重複する内容の修正（関連ルールファイルセクションの統一）
-  - [x] 参照関係の不整合修正（src/todo.md → todo.md、src/docs/knowledge-base.md → docs/knowledge-base.md）
-  - [x] タスク管理とQ&A記録の役割分担の明確化
-  - [x] 各ルールファイルのメタデータ設定完了
-  - [x] todo.mdのナンバリング修正（重複するPhase番号の解消）
-  - [x] 全体の動作確認完了
+- [ ] なし
 
 ### 🟢 通常タスク
 - [~] **Phase 9: UIの微調整（進行中）**
   - [x] **comment-card.blade.php**のリファクタリング完了
-    - [x] ユーザー情報表示をpost-card.blade.phpと統一（プライベートアイコン位置修正）
+    - [x] ユーザー情報表示をpost-card.blade.phpと統一
     - [x] アクションボタン部分を`x-molecules.comment-actions`として分離
     - [x] 返信フォーム部分を`x-molecules.comment-reply-form`として分離
-    - [x] 動作確認完了
-  - [~] **shop-info-card.blade.php**のリファクタリング（進行中）
+  - [x] **shop-info-card.blade.php**のリファクタリング完了
     - [x] アクションボタン部分を`x-molecules.shop-actions`として分離
-    - [ ] 店舗情報行を`x-molecules.shop-info-row`として分離
-    - [ ] 動作確認
-  - [x] **shops/show.blade.php**のレイアウト修正
-    - [x] `Undefined variable $slot`エラーを解決（@extends → x-app-layoutコンポーネントに変更）
+    - [x] 店舗情報行を`x-molecules.shop-info-row`として分離
+  - [x] **shops/show.blade.php**のレイアウト・機能修正
+    - [x] `Undefined variable $slot`エラーを解決
     - [x] お気に入り件数の非同期更新に対応
-    - [x] 動作確認完了
   - [ ] ヘッダーが複数重なっている問題を修正する
   - [ ] 同様のリファクタリング箇所の検索と修正
 
 ### ⚪ 低優先タスク
 - [ ] **Phase 10: CSSファイルの統合と整理（一時停止中）**
-  - [ ] 不要なCSSファイルの削除（modern-ui.css, neumorphism.css, animations.css, posts.css, forms.css, profile.css）
-  - [ ] app.cssの簡略化
-  - [ ] tailwind.config.jsの簡略化
 - [ ] **Phase 11: JavaScriptの簡略化（一時停止中）**
-  - [ ] Alpine.jsコンポーネントの簡略化
-  - [ ] @verbatimディレクティブの適切な使用
 - [ ] **Phase 12: 最終確認とクリーンアップ（一時停止中）**
-  - [ ] 未使用ファイルの確認
-  - [ ] パフォーマンスの確認
-  - [ ] 最終チェックリストの実行
 - [ ] **Phase 13: 店舗検索機能の実装（一時停止中）**
-  - [ ] バックエンド（Controller, Route）の実装
-  - [ ] フロントエンド（View, `shop-card`コンポーネント）の実装
 
-## 完了済みタスク
+## 完了済みタスク（最新）
 
 ### Phase 8: Moleculesコンポーネントのリファクタリング（2024年12月完了）
 - [x] **post-actions.blade.php**の作成と実装
-  - [x] 投稿カードのアクション（いいね・コメント）をコンポーネント化
-  - [x] リンク不具合の修正（オブジェクト渡しから個別値渡しに変更）
-  - [x] コメントセクションへのスクロール機能修正（`id="comments"`の追加）
 - [x] **visit-status-badge.blade.php**の作成と実装
-  - [x] 訪問ステータスバッジをコンポーネント化
 - [x] **x-atoms.avatarコンポーネント**の機能改善
-  - [x] 日本語名の頭文字表示機能を実装
-  - [x] プライベートアイコン表示機能の統合
-- [x] **その他の改善**
-  - [x] `getInitial()`関数を`AvatarHelper.php`に分離
-  - [x] エラー解決と動作確認完了
+- [x] **その他の改善**（`getInitial()`関数の分離など）
 
 ### 過去の完了タスク
-詳細は `todo-archive.md` を参照してください。
-- **Phase 1-7**: プロジェクト構造分析、Atomsコンポーネントリファクタリング、コメント機能非同期化、ナレッジベース作成、ルールファイル最適化
+詳細は `src/todo-archive.md` を参照してください。
+- **Phase 1-7**: プロジェクト構造分析、Atomsリファクタリング、コメント非同期化、ルール最適化など
 
 ## 問題のあるタスク
 
