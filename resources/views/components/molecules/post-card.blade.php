@@ -15,13 +15,9 @@
       class="group-hover:scale-105 transition-transform duration-300" />
 
     <!-- 訪問ステータスバッジ -->
-    @if(isset($post->visit_status))
-    <div class="absolute top-2 right-2">
-      <span class="px-2 py-1 text-xs font-medium rounded-full {{ $post->visit_status ? 'bg-success-100 text-success-800' : 'bg-warning-100 text-warning-800' }}">
-        {{ $post->visit_status ? '訪問済み' : '訪問予定' }}
-      </span>
-    </div>
-    @endif
+    <x-molecules.visit-status-badge
+      :status="$post->visit_status"
+      class="absolute top-2 right-2" />
   </div>
 
   <!-- 投稿内容 -->
@@ -68,30 +64,10 @@
 
     <!-- アクション（いいね、コメント） -->
     @if($showActions)
-    <div class="flex items-center justify-between pt-3 border-t border-neutral-100">
-      <div class="flex items-center space-x-4">
-        <!-- いいねボタン -->
-        <button class="flex items-center space-x-1 text-neutral-500 hover:text-primary-500 transition-colors duration-200">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-          </svg>
-          <span class="text-sm">{{ $post->likes_count ?? 0 }}</span>
-        </button>
-
-        <!-- コメントボタン -->
-        <button class="flex items-center space-x-1 text-neutral-500 hover:text-primary-500 transition-colors duration-200">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-          </svg>
-          <span class="text-sm">{{ $post->comments_count ?? 0 }}</span>
-        </button>
-      </div>
-
-      <!-- 投稿詳細リンク -->
-      <a href="{{ route('posts.show', $post) }}" class="text-sm text-primary-500 hover:text-primary-600 font-medium">
-        詳細
-      </a>
-    </div>
+    <x-molecules.post-actions
+      :post-id="$post->id"
+      :likes-count="$post->likes_count ?? 0"
+      :comments-count="$post->comments_count ?? 0" />
     @endif
   </div>
 </article>

@@ -42,110 +42,54 @@
   - [x] 全体の動作確認完了
 
 ### 🟢 通常タスク
-- [~] **Phase 8: Moleculesコンポーネントのリファクタリング（進行中）**
-  - [x] `author-info.blade.php` の作成と実装
-    - [x] 投稿者情報（アバター、名前、投稿時間、プライベートアイコン）を表示するコンポーネントを作成
-    - [x] サイズ調整機能（small, default, large）を実装
-    - [x] `post-card.blade.php`で使用するように修正
-    - [x] `comment-card.blade.php`でも使用するように修正（再利用性の実証）
-  - [x] `author-info.blade.php` の削除（設計が不適切だったため）
-  - [x] `x-atoms.avatar`コンポーネントの致命的なエラーを解決
-    - [x] `getInitial()`関数を`AvatarHelper.php`に分離し、関数の再宣言エラーを解消
-    - [x] `avatar.blade.php`が`$user`プロパティ無しで呼ばれた際の`Undefined variable`エラーを解消
-  - [ ] `x-atoms.avatar`コンポーネントの機能改善（ここから着手）
-    - [ ] 日本語名の頭文字表示機能を実装する（仕様: 姓の最初の1文字）
-    - [ ] プライベートアイコン表示機能の統合を再確認し、不要なコードを削除する
-  - [ ] `post-actions.blade.php` の作成と実装
-  - [ ] `visit-status-badge.blade.php` の作成と実装
-  - [ ] 他のMoleculesコンポーネントの特定とリファクタリング
-- [ ] **Phase 12: UIの微調整（新規）**
+- [~] **Phase 9: UIの微調整（進行中）**
+  - [x] **comment-card.blade.php**のリファクタリング完了
+    - [x] ユーザー情報表示をpost-card.blade.phpと統一（プライベートアイコン位置修正）
+    - [x] アクションボタン部分を`x-molecules.comment-actions`として分離
+    - [x] 返信フォーム部分を`x-molecules.comment-reply-form`として分離
+    - [x] 動作確認完了
+  - [ ] **shop-info-card.blade.php**のリファクタリング
+    - [ ] アクションボタン部分を`x-molecules.shop-actions`として分離
+    - [ ] 店舗情報行を`x-molecules.shop-info-row`として分離
+    - [ ] 動作確認
   - [ ] ヘッダーが複数重なっている問題を修正する
+  - [ ] 同様のリファクタリング箇所の検索と修正
 
 ### ⚪ 低優先タスク
-- [ ] **Phase 9: CSSファイルの統合と整理（一時停止中）**
+- [ ] **Phase 10: CSSファイルの統合と整理（一時停止中）**
   - [ ] 不要なCSSファイルの削除（modern-ui.css, neumorphism.css, animations.css, posts.css, forms.css, profile.css）
   - [ ] app.cssの簡略化
   - [ ] tailwind.config.jsの簡略化
-- [ ] **Phase 10: JavaScriptの簡略化（一時停止中）**
+- [ ] **Phase 11: JavaScriptの簡略化（一時停止中）**
   - [ ] Alpine.jsコンポーネントの簡略化
   - [ ] @verbatimディレクティブの適切な使用
-- [ ] **Phase 11: 最終確認とクリーンアップ（一時停止中）**
+- [ ] **Phase 12: 最終確認とクリーンアップ（一時停止中）**
   - [ ] 未使用ファイルの確認
   - [ ] パフォーマンスの確認
   - [ ] 最終チェックリストの実行
+- [ ] **Phase 13: 店舗検索機能の実装（一時停止中）**
+  - [ ] バックエンド（Controller, Route）の実装
+  - [ ] フロントエンド（View, `shop-card`コンポーネント）の実装
 
 ## 完了済みタスク
 
-### Phase 1: プロジェクト構造の分析と整理計画
-- [x] **現状分析**
-  - [x] コンポーネント、CSS、およびそれらの使用状況を分析
-  - [x] 削除対象の特定（使用されていないコンポーネント、複雑すぎるコンポーネント、重複した機能を持つコンポーネント、不要なCSSファイル）
-  - [x] 動作確認（アプリケーションの起動確認、コンパイルエラーの確認）
+### Phase 8: Moleculesコンポーネントのリファクタリング（2024年12月完了）
+- [x] **post-actions.blade.php**の作成と実装
+  - [x] 投稿カードのアクション（いいね・コメント）をコンポーネント化
+  - [x] リンク不具合の修正（オブジェクト渡しから個別値渡しに変更）
+  - [x] コメントセクションへのスクロール機能修正（`id="comments"`の追加）
+- [x] **visit-status-badge.blade.php**の作成と実装
+  - [x] 訪問ステータスバッジをコンポーネント化
+- [x] **x-atoms.avatarコンポーネント**の機能改善
+  - [x] 日本語名の頭文字表示機能を実装
+  - [x] プライベートアイコン表示機能の統合
+- [x] **その他の改善**
+  - [x] `getInitial()`関数を`AvatarHelper.php`に分離
+  - [x] エラー解決と動作確認完了
 
-### Phase 2: Atomsコンポーネントのリファクタリング
-- [x] **ボタンコンポーネントの分割**
-  - [x] 汎用コンポーネント（`<x-atoms.button>`, `<x-atoms.icon-button>`）を削除
-  - [x] 用途別のコンポーネントを新規作成：
-    - [x] `button-primary.blade.php`（主要アクション用）
-    - [x] `button-secondary.blade.php`（補助アクション用）
-    - [x] `button-danger.blade.php`（削除などの破壊的操作用）
-    - [x] `button-icon.blade.php`（アイコンのみの円形ボタン）
-- [x] **バッジコンポーネントの簡略化**
-  - [x] `badge-info.blade.php`（情報バッジ）
-  - [x] `badge-success.blade.php`（成功バッジ）
-  - [x] `badge-warning.blade.php`（警告バッジ）
-- [x] **入力コンポーネントの簡略化**
-  - [x] `input-text.blade.php`（テキスト入力）
-- [x] **アバターコンポーネントの基本実装**
-  - [x] `avatar.blade.php`の作成（基本的なアバター表示機能）
-  - [x] サイズ調整機能（small, default, large）の実装
-  - [x] 頭文字表示機能の実装（英語対応）
-- [x] **使用箇所の更新**
-  - [x] 関連するビューファイルを更新し、新しいコンポーネントを使用するように変更
-  - [x] `Unable to locate a class or view for component` エラーを解決
-- [x] **動作確認**
-  - [x] 各ボタンの表示確認
-  - [x] リンク機能の確認
-  - [x] disabled状態の確認
-  - [x] フォーカス状態の確認
-
-### 開発プラクティスの学習
-- [x] **Git運用の学習**
-  - [x] ブランチ運用（`refactor/*`）の学習
-  - [x] コミットメッセージ規約（`feat:`, `fix:`）の学習
-- [x] **Bladeコンポーネントの学習**
-  - [x] 設計思想（`@props`, `{{ $slot }}`）と構文の学習
-  - [x] コンポーネントの責任（役割）の理解
-- [x] **エラー解決の学習**
-  - [x] Laravelのエラー解決のためのスタックトレース読解
-  - [x] エラーメッセージの解釈と対処法の学習
-- [x] **TailwindCSSの学習**
-  - [x] ユーティリティファーストの概念学習
-  - [x] クラス名の意味と使用方法の理解
-
-### セットアップと計画
-- [x] **ルールファイルの作成と統合**
-  - [x] `.cursor/rules/core-rules.mdc` の作成（基本開発ルール）
-  - [x] `.cursor/rules/beginner-guidelines.mdc` の作成（初心者向け解説方針）
-  - [x] `.cursor/rules/laravel-backend.mdc` の作成（Laravelバックエンド開発時のみ参照）
-  - [x] `.cursor/rules/tailwind-frontend.mdc` の作成（フロントエンド開発時のみ参照）
-  - [x] `.cursor/rules/error-handling.mdc` の作成（エラー対応時のみ参照）
-  - [x] `.cursor/rules/task-management.mdc` の作成（タスク管理時のみ参照）
-  - [x] `.cursor/rules/knowledge-management.mdc` の作成（ナレッジ記録時のみ参照）
-  - [x] 古いルールファイルの削除（problem-solving-process.mdc, refactoring-guidelines.mdc, error-handling-guidelines.mdc, rule-compliance-check.mdc）
-  - [x] `todo.md` の作成と初期化
-- [x] **開発環境のセットアップ**
-  - [x] Docker環境の起動確認（portfolio_app, portfolio_nginx, portfolio_mysql）
-  - [x] Laravel 10.48.29 の動作確認
-  - [x] データベースマイグレーションの確認（全23個のマイグレーション完了）
-  - [x] Nginxサーバーの動作確認（http://localhost でアクセス可能）
-  - [x] Node.js環境の確認（npm 10.8.1）
-  - [x] フロントエンドアセットのビルド完了
-
-## 進行中のタスク
-
-- [~] **Phase 8: Moleculesコンポーネントのリファクタリング（進行中）**
-  - [~] `x-atoms.avatar`コンポーネントの改善
+### 過去の完了タスク
+詳細は `todo-archive.md` を参照してください。
+- **Phase 1-7**: プロジェクト構造分析、Atomsコンポーネントリファクタリング、コメント機能非同期化、ナレッジベース作成、ルールファイル最適化
 
 ## 問題のあるタスク
 
@@ -153,13 +97,7 @@
 
 ## 今後の予定タスク
 
-### Phase 8.5: Moleculesコンポーネントのリファクタリング（一時停止中）
-- [ ] **カードコンポーネントの簡略化**
-  - [ ] `shop-card.blade.php` の作成と実装
-  - [ ] `notification-item.blade.php` の作成と実装
-  - [ ] 他のMoleculesコンポーネントの特定とリファクタリング
-
-### Phase 9: CSSファイルの統合と整理（一時停止中）
+### Phase 10: CSSファイルの統合と整理（一時停止中）
 - [ ] **不要なCSSファイルの削除**
   - [ ] `resources/css/components/modern-ui.css` の削除
   - [ ] `resources/css/components/neumorphism.css` の削除
@@ -174,7 +112,7 @@
   - [ ] 不要な設定の削除
   - [ ] 日本語フォント設定の最適化
 
-### Phase 10: JavaScriptの簡略化（一時停止中）
+### Phase 11: JavaScriptの簡略化（一時停止中）
 - [ ] **Alpine.jsコンポーネントの簡略化**
   - [ ] コメントセクションの簡略化
   - [ ] その他のAlpine.jsコンポーネントの簡略化
@@ -182,7 +120,7 @@
   - [ ] JavaScriptコードの保護
   - [ ] Blade構文との競合回避
 
-### Phase 11: 最終確認とクリーンアップ（一時停止中）
+### Phase 12: 最終確認とクリーンアップ（一時停止中）
 - [ ] **未使用ファイルの確認**
   - [ ] 未使用のコンポーネントの検索と削除
 - [ ] **パフォーマンスの確認**
@@ -248,8 +186,8 @@
 - タスク管理システムが稼働開始しました
 - 環境セッティングが完了し、開発準備が整いました
 - アプリケーションは http://localhost でアクセス可能です
-- **現在の優先タスク**: Phase 8 Moleculesコンポーネントのリファクタリング
-- **一時停止中のタスク**: Phase 9以降のリファクタリング作業
+- **現在の優先タスク**: Phase 9 UIの微調整
+- **一時停止中のタスク**: Phase 10以降のリファクタリング作業
 - リファクタリングの基本原則：1コンポーネント1機能、拡張性より単純性、可読性最優先、保守性重視、Tailwindクラス直接記述
 - **新しいルール体系**: 8つのルールファイルで包括的な開発ガイドラインを構築
 - **ルール見落とし防止**: 作業開始前に必ず全てのルールファイルを参照し、適用状況を確認
@@ -257,22 +195,18 @@
 ## 現在のコンポーネント状況
 
 ### x-atoms.avatar コンポーネント
-- **現状**: 基本的な実装済み
+- **現状**: 機能改善完了
 - **機能**: 
   - アバター画像表示（`$user->avatar_url`）
-  - 頭文字表示（英語対応、`strtoupper(substr($user->name, 0, 1))`）
+  - 頭文字表示（日本語対応、`AvatarHelper::getInitial()`）
   - サイズ調整（small, default, large）
-  - オンライン状態表示（未使用）
+  - プライベートアイコン表示（統合済み）
 - **使用箇所**: 
   - `post-card.blade.php`（size="small"）
   - `comment-card.blade.php`（size="default"）
-- **改善が必要な点**:
-  - 日本語名の頭文字表示対応
-  - プライベートアイコン表示機能の追加
-  - `$user->profile_photo_url`への対応
-  - 現在のプライベートアイコン表示ロジックの統合
+  - `post/show.blade.php`（size="lg"）
 
-### プライベートアイコン表示の現状
-- **post-card.blade.php**: ユーザー名の横に個別に表示
-- **comment-card.blade.php**: ユーザー名の横に個別に表示
-- **統合予定**: `x-atoms.avatar`コンポーネントに統合して重複を削除
+### Moleculesコンポーネント
+- **post-actions.blade.php**: 投稿カードのアクション（いいね・コメント）をコンポーネント化
+- **visit-status-badge.blade.php**: 訪問ステータスバッジをコンポーネント化
+- **統合完了**: 重複コードの削除と再利用性の向上 

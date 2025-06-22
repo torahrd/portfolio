@@ -124,7 +124,7 @@
       </div>
 
       <!-- コメントセクション -->
-      <div class="mt-8">
+      <div id="comments" class="mt-8">
         <div class="bg-white rounded-xl shadow-card p-6">
           <h3 class="text-lg font-bold text-neutral-900 mb-6">
             コメント (<span id="comment-count">{{ $post->comments->where('parent_id', null)->count() }}</span>件)
