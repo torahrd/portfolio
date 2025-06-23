@@ -22,29 +22,8 @@ $maxWidthClass = [
 @endphp
 
 <div
-    x-data="{ 
-        show: @js($show),
-        focusables() {
-            let selector = 'a, button, input:not([type=\'hidden\']), textarea, select, details, [tabindex]:not([tabindex=\'-1\'])';
-            return [...this.$el.querySelectorAll(selector)].filter(el => !el.hasAttribute('disabled'));
-        },
-        firstFocusable() { return this.focusables()[0]; },
-        lastFocusable() { return this.focusables().slice(-1)[0]; },
-        nextFocusable() { return this.focusables()[this.nextFocusableIndex()]; },
-        prevFocusable() { return this.focusables()[this.prevFocusableIndex()]; },
-        nextFocusableIndex() { return (this.focusables().indexOf(document.activeElement) + 1) % (this.focusables().length + 1); },
-        prevFocusableIndex() { return Math.max(0, this.focusables().indexOf(document.activeElement)) - 1; },
-    }"
-    x-init="
-        $watch('show', value => {
-            if (value) {
-                document.body.classList.add('overflow-hidden');
-                setTimeout(() => firstFocusable()?.focus(), 100);
-            } else {
-                document.body.classList.remove('overflow-hidden');
-            }
-        })
-    "
+    x-data="modal(@js($show))"
+    x-init="init()"
     x-on:open-modal.window="$event.detail == '{{ $name }}' ? show = true : null"
     x-on:close-modal.window="$event.detail == '{{ $name }}' ? show = false : null"
     x-on:close.stop="show = false"

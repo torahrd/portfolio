@@ -134,7 +134,7 @@
 
       <div class="form-actions">
         <button type="submit" class="btn btn-primary">更新</button>
-        <a href="{{ route('posts.show', $post->id) }}" class="btn btn-secondary">キャンセル</a>
+        <a href="{{ route('posts.show', $post->id) }}" class="btn btn-secondary" autofocus>キャンセル</a>
       </div>
     </form>
   </div>

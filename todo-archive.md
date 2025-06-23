@@ -143,7 +143,7 @@
 - 環境情報
 - ルールファイル構成 
 
-### Phase 10: CSSファイルの統合と整理（2024年6月完了）
+### Phase 10: CSSファイルの統合と整理（2025年6月完了）
 - [x] **不要なCSSファイルの削除**
   - [x] `resources/css/components/modern-ui.css` の削除
   - [x] `resources/css/components/neumorphism.css` の削除
@@ -158,3 +158,27 @@
   - [x] 未使用コンポーネント（modern-card.blade.php）の削除
 
 **まとめ**: CSS設計のシンプル化と不要ファイルの削除により、ビルドサイズ削減と保守性向上を実現。 
+
+### Phase 11: JavaScriptの簡略化（2025年6月完了）
+- [x] コメントセクションのAlpine.jsロジック外部JS化
+- [x] モーダル系（components/ui/modal.blade.php, components/atoms/modal.blade.php, components/modal.blade.php）のAlpine.jsロジック外部JS化
+- [x] ドロップダウン（components/dropdown.blade.php）のAlpine.jsロジック外部JS化
+- [x] ギャラリー（components/organisms/photo-gallery.blade.php, components/molecules/post-gallery.blade.php）のAlpine.jsロジック外部JS化
+- [x] サジェストバー（components/molecules/search-bar.blade.php）のAlpine.jsロジック外部JS化
+- [x] ヘッダー・ナビゲーション（components/organisms/header.blade.php, layouts/navigation.blade.php）のAlpine.jsロジック外部JS化
+- [x] フォーム系（profile/partials/update-password-form.blade.php など）のAlpine.jsロジック外部JS化
+  - [x] 外部JSファイルの新規作成
+  - [x] Blade側の@verbatim削除・x-data修正
+  - [x] Viteでのimport・window登録
+  - [x] 動作確認
+- [x] @verbatimディレクティブの適切な使用
+  - [x] JavaScriptコードの保護
+  - [x] Blade構文との競合回避
+
+#### 進行記録・メモ
+- コメント削除・投稿削除などの確認ダイアログのautofocus対応（標準confirm()のためカスタムモーダル化しない限りautofocus制御不可、現状仕様でOK）
+- コード整理・不要なUI/JSの削除（返信フォームのキャンセルボタン関連の不要なコード整理）
+- 投稿編集画面・プロフィール編集画面のキャンセルボタンautofocus対応
+- コメント返信フォームのautofocus・不要なコード整理
+- ユーザー削除ボタンが表示されない問題の調査・対応（未着手）
+- UIアクセシビリティ改善は段階的に進める方針 
