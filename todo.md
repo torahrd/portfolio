@@ -9,8 +9,7 @@
 - [ ] なし
 
 ### 🟢 通常タスク
-- [ ] **Phase 10: CSSファイルの統合と整理（一時停止中）**
-- [ ] **Phase 11: JavaScriptの簡略化（一時停止中）**
+- [ ] **Phase 11: JavaScriptの簡略化（進行中）**
 - [ ] **Phase 12: 最終確認とクリーンアップ（一時停止中）**
 - [ ] **Phase 13: 店舗検索機能の実装（一時停止中）**
 
@@ -32,22 +31,7 @@
 
 ## 今後の予定タスク
 
-### Phase 10: CSSファイルの統合と整理（一時停止中）
-- [ ] **不要なCSSファイルの削除**
-  - [ ] `resources/css/components/modern-ui.css` の削除
-  - [ ] `resources/css/components/neumorphism.css` の削除
-  - [ ] `resources/css/components/animations.css` の削除
-  - [ ] `resources/css/components/posts.css` の削除
-  - [ ] `resources/css/components/forms.css` の削除
-  - [ ] `resources/css/components/profile.css` の削除
-- [ ] **app.cssの簡略化**
-  - [ ] 必要最小限のカスタムユーティリティのみ残す
-  - [ ] テキスト省略用のユーティリティクラス追加
-- [ ] **tailwind.config.jsの簡略化**
-  - [ ] 不要な設定の削除
-  - [ ] 日本語フォント設定の最適化
-
-### Phase 11: JavaScriptの簡略化（一時停止中）
+### Phase 11: JavaScriptの簡略化（進行中）
 - [ ] **Alpine.jsコンポーネントの簡略化**
   - [ ] コメントセクションの簡略化
   - [ ] その他のAlpine.jsコンポーネントの簡略化
@@ -68,6 +52,8 @@
   - [ ] レスポンシブデザインが機能しているか確認
   - [ ] アクセシビリティ要件を満たしているか確認
   - [ ] コンソールエラーがないか確認
+
+### Phase 13: 店舗検索機能の実装（一時停止中）
 
 ## 環境情報
 

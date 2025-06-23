@@ -48,29 +48,6 @@ export default {
                     400: "#E8D29F",
                     500: "#DFC688",
                 },
-                // エラー解消用mochaカラー
-                mocha: {
-                    100: "#F5E6D3",
-                    200: "#E8D5B7",
-                    300: "#DBC49C",
-                    400: "#CEB380",
-                    500: "#A47864", // animations.cssで使用
-                    600: "#8B6450",
-                    700: "#72503C",
-                    800: "#593C28",
-                    900: "#402814",
-                },
-                sage: {
-                    100: "#F0F4ED",
-                    200: "#E1E9DB",
-                    300: "#D2DEC9",
-                    400: "#C3D3B7",
-                    500: "#87A96B",
-                    600: "#739157",
-                    700: "#5F7943",
-                    800: "#4B612F",
-                    900: "#37491B",
-                },
                 success: {
                     50: "#F0FDF4",
                     100: "#DCFCE7",
@@ -94,14 +71,6 @@ export default {
                     500: "#EF4444",
                     600: "#DC2626",
                     700: "#B91C1C",
-                },
-                electric: {
-                    50: "#EFF6FF",
-                    100: "#DBEAFE",
-                    200: "#BFDBFE",
-                    500: "#3B82F6",
-                    600: "#2563EB",
-                    700: "#1D4ED8",
                 },
             },
             fontSize: {
@@ -131,37 +100,7 @@ export default {
                     xl: "1200px", // 最大幅を1200pxに設定
                 },
             },
-            animation: {
-                "fade-in": "fadeIn 0.5s ease-in-out",
-                "slide-up": "slideUp 0.3s ease-out",
-                "slide-down": "slideDown 0.3s ease-out",
-                "scale-in": "scaleIn 0.2s ease-out",
-                "bounce-subtle": "bounceSubtle 0.6s ease-in-out",
-            },
-            keyframes: {
-                fadeIn: {
-                    "0%": { opacity: "0" },
-                    "100%": { opacity: "1" },
-                },
-                slideUp: {
-                    "0%": { opacity: "0", transform: "translateY(20px)" },
-                    "100%": { opacity: "1", transform: "translateY(0)" },
-                },
-                slideDown: {
-                    "0%": { opacity: "0", transform: "translateY(-20px)" },
-                    "100%": { opacity: "1", transform: "translateY(0)" },
-                },
-                scaleIn: {
-                    "0%": { opacity: "0", transform: "scale(0.9)" },
-                    "100%": { opacity: "1", transform: "scale(1)" },
-                },
-                bounceSubtle: {
-                    "0%, 100%": { transform: "translateY(0)" },
-                    "50%": { transform: "translateY(-5px)" },
-                },
-            },
             boxShadow: {
-                glass: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
                 card: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
                 "card-hover":
                     "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
