@@ -121,7 +121,7 @@
                             <hr>
 
                             <div class="d-flex justify-content-between">
-                                <a href="{{ route('profile.show', $user) }}" class="btn btn-secondary">
+                                <a href="{{ route('profile.show', $user) }}" class="btn btn-secondary" autofocus>
                                     <i class="fas fa-arrow-left"></i> キャンセル
                                 </a>
                                 <button type="submit" class="btn btn-primary">

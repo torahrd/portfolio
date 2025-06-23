@@ -74,7 +74,8 @@
                 <x-atoms.button-secondary
                   size="sm"
                   type="button"
-                  x-on:click="showReplyForm = null; replyContent = ''">
+                  x-on:click="showReplyForm = null; replyContent = ''"
+                  :autofocus="showReplyForm === $comment->id">
                   キャンセル
                 </x-atoms.button-secondary>
                 <x-atoms.button-primary

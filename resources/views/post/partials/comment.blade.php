@@ -46,7 +46,7 @@ if ($level <= 4) {
         <textarea name="body" rows="2" placeholder="<?php echo $comment->user->name; ?>さんに返信...&#10;💡 @でスレッド参加者を検索" required></textarea>
         <div style="margin-top: 5px;">
           <button type="submit" class="btn btn-primary btn-small">返信投稿</button>
-          <button type="button" onclick="toggleReplyForm(<?php echo $comment->id; ?>)" class="btn btn-secondary btn-small">キャンセル</button>
+          <button type="button" onclick="toggleReplyForm(<?php echo $comment->id; ?>)" class="btn btn-secondary btn-small" autofocus>キャンセル</button>
         </div>
       </form>
     </div>
