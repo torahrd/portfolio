@@ -31,8 +31,9 @@
         <!-- プロフィール情報セクション -->
         <div class="profile-card">
           <div class="profile-header text-center">
-            <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}"
-              class="profile-avatar mb-3">
+            <img src="{{ $user->avatar }}" alt="{{ $user->name }}"
+              class="profile-avatar mb-3 rounded-circle shadow-sm"
+              style="width: 128px; height: 128px; object-fit: cover; background: #f3f4f6; border: 1px solid rgba(108,117,125,0.4);" />
             <h1 class="profile-name">{{ $user->name }}</h1>
 
             @if($user->bio)

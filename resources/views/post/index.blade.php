@@ -118,7 +118,7 @@
       <a href="{{ route('profile.show', auth()->user()) }}" class="flex flex-col items-center justify-center space-y-1 text-neutral-500 hover:text-neutral-700 transition-colors duration-200">
         <div class="w-6 h-6 rounded-full overflow-hidden ring-2 ring-neutral-200">
           <img
-            src="{{ auth()->user()->avatar_url ?? '/images/default-avatar.png' }}"
+            src="{{ auth()->user()->avatar ?? '/images/default-avatar.png' }}"
             alt="{{ auth()->user()->name }}"
             class="w-full h-full object-cover">
         </div>

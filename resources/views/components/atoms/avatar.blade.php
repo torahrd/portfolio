@@ -37,8 +37,8 @@ $avatarSize
 @if($user)
 <div {{ $attributes->merge(['class' => implode(' ', $avatarClasses)]) }}>
   <a href="{{ route('profile.show', $user) }}" class="block w-full h-full">
-    @if ($user->avatar_url)
-    <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="w-full h-full object-cover">
+    @if ($user->avatar)
+    <img src="{{ $user->avatar }}" alt="{{ $user->name }}" class="w-full h-full object-cover">
     @else
     <div class="w-full h-full flex items-center justify-center {{ $initialsColor }}">
       <span class="font-bold text-white {{ $fontSize }}">

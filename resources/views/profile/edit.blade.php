@@ -42,8 +42,8 @@
                             <!-- プロフィール画像 -->
                             <div class="mb-4 text-center">
                                 <div class="position-relative d-inline-block" style="width: 128px; height: 128px;">
-                                    @if($user->avatar_url)
-                                    <img id="profilePreview" src="{{ $user->avatar_url }}"
+                                    @if($user->avatar)
+                                    <img id="profilePreview" src="{{ $user->avatar }}"
                                         alt="プロフィール画像"
                                         class="rounded-circle shadow-sm object-fit-cover"
                                         style="width: 128px; height: 128px; object-fit: cover; background: #f3f4f6; border: 1px solid rgba(108,117,125,0.4);" />
