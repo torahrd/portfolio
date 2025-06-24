@@ -112,9 +112,9 @@
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- 左カラム: 写真ギャラリー -->
         <div class="lg:col-span-2">
-          <x-molecules.post-gallery
-            :images="[]"
-            :post-title="$post->shop->name" />
+          @if($post->image_url)
+          <img src="{{ $post->image_url }}" alt="投稿画像" class="w-full rounded-lg mb-4">
+          @endif
         </div>
 
         <!-- 右カラム: 投稿詳細 -->

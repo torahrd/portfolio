@@ -205,3 +205,15 @@
   - [x] コンソールエラーがないか確認
 - [x] profile/show.blade.php・profile/edit.blade.php から不要なJS/CSS読み込み記述を削除
 - [x] プロフィール画面のアクセシビリティ警告（No label associated with a form field）修正 
+
+### Phase 14: 画像アップロード機能のCloudinary移行・整理（2024年6月完了）
+- Cloudinary連携の基本動作確認（APIキー設定・サービスプロバイダ登録・マイグレーション実施）
+- Postモデルにimage_urlカラム追加・$fillable修正
+- 投稿作成・保存・表示の一連の流れをCloudinaryアップロードに統一
+- 既存のローカル/複数画像アップロード機能の削除・Blade/JSの整理
+- コントローラの不要処理・バリデーション整理
+- 動作確認・エラー対応
+- ドキュメント・todo.mdの更新
+
+**要約:**
+- 投稿画像アップロード機能をCloudinaryに統一し、1枚のみアップロード仕様でリリース。複数画像やリッチUIは今後の拡張候補としてtodo.mdに記載。 
