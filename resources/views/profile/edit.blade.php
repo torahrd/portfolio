@@ -12,6 +12,11 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- カスタムCSS -->
+    <style>
+        label[for="avatar"]:hover {
+            opacity: 1 !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -36,17 +41,23 @@
 
                             <!-- プロフィール画像 -->
                             <div class="mb-4 text-center">
-                                <div class="profile-image-container">
+                                <div class="position-relative d-inline-block" style="width: 128px; height: 128px;">
+                                    @if($user->avatar_url)
                                     <img id="profilePreview" src="{{ $user->avatar_url }}"
-                                        alt="プロフィール画像" class="profile-image-edit">
-                                    <div class="image-overlay">
-                                        <label for="avatar" class="image-upload-btn">
-                                            <i class="fas fa-camera"></i>
-                                            <span>画像を変更</span>
-                                        </label>
-                                        <input type="file" id="avatar" name="avatar"
-                                            accept="image/*" style="display: none;">
+                                        alt="プロフィール画像"
+                                        class="rounded-circle shadow-sm object-fit-cover"
+                                        style="width: 128px; height: 128px; object-fit: cover; background: #f3f4f6; border: 1px solid rgba(108,117,125,0.4);" />
+                                    @else
+                                    <div id="profilePreview" class="rounded-circle d-flex align-items-center justify-content-center shadow-sm bg-light text-secondary"
+                                        style="width: 128px; height: 128px; font-size: 2.5rem; background: #f3f4f6; border: 1px solid rgba(108,117,125,0.4);">
+                                        <i class="fas fa-user"></i>
                                     </div>
+                                    @endif
+                                    <label for="avatar" class="position-absolute d-flex align-items-center justify-content-center" style="bottom: 10px; right: 10px; z-index: 2; background: #fff; width: 36px; height: 36px; border-radius: 50%; padding: 0; border: 1px solid rgba(13,110,253,0.5); box-shadow: 0 1px 3px rgba(0,0,0,0.06); cursor: pointer; opacity: 0.85; transition: opacity 0.2s;">
+                                        <i class="fas fa-camera text-primary" style="font-size: 1rem;"></i>
+                                        <span class="visually-hidden">画像を変更</span>
+                                    </label>
+                                    <input type="file" id="avatar" name="avatar" accept="image/*" style="display: none;">
                                 </div>
                                 @error('avatar')
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -158,14 +169,20 @@
                 const file = e.target.files[0];
                 if (file) {
                     // ファイルサイズチェック
-                    if (file.size > 2 * 1024 * 1024) {
-                        alert('ファイルサイズは2MB以下にしてください');
+                    if (file.size > 4 * 1024 * 1024) {
+                        alert('ファイルサイズは4MB以下にしてください');
                         return;
                     }
-
                     const reader = new FileReader();
                     reader.onload = function(e) {
-                        $('#profilePreview').attr('src', e.target.result);
+                        // imgタグがあればsrcを書き換え、なければimgタグを生成して差し替え
+                        let $preview = $('#profilePreview');
+                        if ($preview.is('img')) {
+                            $preview.attr('src', e.target.result);
+                        } else {
+                            // divをimgに差し替え
+                            $preview.replaceWith('<img id="profilePreview" src="' + e.target.result + '" alt="プロフィール画像" class="rounded-circle border border-2 border-secondary shadow-sm object-fit-cover" style="width: 128px; height: 128px; object-fit: cover; background: #f3f4f6;" />');
+                        }
                     };
                     reader.readAsDataURL(file);
                 }

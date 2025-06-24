@@ -168,17 +168,22 @@ class ProfileController extends Controller
      */
     private function handleAvatarUpload($file, User $user): string
     {
-        // 古いアバターを削除
-        if ($user->avatar) {
+        // 既存のローカルファイル名の場合のみ削除
+        if ($user->avatar && !str_starts_with($user->avatar, 'http')) {
             Storage::disk('public')->delete('avatars/' . $user->avatar);
         }
 
-        // 新しいファイル名の生成
-        $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
-
-        // ファイル保存
-        $file->storeAs('avatars', $filename, 'public');
-
-        return $filename;
+        // Cloudinaryへアップロード
+        $uploaded = \CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary::upload($file->getRealPath(), [
+            'folder' => 'user_avatars',
+            'transformation' => [
+                'width' => 400,
+                'height' => 400,
+                'crop' => 'fill',
+                'gravity' => 'face',
+                'quality' => 'auto:good'
+            ]
+        ]);
+        return $uploaded->getSecurePath(); // CloudinaryのURLをそのまま保存
     }
 }
