@@ -39,13 +39,19 @@
 - [x] **パフォーマンスの確認**
   - [x] ビルドサイズの確認
   - [x] Tailwindのパージが正しく動作しているか確認
-- [ ] **最終チェックリスト**
+- [x] 投稿一覧画面が表示されない問題の調査・修正（2025/06/24 完了）
+  - Bladeレイアウトのslot/yield不整合による描画エラーを修正
+  - layouts/app.blade.phpの<main>を{{ $slot }}に戻し、x-app-layout利用時のslotエラーを解消
+  - post-cardのnullガードも追加し、全投稿が正常に表示されることを確認
+- [ ] 最終チェックリスト
   - [ ] 全ページが正常に表示されるか確認
   - [ ] フォームが正常に動作するか確認
   - [ ] エラーメッセージが適切に表示されるか確認
   - [ ] レスポンシブデザインが機能しているか確認
   - [ ] アクセシビリティ要件を満たしているか確認
   - [ ] コンソールエラーがないか確認
+- [x] profile/show.blade.php・profile/edit.blade.php から不要なJS/CSS読み込み記述を削除
+- [x] プロフィール画面のアクセシビリティ警告（No label associated with a form field）修正
 
 ### Phase 13: 店舗検索機能の実装（一時停止中）
 - [ ] 検索機能の不具合調査・修正
@@ -147,6 +153,7 @@
 - [x] 投稿作成画面の$slot未定義エラー修正（app.blade.phpの@yield対応）
 - [x] 投稿作成画面のアクセシビリティ警告（No label associated with a form field）修正
 - [x] 画像404エラー（default-avatar.png, placeholder-food.jpg）解消（ダミー画像自動生成）
-- [ ] `profile/show.blade.php`・`profile/edit.blade.php` から不要なJS/CSS読み込み記述を削除
+- [x] profile/show.blade.php・profile/edit.blade.php から不要なJS/CSS読み込み記述を削除
+- [x] プロフィール画面のアクセシビリティ警告（No label associated with a form field）修正
 - [ ] 投稿データの有無をDBで確認し、必要に応じてデータリカバリまたはロジック修正
 

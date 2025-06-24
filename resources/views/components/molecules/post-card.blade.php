@@ -33,6 +33,7 @@
 
     <!-- 投稿者情報 -->
     <div class="flex items-center space-x-3">
+      @if($post->user)
       <x-atoms.avatar :user="$post->user" size="small" />
       <div class="flex-1 min-w-0">
         <div class="flex items-center space-x-1">
@@ -53,6 +54,14 @@
           {{ $post->created_at->diffForHumans() }}
         </p>
       </div>
+      @else
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-medium text-neutral-900 truncate">不明なユーザー</p>
+        <p class="text-xs text-neutral-500">
+          {{ $post->created_at->diffForHumans() }}
+        </p>
+      </div>
+      @endif
     </div>
 
     <!-- 投稿本文（もしある場合） -->

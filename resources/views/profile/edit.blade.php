@@ -12,7 +12,6 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- カスタムCSS -->
-    <link rel="stylesheet" href="{{ asset('css/profile.css') }}">
 </head>
 
 <body>
