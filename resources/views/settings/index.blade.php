@@ -85,8 +85,8 @@
                   <h3 class="text-sm font-medium text-neutral-900">プロフィールを非公開にする</h3>
                   <p class="text-sm text-neutral-600">フォロワーのみが投稿を見ることができます</p>
                 </div>
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" class="sr-only peer">
+                <label class="relative inline-flex items-center cursor-pointer" for="privacy_private">
+                  <input type="checkbox" id="privacy_private" name="privacy_private" class="sr-only peer">
                   <div class="w-11 h-6 bg-neutral-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
                 </label>
               </div>
@@ -96,8 +96,8 @@
                   <h3 class="text-sm font-medium text-neutral-900">フォロー申請の承認が必要</h3>
                   <p class="text-sm text-neutral-600">新しいフォロワーを手動で承認します</p>
                 </div>
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" class="sr-only peer">
+                <label class="relative inline-flex items-center cursor-pointer" for="privacy_approval">
+                  <input type="checkbox" id="privacy_approval" name="privacy_approval" class="sr-only peer">
                   <div class="w-11 h-6 bg-neutral-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
                 </label>
               </div>
@@ -114,8 +114,8 @@
                   <h3 class="text-sm font-medium text-neutral-900">いいね通知</h3>
                   <p class="text-sm text-neutral-600">投稿にいいねされた時に通知します</p>
                 </div>
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" class="sr-only peer" checked>
+                <label class="relative inline-flex items-center cursor-pointer" for="notify_like">
+                  <input type="checkbox" id="notify_like" name="notify_like" class="sr-only peer" checked>
                   <div class="w-11 h-6 bg-neutral-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
                 </label>
               </div>
@@ -125,8 +125,8 @@
                   <h3 class="text-sm font-medium text-neutral-900">コメント通知</h3>
                   <p class="text-sm text-neutral-600">投稿にコメントされた時に通知します</p>
                 </div>
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" class="sr-only peer" checked>
+                <label class="relative inline-flex items-center cursor-pointer" for="notify_comment">
+                  <input type="checkbox" id="notify_comment" name="notify_comment" class="sr-only peer" checked>
                   <div class="w-11 h-6 bg-neutral-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
                 </label>
               </div>
@@ -136,8 +136,8 @@
                   <h3 class="text-sm font-medium text-neutral-900">フォロー通知</h3>
                   <p class="text-sm text-neutral-600">新しいフォロワーがいる時に通知します</p>
                 </div>
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" class="sr-only peer" checked>
+                <label class="relative inline-flex items-center cursor-pointer" for="notify_follow">
+                  <input type="checkbox" id="notify_follow" name="notify_follow" class="sr-only peer" checked>
                   <div class="w-11 h-6 bg-neutral-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
                 </label>
               </div>

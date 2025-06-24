@@ -25,7 +25,8 @@ class Post extends Model
         'reference_link',
         'memo',
         'visit_status',
-        'private_status'
+        'private_status',
+        'image_url',
     ];
 
     public function user()

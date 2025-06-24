@@ -8,6 +8,7 @@ use App\Models\Post;
 use App\Models\Folder;
 use App\Models\Shop;
 use App\Models\User;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class PostController extends Controller
 {
@@ -64,8 +65,19 @@ class PostController extends Controller
 
     public function store(Request $request, Post $post)
     {
+        // 画像バリデーション追加
+        $request->validate([
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:4096',
+        ]);
+
         $input = $request['post'];
         $input['user_id'] = Auth::user()->id;
+
+        // Cloudinary画像アップロード処理
+        if ($request->hasFile('image')) {
+            $image_url = \CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary::upload($request->file('image')->getRealPath())->getSecurePath();
+            $input['image_url'] = $image_url;
+        }
 
         // フォルダIDを取得して除外
         $folderId = $input['folder_id'] ?? null;
@@ -75,14 +87,13 @@ class PostController extends Controller
 
         // フォルダの関連付け（単一フォルダ）
         if ($folderId) {
-            // 自分のフォルダかチェック
             $userFolderIds = auth()->user()->folders->pluck('id')->toArray();
             if (in_array($folderId, $userFolderIds)) {
                 $post->folders()->attach($folderId);
             }
         }
 
-        return redirect('/posts');
+        return redirect()->route('posts.show', $post->id);
     }
 
     public function show(Post $post)
