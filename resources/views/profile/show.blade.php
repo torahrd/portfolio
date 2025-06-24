@@ -21,7 +21,7 @@
 
     <!-- 戻るボタン -->
     <div class="mb-3">
-      <a href="{{ url()->previous() }}" class="btn btn-outline-secondary">
+      <a href="{{ route('posts.index') }}" class="btn btn-outline-secondary">
         <i class="fas fa-arrow-left"></i> 戻る
       </a>
     </div>
