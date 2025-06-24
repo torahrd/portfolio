@@ -14,8 +14,8 @@
 
         <!-- 既存店舗から選択 -->
         <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 mb-2">店舗を選択してください</label>
-          <select name="post[shop_id]" class="w-full px-3 py-2 border border-gray-300 rounded-md" required>
+          <label for="shop_id" class="block text-sm font-medium text-gray-700 mb-2">店舗を選択してください</label>
+          <select id="shop_id" name="post[shop_id]" class="w-full px-3 py-2 border border-gray-300 rounded-md" required>
             <option value="">-- 選択してください --</option>
             @php
             // 仮のデータ（実際はコントローラーから渡す）
@@ -87,18 +87,19 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <!-- 訪問日時 -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">訪問日時</label>
+            <label for="visit_time" class="block text-sm font-medium text-gray-700 mb-1">訪問日時</label>
             <input
+              id="visit_time"
               type="datetime-local"
               name="post[visit_time]"
-              value="{{ now()->format('Y-m-d\TH:i') }}"
+              value="{{ now()->format('Y-m-d\\TH:i') }}"
               class="w-full px-3 py-2 border border-gray-300 rounded-md">
           </div>
 
           <!-- 予算 -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">予算（円）</label>
-            <select name="post[budget]" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+            <label for="budget" class="block text-sm font-medium text-gray-700 mb-1">予算（円）</label>
+            <select id="budget" name="post[budget]" class="w-full px-3 py-2 border border-gray-300 rounded-md">
               <option value="">選択してください</option>
               <option value="1000">〜1,000円</option>
               <option value="2000">1,000〜2,000円</option>
@@ -112,8 +113,9 @@
 
           <!-- リピートしたいメニュー -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">リピートしたいメニュー</label>
+            <label for="repeat_menu" class="block text-sm font-medium text-gray-700 mb-1">リピートしたいメニュー</label>
             <input
+              id="repeat_menu"
               type="text"
               name="post[repeat_menu]"
               placeholder="例：特製ラーメン"
@@ -122,8 +124,9 @@
 
           <!-- 気になるメニュー -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">気になるメニュー</label>
+            <label for="interest_menu" class="block text-sm font-medium text-gray-700 mb-1">気になるメニュー</label>
             <input
+              id="interest_menu"
               type="text"
               name="post[interest_menu]"
               placeholder="例：餃子セット"
@@ -133,8 +136,9 @@
 
         <!-- メモ -->
         <div class="mt-4">
-          <label class="block text-sm font-medium text-gray-700 mb-1">メモ・感想</label>
+          <label for="memo" class="block text-sm font-medium text-gray-700 mb-1">メモ・感想</label>
           <textarea
+            id="memo"
             name="post[memo]"
             rows="4"
             placeholder="お店の雰囲気、料理の感想、サービスについてなど..."
