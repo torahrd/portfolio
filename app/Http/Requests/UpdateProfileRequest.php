@@ -70,4 +70,14 @@ class UpdateProfileRequest extends FormRequest
             'is_private' => 'プライバシー設定'
         ];
     }
+
+    public function validated($key = null, $default = null)
+    {
+        $data = parent::validated($key, $default);
+        // is_privateが送信されていなければfalseをセット
+        if (!array_key_exists('is_private', $data)) {
+            $data['is_private'] = false;
+        }
+        return $data;
+    }
 }
