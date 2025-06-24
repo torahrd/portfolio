@@ -29,7 +29,7 @@ class UpdateProfileRequest extends FormRequest
                 'nullable',
                 'image',
                 'mimes:jpg,jpeg,png,webp',
-                'max:2048',
+                'max:4096',
                 'dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000'
             ],
             'is_private' => ['boolean']
@@ -51,7 +51,7 @@ class UpdateProfileRequest extends FormRequest
             'website.max' => 'ウェブサイトURLは255文字以内で入力してください',
             'avatar.image' => 'プロフィール画像は画像ファイルである必要があります',
             'avatar.mimes' => 'プロフィール画像はJPEG、PNG、WebP形式のみ対応しています',
-            'avatar.max' => 'プロフィール画像は2MB以下にしてください',
+            'avatar.max' => 'プロフィール画像は4MB以下にしてください',
             'avatar.dimensions' => 'プロフィール画像は100x100px以上、2000x2000px以下にしてください'
         ];
     }

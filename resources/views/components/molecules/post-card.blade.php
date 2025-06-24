@@ -7,12 +7,14 @@
 <article class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden group {{ $compact ? 'p-3' : 'p-4' }}">
   <!-- 投稿画像 -->
   <div class="relative mb-3">
-    <x-atoms.image
-      :src="$post->image_url ?? '/images/placeholder-food.jpg'"
-      :alt="$post->shop->name ?? '店舗画像'"
-      aspect-ratio="16/9"
-      rounded="lg"
-      class="group-hover:scale-105 transition-transform duration-300" />
+    <a href="{{ route('posts.show', $post) }}" class="block">
+      <x-atoms.image
+        :src="$post->image_url ?? '/images/placeholder-food.jpg'"
+        :alt="$post->shop->name ?? '店舗画像'"
+        aspect-ratio="16/9"
+        rounded="lg"
+        class="group-hover:scale-105 transition-transform duration-300" />
+    </a>
 
     <!-- 訪問ステータスバッジ -->
     <x-molecules.visit-status-badge
