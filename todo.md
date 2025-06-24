@@ -130,16 +130,31 @@
 - **visit-status-badge.blade.php**: 訪問ステータスバッジをコンポーネント化
 - **統合完了**: 重複コードの削除と再利用性の向上 
 
-- [x] プロフィール編集画面UI改善
-  - 丸型・固定サイズの画像プレビュー、カメラアイコンの円・位置・透過・バランス調整
-  - 画像がない場合のプレースホルダーも丸型・中央にアイコン表示
-  - 枠線を細く半透明に統一、全体の色味・余白も他ページと統一
-  - 画像選択時のプレビュー切り替えも対応
-  - 動作確認済み（2024/06/XX）
-- [~] Nginxの413エラー調査・対応
-  - client_max_body_size 4M; の反映を試みるも、Dockerfile/COPY/ボリュームマウント等で反映されず
-  - 現状は2MB以下の画像のみアップロード可能へ修正中
-  - 本番運用や4MB超対応は今後の課題として残す
+- [x] プロフィール画像が表示されない・UI崩れの修正
+  - DBのカラム名（avatar_url→avatar）不一致を修正し、Bladeファイル全体でavatar参照に統一
+  - プロフィール詳細画面の画像表示が崩れる問題をインラインスタイル追加で修正
+  - 他画面も画像表示・UI問題なしを確認
+  - 動作確認済み（2025/06/25）
+- [~] Nginxの413エラー（Request Entity Too Large）で2MB超の画像アップロード不可
+  - default.confでclient_max_body_size 4M;を設定済みだが、Docker環境で反映されない問題が継続中
+  - php.iniのupload_max_filesize, post_max_sizeは十分大きい（64M/128M）
+  - 1MB以下の画像はアップロード可能
+  - **調査結果**: Docker+nginx環境ではdefault.confのマウントやCOPYが正しく反映されているか、nginxコンテナ内の/etc/nginx/conf.d/default.confを必ず確認する必要あり
+  - 反映されない場合は、ボリュームマウントやDockerfileのCOPYのパス・順序・キャッシュクリア（--no-cache）を再確認
+  - nginx再起動（reload/restart）も必須
+  - それでも反映されない場合、nginxイメージのビルドやdocker-compose.ymlのvolumes設定を見直す
+  - 参考: [Qiita記事1](https://qiita.com/mejileben/items/5a4702d897793efc9aae) [Qiita記事2](https://qiita.com/mumucochimu/items/d380fafbe8445d3459dd)
+  - **今後の対応案**:
+    - 1. nginxコンテナ内で/etc/nginx/conf.d/default.confの内容を直接確認し、client_max_body_sizeが反映されているか検証
+    - 2. 必要に応じてdocker-compose.ymlのvolumes設定やDockerfileのCOPY順序を修正
+    - 3. 反映後はdocker compose down/up --buildで完全再起動
+    - 4. それでも不可ならnginxイメージのキャッシュクリアや別イメージ検証も検討
+  - 投稿作成画面・プロフィール編集画面ともに同様の現象を確認
+  - **現状は1MB以下で運用、4MB以上対応は継続調査・今後の課題**
+
+- [ ] 4MB以上の画像アップロード対応（Nginx設定反映問題の恒久対応）
+  - 上記調査・修正を段階的に実施
+  - 完全対応後は動作確認・ドキュメント反映
 
 ## 今後の予定
 - Nginxのclient_max_body_size本番対応・4MB超の画像アップロード対応
