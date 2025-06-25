@@ -15,6 +15,15 @@
 
 ## 完了済みタスク（最新）
 
+### Phase 15-2: Google Places API (New)連携・API動作確認（2025年6月完了）
+- [x] `/api/shops/search-places`・`/api/shops/place-details`のAPI連携動作確認
+  - [x] Google Cloud ConsoleでAPIキー制限・有効化設定を調整
+  - [x] Laravel側でskagarwal/google-places-apiパッケージのPlacesNew対応に切り替え
+  - [x] getPlaceDetailsのfieldsリストを新API仕様に修正
+  - [x] レスポンス・エラー調査（laravel.log出力）でリファラー制限・fields不一致等の問題を解決
+  - [x] Google Places API (New)から正しい店舗情報（電話番号・住所・営業時間等）が取得できることを確認
+- **まとめ**: API連携のエラー調査・設定修正・パッケージ切り替え・フィールド仕様対応など、Google Places API (New)の正しい利用に至るまでの一連の流れを完了。
+
 ### Phase 11: JavaScriptの簡略化（完了）
 - [x] Alpine.jsロジックの外部JS化・@verbatim整理（主要コンポーネント全般）
 
@@ -81,7 +90,8 @@
 ### Phase 15-2: 情報取得機能実装（2-3週間）
 
 #### 2.1 店舗検索・情報取得
-- [ ] 投稿作成画面での店舗名検索機能
+- [~] 投稿作成画面での店舗名検索機能
+  - [x] API連携動作確認（/api/shops/search-places, /api/shops/place-details）
   - [ ] リアルタイム検索（Autocomplete）
   - [ ] 検索結果の表示・選択機能
 - [ ] Google Places APIからの情報自動取得

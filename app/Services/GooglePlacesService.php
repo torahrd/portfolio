@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Exception;
-use SKAgarwal\GoogleApi\Places\GooglePlaces;
+use SKAgarwal\GoogleApi\PlacesNew\GooglePlaces;
 
 class GooglePlacesService
 {
@@ -21,7 +21,7 @@ class GooglePlacesService
 
   public function __construct()
   {
-    $this->client = new GooglePlaces(config('services.google.places_api_key'));
+    $this->client = GooglePlaces::make(key: config('services.google.places_api_key'));
   }
 
   /**
@@ -81,15 +81,15 @@ class GooglePlacesService
         throw new Exception('API使用量上限に達しました。しばらく時間をおいてから再試行してください。');
       }
 
-      // デフォルトフィールド
+      // デフォルトフィールド（Google Places API (New)仕様に修正）
       $defaultFields = [
-        'name',
-        'formatted_address',
-        'formatted_phone_number',
-        'website',
-        'opening_hours',
-        'geometry',
-        'place_id'
+        'id',
+        'displayName',
+        'shortFormattedAddress',
+        'nationalPhoneNumber',
+        'websiteUri',
+        'regularOpeningHours',
+        'location',
       ];
 
       $requestedFields = $fields ?: $defaultFields;
@@ -99,15 +99,15 @@ class GooglePlacesService
 
       // キャッシュから取得を試行（24時間キャッシュ）
       $result = Cache::remember($cacheKey, 86400, function () use ($placeId, $requestedFields) {
-        $response = $this->client->placeDetails($placeId, [
-          'fields' => implode(',', $requestedFields),
-          'language' => 'ja'
+        // 新API用のplaceDetails呼び出し
+        $response = $this->client->placeDetails($placeId, $requestedFields);
+        Log::info('Google Places API response', [
+          'place_id' => $placeId,
+          'response' => $response->json()
         ]);
-
         if (!$response->successful()) {
           throw new Exception('Place details API呼び出しに失敗しました: ' . $response->status());
         }
-
         return $response->json()['result'] ?? [];
       });
 

@@ -9,8 +9,11 @@ class TextNormalizationService
   /**
    * 店舗名を正規化
    */
-  public function normalizeShopName(string $name): string
+  public function normalizeShopName(?string $name): string
   {
+    if (is_null($name)) {
+      $name = '';
+    }
     // 1. ひらがな・カタカナ統一（カタカナに統一）
     $normalized = mb_convert_kana($name, 'KV');
 
@@ -18,25 +21,28 @@ class TextNormalizationService
     $normalized = mb_convert_kana($normalized, 'RNASKV');
 
     // 3. 空白・記号の正規化
-    $normalized = preg_replace('/\s+/', '', $normalized);
-    $normalized = preg_replace('/[()（）]/', '', $normalized);
-    $normalized = preg_replace('/[「」『』]/', '', $normalized);
-    $normalized = preg_replace('/[・･]/', '', $normalized);
+    $normalized = preg_replace('/\s+/', '', $normalized) ?? '';
+    $normalized = preg_replace('/[()（）]/', '', $normalized) ?? '';
+    $normalized = preg_replace('/[「」『』]/', '', $normalized) ?? '';
+    $normalized = preg_replace('/[・･]/', '', $normalized) ?? '';
 
     // 4. 小文字に統一
     $normalized = strtolower($normalized);
 
     // 5. 特殊文字の除去
-    $normalized = preg_replace('/[^\w\s]/u', '', $normalized);
+    $normalized = preg_replace('/[^\w\s]/u', '', $normalized) ?? '';
 
-    return trim($normalized);
+    return trim(is_string($normalized) ? $normalized : '');
   }
 
   /**
    * 住所を正規化
    */
-  public function normalizeAddress(string $address): string
+  public function normalizeAddress(?string $address): string
   {
+    if (is_null($address)) {
+      $address = '';
+    }
     // 1. ひらがな・カタカナ統一
     $normalized = mb_convert_kana($address, 'KV');
 
@@ -44,7 +50,7 @@ class TextNormalizationService
     $normalized = mb_convert_kana($normalized, 'RNASKV');
 
     // 3. 空白の正規化（単一スペースに統一）
-    $normalized = preg_replace('/\s+/', ' ', $normalized);
+    $normalized = preg_replace('/\s+/', ' ', $normalized) ?? '';
 
     // 4. 都道府県の正規化
     $normalized = $this->normalizePrefecture($normalized);
@@ -55,7 +61,7 @@ class TextNormalizationService
     // 6. 番地の正規化
     $normalized = $this->normalizeStreetNumber($normalized);
 
-    return trim($normalized);
+    return trim(is_string($normalized) ? $normalized : '');
   }
 
   /**

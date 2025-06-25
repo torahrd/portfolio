@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\FollowRequestController;
+use App\Http\Controllers\Api\ShopSearchController;
 use App\Http\Controllers\ShopController;
 
 /*
@@ -30,6 +31,16 @@ Route::middleware('auth')->group(function () {
         ->name('api.follow-requests.mark-read');
 });
 
+// Google Places API連携の店舗検索（認証必須）
+Route::middleware('auth:sanctum')->group(function () {
+    // 店舗検索（Google Places API + 既存データベース）
+    Route::get('/shops/search-places', [ShopSearchController::class, 'search'])
+        ->name('api.shops.search-places');
+
+    // 店舗詳細情報取得（Google Places API）
+    Route::get('/shops/place-details', [ShopSearchController::class, 'getPlaceDetails'])
+        ->name('api.shops.place-details');
+});
 
 // 認証が必要なAPI
 Route::middleware(['auth:sanctum'])->group(function () {
