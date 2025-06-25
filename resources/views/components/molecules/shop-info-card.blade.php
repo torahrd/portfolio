@@ -74,17 +74,5 @@
   </div>
 
   <!-- 評価とレビュー数 -->
-  @if($shop->rating || $shop->reviews_count)
-  <div class="flex items-center justify-between mt-4 pt-4 border-t border-neutral-200">
-    @if($shop->rating)
-    <x-atoms.rating :rating="$shop->rating" size="sm" />
-    @endif
-
-    @if($shop->reviews_count)
-    <span class="text-sm text-neutral-500">
-      {{ $shop->reviews_count }}件のレビュー
-    </span>
-    @endif
-  </div>
-  @endif
+  {{-- 評価機能は個人の好み重視のため除外 --}}
 </div>
