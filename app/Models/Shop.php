@@ -31,6 +31,9 @@ class Shop extends Model
         'latitude',
         'longitude',
         'created_by',
+        // Google Places API連携用フィールド
+        'google_place_id',
+        'formatted_phone_number',
     ];
 
     protected $casts = [
@@ -197,5 +200,152 @@ class Shop extends Model
         return $query->whereHas('favorited_by_users', function ($q) use ($days) {
             $q->where('shop_favorites.created_at', '>=', now()->subDays($days));
         });
+    }
+
+    /**
+     * Google Place IDで店舗を検索するスコープ
+     */
+    public function scopeByGooglePlaceId($query, $placeId)
+    {
+        return $query->where('google_place_id', $placeId);
+    }
+
+    /**
+     * Google Place IDが設定されている店舗を取得するスコープ
+     */
+    public function scopeWithGooglePlaceId($query)
+    {
+        return $query->whereNotNull('google_place_id');
+    }
+
+    /**
+     * Google Place IDが設定されていない店舗を取得するスコープ
+     */
+    public function scopeWithoutGooglePlaceId($query)
+    {
+        return $query->whereNull('google_place_id');
+    }
+
+    /**
+     * 座標が設定されている店舗を取得するスコープ
+     */
+    public function scopeWithCoordinates($query)
+    {
+        return $query->whereNotNull('latitude')->whereNotNull('longitude');
+    }
+
+    /**
+     * 指定された座標から一定距離内の店舗を取得するスコープ
+     */
+    public function scopeNearby($query, $latitude, $longitude, $radiusKm = 10)
+    {
+        return $query->withCoordinates()
+            ->selectRaw(
+                '*, 
+                (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance',
+                [$latitude, $longitude, $latitude]
+            )
+            ->having('distance', '<=', $radiusKm)
+            ->orderBy('distance');
+    }
+
+    /**
+     * Google Places APIから取得した情報で店舗を更新
+     */
+    public function updateFromGooglePlaces(array $placeData): bool
+    {
+        $updateData = [];
+
+        // 基本情報の更新
+        if (isset($placeData['name'])) {
+            $updateData['name'] = $placeData['name'];
+        }
+
+        if (isset($placeData['formatted_address'])) {
+            $updateData['address'] = $placeData['formatted_address'];
+        }
+
+        if (isset($placeData['formatted_phone_number'])) {
+            $updateData['formatted_phone_number'] = $placeData['formatted_phone_number'];
+        }
+
+        if (isset($placeData['website'])) {
+            $updateData['website'] = $placeData['website'];
+        }
+
+        // 座標情報の更新
+        if (isset($placeData['geometry']['location'])) {
+            $location = $placeData['geometry']['location'];
+            $updateData['latitude'] = $location['lat'];
+            $updateData['longitude'] = $location['lng'];
+        }
+
+        // Place IDの設定
+        if (isset($placeData['place_id'])) {
+            $updateData['google_place_id'] = $placeData['place_id'];
+        }
+
+        return $this->update($updateData);
+    }
+
+    /**
+     * Google Places APIから営業時間を取得してbusiness_hoursテーブルに保存
+     */
+    public function updateBusinessHoursFromGooglePlaces(array $placeData): bool
+    {
+        if (!isset($placeData['opening_hours']['periods'])) {
+            return false;
+        }
+
+        // 既存の営業時間を削除
+        $this->business_hours()->delete();
+
+        $periods = $placeData['opening_hours']['periods'];
+        $businessHours = [];
+
+        foreach ($periods as $period) {
+            if (isset($period['open']) && isset($period['close'])) {
+                $businessHours[] = [
+                    'shop_id' => $this->id,
+                    'day' => $period['open']['day'],
+                    'open_time' => $this->formatGoogleTime($period['open']['time']),
+                    'close_time' => $this->formatGoogleTime($period['close']['time']),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+        }
+
+        if (!empty($businessHours)) {
+            return $this->business_hours()->insert($businessHours);
+        }
+
+        return false;
+    }
+
+    /**
+     * Google Places APIの時間形式（HHMM）をMySQLのtime形式（HH:MM:SS）に変換
+     */
+    private function formatGoogleTime(string $googleTime): string
+    {
+        $hour = substr($googleTime, 0, 2);
+        $minute = substr($googleTime, 2, 2);
+        return sprintf('%02d:%02d:00', $hour, $minute);
+    }
+
+    /**
+     * 同じGoogle Place IDを持つ店舗が存在するかチェック
+     */
+    public static function existsByGooglePlaceId(string $placeId): bool
+    {
+        return static::where('google_place_id', $placeId)->exists();
+    }
+
+    /**
+     * Google Place IDで店舗を取得
+     */
+    public static function findByGooglePlaceId(string $placeId): ?self
+    {
+        return static::where('google_place_id', $placeId)->first();
     }
 }

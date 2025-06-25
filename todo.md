@@ -33,40 +33,50 @@
 ### Phase 15-1: 基盤構築（1-2週間）
 
 #### 1.1 環境設定とAPI準備
-- [ ] Google Cloud ConsoleでのAPIキー取得
-  - [ ] Maps JavaScript API有効化
-  - [ ] Places API有効化
-  - [ ] Geocoding API有効化
-- [ ] 環境変数設定（フロントエンド用・バックエンド用分離）
-  - [ ] `.env`ファイルにAPIキー追加
-  - [ ] 本番環境での制限設定
-- [ ] 必要なパッケージインストール
-  - [ ] `skagarwal/google-places-api`（v3.0+）
+- [x] Google Cloud ConsoleでのAPIキー取得
+  - [x] Maps JavaScript API有効化
+  - [x] Places API有効化
+  - [x] Geocoding API有効化
+- [x] 環境変数設定（フロントエンド用・バックエンド用分離）
+  - [x] `.env`ファイルにAPIキー追加
+  - [x] 本番環境での制限設定
+- [x] 必要なパッケージインストール
+  - [x] `skagarwal/google-places-api`（v3.0+）
 
 #### 1.2 データベース設計
-- [ ] 既存の`latitude`、`longitude`フィールドの活用確認
-- [ ] Google Places API用の追加フィールド設計
-  - [ ] `google_place_id`（ユニーク制約）
-  - [ ] `name_normalized`（正規化された店舗名）
-  - [ ] `address_normalized`（正規化された住所）
-  - [ ] `phone`、`website`、`description`
-  - [ ] `rating`、`user_ratings_total`
-  - [ ] `opening_hours`（JSON形式）
-  - [ ] `last_google_update`（タイムスタンプ）
-- [ ] インデックス設計
-  - [ ] `google_place_id`のユニークインデックス
-  - [ ] `name_normalized`、`address_normalized`の複合インデックス
-  - [ ] `latitude`、`longitude`の空間インデックス
+- [x] 既存の`latitude`、`longitude`フィールドの活用確認
+- [x] Google Places API用の追加フィールド設計
+  - [x] `google_place_id`（ユニーク制約）
+  - [x] `formatted_phone_number`（Google Places APIから取得した電話番号）
+  - [x] `website`（Google Places APIから取得した公式サイトURL）
+  - [x] 既存の`address`フィールドを活用（正規化された住所）
+  - [x] 既存の`business_hours`テーブルを活用（営業時間）
+- [x] インデックス設計
+  - [x] `google_place_id`のインデックス
+  - [x] `latitude`、`longitude`の複合インデックス
 
 #### 1.3 サービス層実装
-- [ ] `GooglePlacesService`クラス作成
-  - [ ] 多段階キャッシュ戦略実装（Redis + DB）
-  - [ ] エラーハンドリング・回路ブレーカーパターン
-  - [ ] レート制限対応
-- [ ] `TextNormalizationService`クラス作成
-  - [ ] 店舗名の正規化機能
-  - [ ] 住所の正規化機能
-  - [ ] 多言語対応（ひらがな・カタカナ・漢字・ローマ字）
+- [x] `GooglePlacesService`クラス作成
+  - [x] 多段階キャッシュ戦略実装（Redis + DB）
+  - [x] エラーハンドリング・回路ブレーカーパターン
+  - [x] レート制限対応
+- [x] `TextNormalizationService`クラス作成
+  - [x] 店舗名の正規化機能
+  - [x] 住所の正規化機能
+  - [x] 多言語対応（ひらがな・カタカナ・漢字・ローマ字）
+
+#### 1.4 モデル層実装
+- [x] Shopモデルの更新
+  - [x] Google Places API関連フィールドの追加
+  - [x] スコープメソッドの実装
+  - [x] API連携メソッドの実装
+  - [x] 営業時間更新メソッドの実装
+
+#### 1.5 評価機能の削除（個人の好み重視のため）
+- [x] 評価関連ファイルの削除
+  - [x] `rating.blade.php`コンポーネントの削除
+  - [x] `shop-info-card.blade.php`から評価表示部分の削除
+  - [x] `GooglePlacesService.php`から評価関連フィールドの削除
 
 ### Phase 15-2: 情報取得機能実装（2-3週間）
 
