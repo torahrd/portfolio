@@ -125,11 +125,17 @@ class PostController extends Controller
             $googlePlacesService = app(\App\Services\GooglePlacesService::class);
             $placeDetails = $googlePlacesService->getPlaceDetails($placeId);
 
-            // 店舗データを作成
+            // 取得した詳細情報を詳細にログ出力
+            Log::info('Google Places API (New) 店舗詳細取得', [
+                'place_id' => $placeId,
+                'details' => $placeDetails
+            ]);
+
+            // 店舗データを作成（Google Places API (New)仕様に合わせてフィールド名修正）
             $shopData = [
                 'name' => $placeDetails['displayName']['text'] ?? 'Unknown Shop',
-                'address' => $placeDetails['shortFormattedAddress'] ?? '',
-                'formatted_phone_number' => $placeDetails['formatted_phone_number'] ?? '',
+                'address' => $placeDetails['formattedAddress'] ?? '',
+                'formatted_phone_number' => $placeDetails['nationalPhoneNumber'] ?? '',
                 'website' => $placeDetails['websiteUri'] ?? '',
                 'google_place_id' => $placeId,
                 'created_by' => Auth::user()->id,
@@ -137,8 +143,8 @@ class PostController extends Controller
 
             // 座標情報があれば追加
             if (isset($placeDetails['location'])) {
-                $shopData['latitude'] = $placeDetails['location']['latitude'];
-                $shopData['longitude'] = $placeDetails['location']['longitude'];
+                $shopData['latitude'] = $placeDetails['location']['latitude'] ?? null;
+                $shopData['longitude'] = $placeDetails['location']['longitude'] ?? null;
             }
 
             // 店舗を作成

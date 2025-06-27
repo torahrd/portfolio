@@ -142,7 +142,7 @@ class GooglePlacesService
           // Google Places API (New)のplaceDetailsエンドポイントを呼び出し
           $response = Http::withHeaders([
             'X-Goog-Api-Key' => $this->apiKey,
-            'X-Goog-FieldMask' => 'places.id,places.displayName,places.formattedAddress,places.location,places.types,places.nationalPhoneNumber,places.websiteUri,places.businessStatus,places.priceLevel,places.rating,places.userRatingCount,places.utcOffsetMinutes,places.primaryType,places.primaryTypeDisplayName,places.currentOpeningHours,places.regularOpeningHours,places.internationalPhoneNumber'
+            'X-Goog-FieldMask' => 'id,displayName,formattedAddress,location,types,nationalPhoneNumber,websiteUri,businessStatus,priceLevel,rating,userRatingCount,utcOffsetMinutes,primaryType,primaryTypeDisplayName,currentOpeningHours,regularOpeningHours,internationalPhoneNumber'
           ])->get("{$this->baseUrl}/places/{$placeId}", [
             'languageCode' => $language
           ]);

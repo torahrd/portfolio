@@ -289,43 +289,45 @@ class Shop extends Model
      */
     public function updateBusinessHoursFromGooglePlaces(array $placeData): bool
     {
-        if (!isset($placeData['opening_hours']['periods'])) {
+        // 新API仕様: regularOpeningHours → periods
+        $periods = null;
+        if (isset($placeData['regularOpeningHours']['periods'])) {
+            $periods = $placeData['regularOpeningHours']['periods'];
+        } elseif (isset($placeData['opening_hours']['periods'])) {
+            // 旧仕様も一応サポート
+            $periods = $placeData['opening_hours']['periods'];
+        }
+        if (!$periods) {
             return false;
         }
 
         // 既存の営業時間を削除
         $this->business_hours()->delete();
 
-        $periods = $placeData['opening_hours']['periods'];
         $businessHours = [];
-
         foreach ($periods as $period) {
             if (isset($period['open']) && isset($period['close'])) {
                 $businessHours[] = [
                     'shop_id' => $this->id,
                     'day' => $period['open']['day'],
-                    'open_time' => $this->formatGoogleTime($period['open']['time']),
-                    'close_time' => $this->formatGoogleTime($period['close']['time']),
+                    'open_time' => $this->formatGoogleTime($period['open']['hour'], $period['open']['minute']),
+                    'close_time' => $this->formatGoogleTime($period['close']['hour'], $period['close']['minute']),
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
             }
         }
-
         if (!empty($businessHours)) {
             return $this->business_hours()->insert($businessHours);
         }
-
         return false;
     }
 
     /**
-     * Google Places APIの時間形式（HHMM）をMySQLのtime形式（HH:MM:SS）に変換
+     * Google Places APIの時間形式（hour, minute）をMySQLのtime形式（HH:MM:SS）に変換
      */
-    private function formatGoogleTime(string $googleTime): string
+    private function formatGoogleTime($hour, $minute): string
     {
-        $hour = substr($googleTime, 0, 2);
-        $minute = substr($googleTime, 2, 2);
         return sprintf('%02d:%02d:00', $hour, $minute);
     }
 
