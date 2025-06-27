@@ -18,11 +18,15 @@ class ShopSeeder extends Seeder
     {
         $faker = Faker::create();
 
-        DB::table('shops')->insert([
-            'name' => $faker->company(),
-            'address' => $faker->address(),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        $shops = [];
+        for ($i = 0; $i < 10; $i++) {
+            $shops[] = [
+                'name' => $faker->company(),
+                'address' => $faker->address(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+        DB::table('shops')->insert($shops);
     }
 }

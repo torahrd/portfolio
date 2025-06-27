@@ -27,28 +27,33 @@ class ShopSearchController extends Controller
     }
 
     /**
-     * 店舗名で検索（Google Places API + 既存データベース）
+     * 店舗名で検索（Google Places APIベース + フォールバック）
      */
     public function search(Request $request): JsonResponse
     {
         try {
             // バリデーション
             $request->validate([
-                'query' => 'required|string|min:1|max:100',
+                'query' => 'required|string|min:2|max:100',
                 'language' => 'string|in:ja,en',
             ]);
 
             $query = $request->input('query');
             $language = $request->input('language', 'ja');
 
-            // 1. 既存データベースから検索
-            $existingShops = $this->searchExistingShops($query);
+            // 1. Google Places APIから検索（メイン）
+            $results = $this->searchGooglePlaces($query, $language);
 
-            // 2. Google Places APIから検索
-            $googlePlaces = $this->searchGooglePlaces($query, $language);
+            // 2. 結果が少ない場合は既存DBからフォールバック
+            if (count($results) < 3) {
+                $fallbackResults = $this->searchExistingShopsFallback($query);
+                $results = $this->mergeResultsOptimized($results, $fallbackResults);
+            }
 
-            // 3. 結果を統合・重複除去
-            $results = $this->mergeResults($existingShops, $googlePlaces);
+            // 3. 結果を5件に制限
+            $results = array_slice($results, 0, 5);
+
+            Log::debug('APIレスポンス直前', ['results' => $results]);
 
             return response()->json([
                 'success' => true,
@@ -61,57 +66,41 @@ class ShopSearchController extends Controller
                 'error' => $e->getMessage()
             ]);
 
-            return response()->json([
-                'success' => false,
-                'message' => '検索中にエラーが発生しました。',
-                'error' => $e->getMessage()
-            ], 500);
+            // エラー時は既存DB検索にフォールバック
+            try {
+                $fallbackResults = $this->searchExistingShopsFallback($query);
+                $results = array_slice($fallbackResults, 0, 5);
+
+                return response()->json([
+                    'success' => true,
+                    'data' => $results,
+                    'count' => count($results),
+                    'note' => 'Google Places APIが利用できませんでした。既存データから検索結果を表示しています。'
+                ]);
+            } catch (Exception $fallbackError) {
+                Log::error('Fallback search also failed', [
+                    'query' => $request->input('query'),
+                    'error' => $fallbackError->getMessage()
+                ]);
+
+                return response()->json([
+                    'success' => false,
+                    'message' => '検索中にエラーが発生しました。',
+                    'error' => $e->getMessage()
+                ], 500);
+            }
         }
     }
 
     /**
-     * 既存データベースから店舗を検索
-     */
-    private function searchExistingShops(string $query): array
-    {
-        // 正規化されたクエリで検索
-        $normalizedQuery = $this->textNormalizationService->normalizeShopName($query);
-
-        $shops = Shop::where(function ($q) use ($query, $normalizedQuery) {
-            $q->where('name', 'LIKE', "%{$query}%")
-                ->orWhere('name', 'LIKE', "%{$normalizedQuery}%");
-        })
-            ->with(['business_hours', 'creator:id,name'])
-            ->limit(5)
-            ->get();
-
-        return $shops->map(function ($shop) {
-            return [
-                'id' => $shop->id,
-                'name' => $shop->name,
-                'address' => $shop->address,
-                'phone' => $shop->phone,
-                'website' => $shop->website,
-                'google_place_id' => $shop->google_place_id,
-                'latitude' => $shop->latitude,
-                'longitude' => $shop->longitude,
-                'is_existing' => true,
-                'source' => 'database',
-                'favorites_count' => $shop->favorites_count,
-                'recent_posts_count' => $shop->posts()->count(),
-            ];
-        })->toArray();
-    }
-
-    /**
-     * Google Places APIから店舗を検索
+     * Google Places APIから店舗を検索（メイン検索）
      */
     private function searchGooglePlaces(string $query, string $language): array
     {
         try {
             $places = $this->googlePlacesService->searchPlace($query, $language);
 
-            return collect($places)->map(function ($place) {
+            return collect($places)->map(function ($place) use ($query) {
                 // 既存の店舗かチェック
                 $existingShop = Shop::findByGooglePlaceId($place['place_id'] ?? '');
 
@@ -119,18 +108,22 @@ class ShopSearchController extends Controller
                     'id' => $existingShop?->id,
                     'name' => $place['name'] ?? '',
                     'address' => $place['formatted_address'] ?? '',
-                    'phone' => $place['formatted_phone_number'] ?? '',
+                    'formatted_phone_number' => $place['formatted_phone_number'] ?? '',
                     'website' => $place['website'] ?? '',
                     'google_place_id' => $place['place_id'] ?? '',
                     'latitude' => $place['geometry']['location']['lat'] ?? null,
                     'longitude' => $place['geometry']['location']['lng'] ?? null,
                     'is_existing' => $existingShop !== null,
                     'source' => 'google_places',
+                    'match_score' => $this->calculateMatchScore($place['name'] ?? '', $query),
                     'rating' => $place['rating'] ?? null,
                     'user_ratings_total' => $place['user_ratings_total'] ?? null,
                     'opening_hours' => $place['opening_hours'] ?? null,
                 ];
-            })->toArray();
+            })
+                ->sortByDesc('match_score') // 完全一致を優先
+                ->values()
+                ->toArray();
         } catch (Exception $e) {
             Log::warning('Google Places API search failed', [
                 'query' => $query,
@@ -142,31 +135,169 @@ class ShopSearchController extends Controller
     }
 
     /**
-     * 検索結果を統合・重複除去
+     * 既存データベースから店舗を検索（フォールバック用）
      */
-    private function mergeResults(array $existingShops, array $googlePlaces): array
+    private function searchExistingShopsFallback(string $query): array
     {
+        Log::debug('フォールバック検索開始', ['query' => $query]);
+        try {
+            $normalizedQuery = $this->textNormalizationService->normalizeShopName($query);
+
+            // 完全一致
+            $exact = Shop::where('name', $query);
+            if ($normalizedQuery !== '' && $normalizedQuery !== $query) {
+                $exact->orWhere('name', $normalizedQuery);
+            }
+            $exact = $exact->select(['id', 'name', 'address', 'formatted_phone_number', 'website', 'google_place_id', 'latitude', 'longitude'])->get();
+            Log::debug('完全一致結果', $exact->toArray());
+
+            // 前方一致
+            $starts = Shop::where(function ($q) use ($query, $normalizedQuery) {
+                $q->where('name', 'LIKE', "{$query}%");
+                if ($normalizedQuery !== '' && $normalizedQuery !== $query) {
+                    $q->orWhere('name', 'LIKE', "{$normalizedQuery}%");
+                }
+            })
+                ->select(['id', 'name', 'address', 'formatted_phone_number', 'website', 'google_place_id', 'latitude', 'longitude'])
+                ->get();
+            Log::debug('前方一致結果', $starts->toArray());
+
+            // 部分一致
+            $partials = Shop::where(function ($q) use ($query, $normalizedQuery) {
+                $q->where('name', 'LIKE', "%{$query}%");
+                if ($normalizedQuery !== '' && $normalizedQuery !== $query) {
+                    $q->orWhere('name', 'LIKE', "%{$normalizedQuery}%");
+                }
+            })
+                ->select(['id', 'name', 'address', 'formatted_phone_number', 'website', 'google_place_id', 'latitude', 'longitude'])
+                ->get();
+            Log::debug('部分一致結果', $partials->toArray());
+
+            // コレクションで重複排除しつつ優先度順に結合
+            $all = collect();
+            $addedIds = [];
+
+            foreach ($exact as $shop) {
+                if (!in_array($shop->id, $addedIds, true)) {
+                    $all->push($shop);
+                    $addedIds[] = $shop->id;
+                }
+            }
+            foreach ($starts as $shop) {
+                if (!in_array($shop->id, $addedIds, true)) {
+                    $all->push($shop);
+                    $addedIds[] = $shop->id;
+                }
+            }
+            foreach ($partials as $shop) {
+                if (!in_array($shop->id, $addedIds, true)) {
+                    $all->push($shop);
+                    $addedIds[] = $shop->id;
+                }
+            }
+
+            Log::debug('重複排除後の全件', $all->toArray());
+            $result = $all->take(5)->map(function ($shop) use ($query) {
+                return [
+                    'id' => $shop->id,
+                    'name' => $shop->name,
+                    'address' => $shop->address,
+                    'formatted_phone_number' => $shop->formatted_phone_number,
+                    'website' => $shop->website,
+                    'google_place_id' => $shop->google_place_id,
+                    'latitude' => $shop->latitude,
+                    'longitude' => $shop->longitude,
+                    'is_existing' => true,
+                    'source' => 'database',
+                    'match_score' => $this->calculateMatchScore($shop->name, $query),
+                ];
+            })->toArray();
+            Log::debug('フォールバック検索return直前', $result);
+            return $result;
+        } catch (\Exception $e) {
+            Log::error('フォールバック検索例外', ['error' => $e->getMessage()]);
+            throw $e;
+        }
+    }
+
+    /**
+     * 検索結果のマッチスコアを計算
+     */
+    private function calculateMatchScore(string $shopName, string $query): int
+    {
+        $shopNameLower = mb_strtolower($shopName);
+        $queryLower = mb_strtolower($query);
+
+        // 完全一致: 100点
+        if ($shopNameLower === $queryLower) {
+            return 100;
+        }
+
+        // 前方一致: 80点
+        if (mb_strpos($shopNameLower, $queryLower) === 0) {
+            return 80;
+        }
+
+        // 部分一致: 60点
+        if (mb_strpos($shopNameLower, $queryLower) !== false) {
+            return 60;
+        }
+
+        // 正規化後の一致: 40点
+        $normalizedShopName = $this->textNormalizationService->normalizeShopName($shopName);
+        $normalizedQuery = $this->textNormalizationService->normalizeShopName($query);
+
+        if (mb_strpos(mb_strtolower($normalizedShopName), mb_strtolower($normalizedQuery)) !== false) {
+            return 40;
+        }
+
+        return 0;
+    }
+
+    /**
+     * 検索結果を統合・重複除去（最適化版）
+     */
+    private function mergeResultsOptimized(array $googlePlaces, array $existingShops): array
+    {
+        // Google側が空なら既存DBの全件をそのまま返す
+        if (empty($googlePlaces)) {
+            return $existingShops;
+        }
+
         $results = [];
         $processedPlaceIds = [];
+        $processedNames = [];
 
-        // 1. 既存店舗を優先的に追加
-        foreach ($existingShops as $shop) {
-            $results[] = $shop;
-            if ($shop['google_place_id']) {
-                $processedPlaceIds[] = $shop['google_place_id'];
-            }
-        }
-
-        // 2. Google Places APIの結果を追加（重複を除く）
+        // 1. Google Places APIの結果を追加
         foreach ($googlePlaces as $place) {
-            if (!in_array($place['google_place_id'], $processedPlaceIds)) {
-                $results[] = $place;
+            $results[] = $place;
+            if ($place['google_place_id']) {
                 $processedPlaceIds[] = $place['google_place_id'];
             }
+            $processedNames[] = mb_strtolower($place['name']);
         }
 
-        // 3. 結果を制限（最大10件）
-        return array_slice($results, 0, 10);
+        // 2. 既存DBの結果を追加（重複を除く）
+        foreach ($existingShops as $shop) {
+            $shopNameLower = mb_strtolower($shop['name']);
+
+            // Google Place IDまたは名前で重複チェック
+            if (
+                !in_array($shop['google_place_id'], $processedPlaceIds) &&
+                !in_array($shopNameLower, $processedNames)
+            ) {
+                $results[] = $shop;
+                $processedPlaceIds[] = $shop['google_place_id'];
+                $processedNames[] = $shopNameLower;
+            }
+        }
+
+        // 3. マッチスコアでソート
+        usort($results, function ($a, $b) {
+            return ($b['match_score'] ?? 0) - ($a['match_score'] ?? 0);
+        });
+
+        return $results;
     }
 
     /**

@@ -24,16 +24,12 @@ class Shop extends Model
     protected $fillable = [
         'name',
         'address',
-        'phone',
-        'website',
-        'description',
-        'category',
         'latitude',
         'longitude',
-        'created_by',
-        // Google Places API連携用フィールド
-        'google_place_id',
         'formatted_phone_number',
+        'website',
+        'google_place_id',
+        'created_by',
     ];
 
     protected $casts = [

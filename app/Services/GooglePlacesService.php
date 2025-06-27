@@ -35,11 +35,11 @@ class GooglePlacesService
         throw new Exception('API使用量上限に達しました。しばらく時間をおいてから再試行してください。');
       }
 
-      // キャッシュキー
+      // キャッシュキー（階層キャッシュ戦略）
       $cacheKey = $this->cachePrefix . 'search:' . md5($query . $language);
 
-      // キャッシュから取得を試行
-      $result = Cache::remember($cacheKey, 1800, function () use ($query, $language) {
+      // キャッシュから取得を試行（1時間キャッシュ）
+      $result = Cache::remember($cacheKey, 3600, function () use ($query, $language) {
         // Google Places API呼び出し
         $response = $this->client->textSearch($query, [
           'language' => $language,
@@ -94,7 +94,7 @@ class GooglePlacesService
 
       $requestedFields = $fields ?: $defaultFields;
 
-      // キャッシュキー
+      // キャッシュキー（階層キャッシュ戦略）
       $cacheKey = $this->cachePrefix . 'details:' . $placeId;
 
       // キャッシュから取得を試行（24時間キャッシュ）
