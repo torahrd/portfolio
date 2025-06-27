@@ -30,15 +30,6 @@
             {{ $shop->address }}
           </div>
           @endif
-
-          @if($shop->website)
-          <div class="flex items-center text-white/90 text-sm mt-1">
-            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg>
-            <a href="{{ $shop->website }}" target="_blank" rel="noopener" class="underline hover:text-blue-700">公式サイト</a>
-          </div>
-          @endif
         </div>
       </div>
     </div>

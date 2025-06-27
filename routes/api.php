@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\FollowRequestController;
 use App\Http\Controllers\Api\ShopSearchController;
 use App\Http\Controllers\ShopController;
+use App\Http\Controllers\Api\ShopMapApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,3 +57,5 @@ Route::middleware(['auth'])->group(function () {
     // 新規店舗作成
     Route::post('/shops', [ShopController::class, 'store'])->name('api.shops.store');
 });
+
+Route::get('/shops/map-data', [ShopMapApiController::class, 'index']);
