@@ -9,6 +9,7 @@ use App\Http\Controllers\ShopController;
 use App\Http\Controllers\UserSearchController;
 use App\Http\Controllers\FavoriteShopController;
 use App\Http\Controllers\FollowController;
+use App\Http\Controllers\MapController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -140,3 +141,5 @@ Route::middleware('auth')->group(function () {
 // ===== 認証関連ルート =====
 
 require __DIR__ . '/auth.php';
+
+Route::get('/map', [MapController::class, 'index'])->name('map.index');
