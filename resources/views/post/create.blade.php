@@ -68,6 +68,15 @@
                           class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
                           部分一致
                         </span>
+                        <!-- データソース表示 -->
+                        <span x-show="shop.source === 'google_places'"
+                          class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800">
+                          Google
+                        </span>
+                        <span x-show="shop.source === 'database'"
+                          class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                          DB
+                        </span>
                       </div>
                       <div class="text-sm text-gray-500 mt-1" x-text="shop.address"></div>
                       <div class="text-xs text-gray-400 mt-1" x-show="shop.formatted_phone_number" x-text="shop.formatted_phone_number"></div>
@@ -120,6 +129,7 @@
 
           <p class="text-sm text-gray-600">
             店舗名を入力すると、Google Places APIからリアルタイムで検索結果が表示されます。
+            Google Places APIが利用できない場合は、既存のデータベースから検索結果を表示します。
           </p>
         </div>
 

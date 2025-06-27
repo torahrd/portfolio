@@ -53,8 +53,6 @@ class ShopSearchController extends Controller
             // 3. 結果を5件に制限
             $results = array_slice($results, 0, 5);
 
-            Log::debug('APIレスポンス直前', ['results' => $results]);
-
             return response()->json([
                 'success' => true,
                 'data' => $results,
@@ -98,38 +96,29 @@ class ShopSearchController extends Controller
     private function searchGooglePlaces(string $query, string $language): array
     {
         try {
-            $places = $this->googlePlacesService->searchPlace($query, $language);
-
-            return collect($places)->map(function ($place) use ($query) {
-                // 既存の店舗かチェック
-                $existingShop = Shop::findByGooglePlaceId($place['place_id'] ?? '');
-
-                return [
-                    'id' => $existingShop?->id,
-                    'name' => $place['name'] ?? '',
-                    'address' => $place['formatted_address'] ?? '',
-                    'formatted_phone_number' => $place['formatted_phone_number'] ?? '',
-                    'website' => $place['website'] ?? '',
-                    'google_place_id' => $place['place_id'] ?? '',
-                    'latitude' => $place['geometry']['location']['lat'] ?? null,
-                    'longitude' => $place['geometry']['location']['lng'] ?? null,
-                    'is_existing' => $existingShop !== null,
-                    'source' => 'google_places',
-                    'match_score' => $this->calculateMatchScore($place['name'] ?? '', $query),
-                    'rating' => $place['rating'] ?? null,
-                    'user_ratings_total' => $place['user_ratings_total'] ?? null,
-                    'opening_hours' => $place['opening_hours'] ?? null,
-                ];
-            })
-                ->sortByDesc('match_score') // 完全一致を優先
-                ->values()
-                ->toArray();
-        } catch (Exception $e) {
-            Log::warning('Google Places API search failed', [
+            Log::info('Google Places API (New)検索開始', [
                 'query' => $query,
-                'error' => $e->getMessage()
+                'language' => $language
             ]);
 
+            // 新しいAPIを試行
+            $places = $this->googlePlacesService->searchPlaceNew($query, $language);
+
+            Log::info('Google Places API (New)検索結果', [
+                'query' => $query,
+                'result_count' => count($places)
+            ]);
+
+            // 新しいAPIのレスポンス形式に合わせて変換
+            return $this->googlePlacesService->transformPlacesToShops($places, $query);
+        } catch (\Exception $e) {
+            Log::warning('Google Places API (New)検索失敗、フォールバック機能を使用', [
+                'query' => $query,
+                'error' => $e->getMessage(),
+                'fallback_to_db' => true
+            ]);
+
+            // 新しいAPIが失敗した場合は空配列を返し、DB検索にフォールバック
             return [];
         }
     }
