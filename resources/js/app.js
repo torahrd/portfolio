@@ -14,6 +14,10 @@ window.modal = modal;
 import { searchBar } from "./components/search-bar.js";
 window.searchBar = searchBar;
 
+// 店舗検索用Alpine関数をグローバル登録
+import { shopSearch } from "./components/shop-search.js";
+window.shopSearch = shopSearch;
+
 Alpine.start();
 
 // Import post-reply functionality

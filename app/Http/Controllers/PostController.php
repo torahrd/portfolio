@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use App\Models\Post;
 use App\Models\Folder;
 use App\Models\Shop;
@@ -37,7 +38,7 @@ class PostController extends Controller
     {
         try {
             // 最近投稿した店舗を取得
-            $recentShops = auth()->user()->posts()
+            $recentShops = Post::where('user_id', Auth::id())
                 ->with('shop')
                 ->latest()
                 ->take(5)
@@ -73,6 +74,18 @@ class PostController extends Controller
         $input = $request['post'];
         $input['user_id'] = Auth::user()->id;
 
+        // 店舗処理（Google Places API連携）
+        $shopId = $input['shop_id'] ?? null;
+        $googlePlaceId = $input['google_place_id'] ?? null;
+
+        // 新規店舗の場合（shop_idが空でgoogle_place_idがある場合）
+        if (empty($shopId) && !empty($googlePlaceId)) {
+            $shop = $this->createShopFromGooglePlaces($googlePlaceId, $request);
+            if ($shop) {
+                $input['shop_id'] = $shop->id;
+            }
+        }
+
         // Cloudinary画像アップロード処理
         if ($request->hasFile('image')) {
             $image_url = \CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary::upload($request->file('image')->getRealPath())->getSecurePath();
@@ -94,6 +107,63 @@ class PostController extends Controller
         }
 
         return redirect()->route('posts.show', $post->id);
+    }
+
+    /**
+     * Google Places APIから店舗情報を取得してデータベースに保存
+     */
+    private function createShopFromGooglePlaces(string $placeId, Request $request): ?Shop
+    {
+        try {
+            // 既に同じPlace IDの店舗が存在するかチェック
+            $existingShop = Shop::findByGooglePlaceId($placeId);
+            if ($existingShop) {
+                return $existingShop;
+            }
+
+            // Google Places APIから詳細情報を取得
+            $googlePlacesService = app(\App\Services\GooglePlacesService::class);
+            $placeDetails = $googlePlacesService->getPlaceDetails($placeId);
+
+            // 店舗データを作成
+            $shopData = [
+                'name' => $placeDetails['displayName']['text'] ?? 'Unknown Shop',
+                'address' => $placeDetails['shortFormattedAddress'] ?? '',
+                'formatted_phone_number' => $placeDetails['formatted_phone_number'] ?? '',
+                'website' => $placeDetails['websiteUri'] ?? '',
+                'google_place_id' => $placeId,
+                'created_by' => Auth::user()->id,
+            ];
+
+            // 座標情報があれば追加
+            if (isset($placeDetails['location'])) {
+                $shopData['latitude'] = $placeDetails['location']['latitude'];
+                $shopData['longitude'] = $placeDetails['location']['longitude'];
+            }
+
+            // 店舗を作成
+            $shop = Shop::create($shopData);
+
+            // 営業時間情報があれば保存
+            if (isset($placeDetails['regularOpeningHours'])) {
+                $shop->updateBusinessHoursFromGooglePlaces($placeDetails);
+            }
+
+            return $shop;
+        } catch (\Exception $e) {
+            Log::error('Google Places API店舗作成エラー', [
+                'place_id' => $placeId,
+                'error' => $e->getMessage()
+            ]);
+
+            // エラーが発生した場合は基本的な店舗情報で作成
+            return Shop::create([
+                'name' => 'Unknown Shop',
+                'address' => '',
+                'google_place_id' => $placeId,
+                'created_by' => Auth::user()->id,
+            ]);
+        }
     }
 
     public function show(Post $post)

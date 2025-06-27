@@ -32,7 +32,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // Google Places API連携の店舗検索（認証必須）
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['web', 'auth:sanctum'])->group(function () {
     // 店舗検索（Google Places API + 既存データベース）
     Route::get('/shops/search-places', [ShopSearchController::class, 'search'])
         ->name('api.shops.search-places');
