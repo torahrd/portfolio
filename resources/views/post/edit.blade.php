@@ -18,9 +18,13 @@
           <h3 class="text-lg font-bold mb-2">2. 写真を追加（任意）</h3>
           <p class="text-sm text-gray-600 mb-4">お店の雰囲気や料理の写真を追加できます</p>
           @if($post->image_url)
-          <div class="mb-4">
+          <div class="mb-4" id="current-image-section">
             <label class="block text-sm font-medium text-gray-700 mb-1">現在の画像</label>
             <img src="{{ $post->image_url }}" alt="投稿画像" class="w-full max-w-xs rounded-lg border mb-2">
+            <label class="inline-flex items-center" id="remove-image-section">
+              <input type="checkbox" name="remove_image" value="1" class="mr-2">
+              <span class="text-sm text-red-600">画像を削除する</span>
+            </label>
           </div>
           @endif
           <div class="mt-4">
@@ -30,10 +34,30 @@
               type="file"
               name="image"
               accept="image/*"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md">
+              class="w-full px-3 py-2 border border-gray-300 rounded-md"
+              onchange="handleImageChange()">
             <p class="text-xs text-gray-500 mt-1">※ 1枚のみアップロード可能です。Cloudinaryに保存されます。</p>
           </div>
         </div>
+
+        <script>
+          function handleImageChange() {
+            const fileInput = document.getElementById('image');
+            const removeSection = document.getElementById('remove-image-section');
+
+            if (fileInput.files.length > 0) {
+              // 新しい画像が選択されたら削除ボタンを非表示
+              if (removeSection) {
+                removeSection.style.display = 'none';
+              }
+            } else {
+              // 画像が選択されていない場合は削除ボタンを表示
+              if (removeSection) {
+                removeSection.style.display = 'inline-flex';
+              }
+            }
+          }
+        </script>
 
         <!-- 詳細情報 -->
         <div class="bg-white rounded-lg shadow p-6 mb-6">
