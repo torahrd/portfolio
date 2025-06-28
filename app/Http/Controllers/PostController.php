@@ -218,18 +218,84 @@ class PostController extends Controller
     public function edit(Post $post, Shop $shop)
     {
         $user = Auth::user();
-        $folders = $user->folders;
         $shops = $shop->get();
 
-        return view('post.edit', compact('folders', 'shops', 'post'));
+        return view('post.edit', compact('shops', 'post'));
     }
 
     public function update(Request $request, Post $post)
     {
-        $input_post = $request['post'];
-        $post->fill($input_post)->save();
+        // 到達確認用ログ（バリデーション前）
+        Log::info('PostController@update: メソッド開始', [
+            'request_all' => $request->all(),
+            'request_post' => $request->input('post'),
+            'method' => $request->method(),
+            'url' => $request->url(),
+            'post_id' => $post->id,
+        ]);
 
-        return redirect('/posts/' . $post->id);
+        // 画像バリデーション追加
+        $request->validate([
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:4096',
+            'post.shop_id' => 'required_without:post.google_place_id',
+            'post.google_place_id' => 'required_without:post.shop_id',
+        ]);
+
+        $input = $request['post'];
+        $input['user_id'] = Auth::user()->id;
+
+        // 店舗処理（Google Places API連携）
+        $shopId = $input['shop_id'] ?? null;
+        $googlePlaceId = $input['google_place_id'] ?? null;
+        $shopName = $input['shop_name'] ?? null;
+        $shopAddress = $input['shop_address'] ?? null;
+        Log::info('投稿update: 受信値', [
+            'shop_id' => $shopId,
+            'google_place_id' => $googlePlaceId,
+            'shop_name' => $shopName,
+            'shop_address' => $shopAddress,
+            'input' => $input,
+        ]);
+
+        // 新規店舗の場合（shop_idが空でgoogle_place_idがある場合）
+        if (empty($shopId) && !empty($googlePlaceId)) {
+            Log::info('投稿update: createShopFromGooglePlaces呼び出し直前', [
+                'google_place_id' => $googlePlaceId,
+                'shop_name' => $shopName,
+                'shop_address' => $shopAddress,
+            ]);
+            $shop = $this->createShopFromGooglePlaces($googlePlaceId, $request, $shopName, $shopAddress);
+            Log::info('投稿update: createShopFromGooglePlaces呼び出し直後', [
+                'shop' => $shop,
+            ]);
+            if ($shop) {
+                $input['shop_id'] = $shop->id;
+            }
+        }
+        // shop_idがnullのままならバリデーションエラー
+        if (empty($input['shop_id'])) {
+            Log::error('投稿update: shop_idがセットできずバリデーションエラー', [
+                'input' => $input
+            ]);
+            return back()->withErrors(['shop_id' => '店舗情報の取得に失敗しました。もう一度お試しください。'])->withInput();
+        }
+
+        // Cloudinary画像アップロード処理
+        if ($request->hasFile('image')) {
+            $image_url = \CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary::upload($request->file('image')->getRealPath())->getSecurePath();
+            $input['image_url'] = $image_url;
+        }
+
+        // 画像削除処理（チェックボックスまたは新規アップロード時）
+        if (($request->has('remove_image') && $request->input('remove_image') == '1') ||
+            $request->hasFile('image')
+        ) {
+            $input['image_url'] = $request->hasFile('image') ? $input['image_url'] : null;
+        }
+
+        $post->fill($input)->save();
+
+        return redirect()->route('posts.show', $post->id);
     }
 
     public function destroy(Post $post)
