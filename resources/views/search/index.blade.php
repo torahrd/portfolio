@@ -9,39 +9,59 @@
 
       <!-- 検索フォーム -->
       <div class="bg-white rounded-xl shadow-card p-6 mb-8">
-        <form method="GET" action="{{ route('search') }}" class="space-y-4">
-          <div class="flex flex-col md:flex-row gap-4">
-            <div class="flex-1">
-              <x-atoms.input
-                type="text"
-                name="q"
-                placeholder="店舗名、料理名、エリアで検索..."
-                value="{{ request('q') }}"
-                class="w-full" />
-            </div>
-            <div>
-              <x-atoms.button-primary type="submit" class="w-full md:w-auto">
-                検索
-              </x-atoms.button-primary>
-            </div>
-          </div>
-        </form>
+        <x-molecules.search-bar :placeholder="'店舗名、料理名、エリアで検索...'" :value="request('q')" :action="route('search')" />
       </div>
 
       <!-- 検索結果 -->
-      @if(request('q'))
+      @if($query)
       <div class="bg-white rounded-xl shadow-card p-6">
         <h2 class="text-xl font-semibold text-neutral-900 mb-4">
-          "{{ request('q') }}" の検索結果
+          "{{ $query }}" の検索結果
         </h2>
 
+        @if($shop)
+        <!-- 店舗情報カード -->
+        <div class="mb-8 flex items-center space-x-6">
+          @if($shop->image_url)
+          <img src="{{ $shop->image_url }}" alt="{{ $shop->name }}" class="w-24 h-24 object-cover rounded-xl border">
+          @else
+          <div class="w-24 h-24 bg-neutral-100 flex items-center justify-center rounded-xl border text-neutral-400">
+            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </div>
+          @endif
+          <div>
+            <div class="text-2xl font-bold text-neutral-900">{{ $shop->name }}</div>
+            <div class="text-neutral-600 text-sm mt-1">{{ $shop->address }}</div>
+            @if($shop->website)
+            <a href="{{ $shop->website }}" class="text-primary-500 text-sm hover:underline" target="_blank">公式サイト</a>
+            @endif
+          </div>
+        </div>
+
+        <!-- 投稿一覧 -->
+        <div>
+          <h3 class="text-lg font-semibold text-neutral-900 mb-4">この店舗の投稿</h3>
+          @if($posts->count())
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            @foreach($posts as $post)
+            <x-molecules.post-card :post="$post" />
+            @endforeach
+          </div>
+          @else
+          <p class="text-neutral-600">この店舗への投稿はまだありません。</p>
+          @endif
+        </div>
+        @else
         <div class="text-center py-12">
           <svg class="mx-auto h-12 w-12 text-neutral-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
           </svg>
-          <h3 class="text-lg font-medium text-neutral-900 mb-2">検索機能は開発中です</h3>
-          <p class="text-neutral-600">現在、検索機能を実装中です。しばらくお待ちください。</p>
+          <h3 class="text-lg font-medium text-neutral-900 mb-2">該当する店舗が見つかりません</h3>
+          <p class="text-neutral-600">別のキーワードでお試しください。</p>
         </div>
+        @endif
       </div>
       @else
       <!-- 初期状態 -->

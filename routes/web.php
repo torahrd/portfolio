@@ -10,6 +10,7 @@ use App\Http\Controllers\UserSearchController;
 use App\Http\Controllers\FavoriteShopController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\MapController;
+use App\Http\Controllers\SearchController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -30,9 +31,7 @@ Route::get('/dashboard', function () {
 // ===== コンポーネントで使用される基本ページ =====
 
 // 検索ページ
-Route::get('/search', function () {
-    return view('search.index', ['results' => []]);
-})->name('search');
+Route::get('/search', [SearchController::class, 'index'])->name('search');
 
 // 通知ページ（認証必要）
 Route::get('/notifications', function () {

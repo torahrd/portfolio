@@ -12,7 +12,7 @@
           <div class="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
             <span class="text-white font-bold text-lg">T+</span>
           </div>
-          <span class="hidden sm:block text-xl font-bold text-neutral-900">Tabelog+</span>
+          <span class="hidden sm:block text-xl font-bold text-neutral-900">TasteRetreat</span>
         </a>
       </div>
 
@@ -26,22 +26,19 @@
       <!-- ナビゲーション -->
       <div class="flex items-center space-x-4">
         @auth
-        <!-- 通知 -->
+        <!-- 通知（リンク型・アイコン＋テキスト） -->
         <div class="relative" x-data="{ open: false }">
-          <x-atoms.button-icon
-            size="md"
-            x-on:click="open = !open"
-            class="relative">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <a href="#" x-on:click.prevent="open = !open" class="flex items-center px-3 py-2 rounded-lg hover:bg-primary-50 text-primary-600 font-semibold transition-colors relative">
+            <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4 17h5l-5 5v-5z"></path>
             </svg>
+            通知
             @if(auth()->user()->unreadNotifications->count() > 0)
             <span class="absolute -top-1 -right-1 bg-primary-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
               {{ min(auth()->user()->unreadNotifications->count(), 99) }}
             </span>
             @endif
-          </x-atoms.button-icon>
-
+          </a>
           <!-- 通知ドロップダウン -->
           <div
             x-show="open"
@@ -56,7 +53,6 @@
             <div class="px-4 py-3 border-b border-neutral-200">
               <h3 class="text-sm font-semibold text-neutral-900">通知</h3>
             </div>
-
             <div class="max-h-96 overflow-y-auto">
               @forelse(auth()->user()->notifications->take(5) as $notification)
               <div class="px-4 py-3 border-b border-neutral-100 last:border-b-0">
@@ -68,7 +64,6 @@
               </div>
               @endforelse
             </div>
-
             @if(auth()->user()->notifications->count() > 5)
             <div class="px-4 py-3 border-t border-neutral-200">
               <a href="{{ route('notifications.index') }}" class="text-sm text-primary-500 hover:text-primary-600 font-medium">
@@ -79,10 +74,21 @@
           </div>
         </div>
 
-        <!-- 投稿作成 -->
-        <x-atoms.button-primary href="{{ route('posts.create') }}" size="sm">
+        <!-- 投稿（リンク型・アイコン＋テキスト） -->
+        <a href="{{ route('posts.create') }}" class="flex items-center px-3 py-2 rounded-lg hover:bg-primary-50 text-primary-600 font-semibold transition-colors">
+          <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
           投稿
-        </x-atoms.button-primary>
+        </a>
+
+        <!-- 地図ページへのリンク -->
+        <a href="{{ route('map.index') }}" class="flex items-center px-3 py-2 rounded-lg hover:bg-primary-50 text-primary-600 font-semibold transition-colors">
+          <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A2 2 0 013 15.382V6.618a2 2 0 011.553-1.946l5.894-1.684a2 2 0 011.106 0l5.894 1.684A2 2 0 0121 6.618v8.764a2 2 0 01-1.553 1.946L15 20m-6 0V4m6 16V4" />
+          </svg>
+          地図
+        </a>
 
         <!-- ユーザーメニュー -->
         <div class="relative" x-data="{ open: false }">

@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\FollowRequestController;
 use App\Http\Controllers\Api\ShopSearchController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\Api\ShopMapApiController;
+use App\Http\Controllers\Api\SearchSuggestionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,3 +60,6 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::get('/shops/map-data', [ShopMapApiController::class, 'index']);
+
+// 店舗名サジェストAPI
+Route::get('/search/suggestions', [SearchSuggestionController::class, 'shopNameSuggestions']);
