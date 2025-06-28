@@ -12,6 +12,174 @@
   <script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      // レトロスタイルの定義（Google公式サンプル）
+      const retroStyle = [{
+          elementType: "geometry",
+          stylers: [{
+            color: "#ebe3cd"
+          }]
+        },
+        {
+          elementType: "labels.text.fill",
+          stylers: [{
+            color: "#523735"
+          }]
+        },
+        {
+          elementType: "labels.text.stroke",
+          stylers: [{
+            color: "#f5f1e6"
+          }]
+        },
+        {
+          featureType: "administrative",
+          elementType: "geometry.stroke",
+          stylers: [{
+            color: "#c9b2a6"
+          }],
+        },
+        {
+          featureType: "administrative.land_parcel",
+          elementType: "geometry.stroke",
+          stylers: [{
+            color: "#dcd2be"
+          }],
+        },
+        {
+          featureType: "administrative.land_parcel",
+          elementType: "labels.text.fill",
+          stylers: [{
+            color: "#ae9e90"
+          }],
+        },
+        {
+          featureType: "landscape.natural",
+          elementType: "geometry",
+          stylers: [{
+            color: "#dfd2ae"
+          }],
+        },
+        {
+          featureType: "poi",
+          elementType: "geometry",
+          stylers: [{
+            color: "#dfd2ae"
+          }],
+        },
+        {
+          featureType: "poi",
+          elementType: "labels.text.fill",
+          stylers: [{
+            color: "#93817c"
+          }],
+        },
+        {
+          featureType: "poi.park",
+          elementType: "geometry.fill",
+          stylers: [{
+            color: "#a5b076"
+          }],
+        },
+        {
+          featureType: "poi.park",
+          elementType: "labels.text.fill",
+          stylers: [{
+            color: "#447530"
+          }],
+        },
+        {
+          featureType: "road",
+          elementType: "geometry",
+          stylers: [{
+            color: "#f5f1e6"
+          }],
+        },
+        {
+          featureType: "road.arterial",
+          elementType: "geometry",
+          stylers: [{
+            color: "#fdfcf8"
+          }],
+        },
+        {
+          featureType: "road.highway",
+          elementType: "geometry",
+          stylers: [{
+            color: "#f8c967"
+          }],
+        },
+        {
+          featureType: "road.highway",
+          elementType: "geometry.stroke",
+          stylers: [{
+            color: "#e9bc62"
+          }],
+        },
+        {
+          featureType: "road.highway.controlled_access",
+          elementType: "geometry",
+          stylers: [{
+            color: "#e98d58"
+          }],
+        },
+        {
+          featureType: "road.highway.controlled_access",
+          elementType: "geometry.stroke",
+          stylers: [{
+            color: "#db8555"
+          }],
+        },
+        {
+          featureType: "road.local",
+          elementType: "labels.text.fill",
+          stylers: [{
+            color: "#806b63"
+          }],
+        },
+        {
+          featureType: "transit.line",
+          elementType: "geometry",
+          stylers: [{
+            color: "#dfd2ae"
+          }],
+        },
+        {
+          featureType: "transit.line",
+          elementType: "labels.text.fill",
+          stylers: [{
+            color: "#8f7d77"
+          }],
+        },
+        {
+          featureType: "transit.line",
+          elementType: "labels.text.stroke",
+          stylers: [{
+            color: "#ebe3cd"
+          }],
+        },
+        {
+          featureType: "transit.station",
+          elementType: "geometry",
+          stylers: [{
+            color: "#dfd2ae"
+          }],
+        },
+        {
+          featureType: "water",
+          elementType: "geometry.fill",
+          stylers: [{
+            color: "#b9d3c2"
+          }],
+        },
+        {
+          featureType: "water",
+          elementType: "labels.text.fill",
+          stylers: [{
+            color: "#92998d"
+          }],
+        },
+      ];
+
       // デフォルトは東京駅
       let center = {
         lat: 35.681236,
@@ -52,6 +220,7 @@
         center: center,
         zoom: 13,
         mapId: 'DEMO_MAP_ID', // マップID設定
+        styles: retroStyle, // レトロスタイルを適用
       });
       // console.log('Google Mapsオブジェクト:', map);
 
@@ -60,125 +229,40 @@
         .then(res => res.json())
         .then(shops => {
           shops.forEach(shop => {
-            // lat/lngがnullまたは数値でない場合はスキップ
+            const lat = Number(shop.lat);
+            const lng = Number(shop.lng);
             if (
-              typeof shop.lat !== 'number' ||
-              typeof shop.lng !== 'number' ||
-              isNaN(shop.lat) ||
-              isNaN(shop.lng)
+              typeof lat !== 'number' ||
+              typeof lng !== 'number' ||
+              isNaN(lat) ||
+              isNaN(lng)
             ) {
               return;
             }
-            // レスポンシブ対応：画面幅に応じてマーカーサイズ調整
-            const isMobile = window.innerWidth < 768;
-            const markerSize = isMobile ? 56 : 48;
-            const imageSize = isMobile ? 56 : 48;
-
-            // カスタムHTMLマーカー
-            const markerDiv = document.createElement('div');
-            markerDiv.style.display = 'flex';
-            markerDiv.style.flexDirection = 'column';
-            markerDiv.style.alignItems = 'center';
-            markerDiv.style.cursor = 'pointer';
-            markerDiv.style.transition = 'transform 0.2s ease-in-out';
-            markerDiv.style.userSelect = 'none';
-            markerDiv.setAttribute('aria-label', `${shop.name}の詳細を見る`);
-
-            // ホバー効果
-            markerDiv.addEventListener('mouseenter', () => {
-              markerDiv.style.transform = 'scale(1.1)';
-            });
-            markerDiv.addEventListener('mouseleave', () => {
-              markerDiv.style.transform = 'scale(1)';
-            });
-
-            // 画像
-            const img = document.createElement('img');
-            img.src = shop.image_url || '/images/placeholder-food.jpg';
-            img.alt = shop.name;
-            img.style.width = `${imageSize}px`;
-            img.style.height = `${imageSize}px`;
-            img.style.objectFit = 'cover';
-            img.style.borderRadius = '8px';
-            img.style.border = `3px solid ${shop.is_open ? '#22c55e' : '#a3a3a3'}`; // グリーン/グレー
-            img.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
-            markerDiv.appendChild(img);
-
-            // 店舗名（レスポンシブ対応）
-            const nameDiv = document.createElement('div');
-            nameDiv.textContent = shop.name;
-            nameDiv.style.background = 'rgba(255,255,255,0.95)';
-            nameDiv.style.fontSize = isMobile ? '11px' : '12px';
-            nameDiv.style.padding = isMobile ? '3px 8px' : '2px 6px';
-            nameDiv.style.borderRadius = '4px';
-            nameDiv.style.marginTop = '4px';
-            nameDiv.style.boxShadow = '0 1px 4px rgba(0,0,0,0.08)';
-            nameDiv.style.maxWidth = '120px';
-            nameDiv.style.textAlign = 'center';
-            nameDiv.style.whiteSpace = 'nowrap';
-            nameDiv.style.overflow = 'hidden';
-            nameDiv.style.textOverflow = 'ellipsis';
-            markerDiv.appendChild(nameDiv);
-
-            // OverlayViewでHTMLマーカーを地図に追加
-            class CustomMarker extends google.maps.OverlayView {
-              constructor(position, element, url) {
-                super();
-                this.position = position;
-                this.element = element;
-                this.url = url;
-              }
-              onAdd() {
-                this.getPanes().overlayMouseTarget.appendChild(this.element);
-                // クリック領域を拡大（マーカー全体をタップ可能に）
-                this.element.addEventListener('click', () => {
-                  window.location.href = this.url;
-                });
-                // タッチデバイス対応
-                this.element.addEventListener('touchend', (e) => {
-                  e.preventDefault();
-                  window.location.href = this.url;
-                });
-              }
-              draw() {
-                const projection = this.getProjection();
-                const pos = projection.fromLatLngToDivPixel(new google.maps.LatLng(this.position));
-                this.element.style.position = 'absolute';
-                this.element.style.left = `${pos.x - (markerSize / 2)}px`;
-                this.element.style.top = `${pos.y - markerSize}px`;
-                this.element.style.zIndex = 10;
-              }
-              onRemove() {
-                if (this.element.parentNode) {
-                  this.element.parentNode.removeChild(this.element);
-                }
-              }
-            }
-
-            const marker = new CustomMarker({
-                lat: shop.lat,
-                lng: shop.lng
+            const marker = new google.maps.Marker({
+              position: {
+                lat,
+                lng
               },
-              markerDiv,
-              shop.shop_url
-            );
-            marker.setMap(map);
+              map: map,
+              title: shop.name
+            });
+            marker.addListener('click', () => {
+              window.location.href = shop.shop_url;
+            });
             markers.push(marker);
           });
 
-          // MarkerClustererでマーカーをクラスタリング（カスタムマーカー非対応のため一時停止）
-          // new markerClusterer.MarkerClusterer({
-          //   map,
-          //   markers,
-          //   algorithm: new markerClusterer.SuperClusterAlgorithm({
-          //     radius: 100,
-          //     maxZoom: 15,
-          //   }),
-          //   renderer: { ... }
-          // });
+          // マーカークラスタリングを有効化
+          if (markers.length > 0 && window.markerClusterer) {
+            new window.markerClusterer.MarkerClusterer({
+              map,
+              markers
+            });
+          }
         })
         .catch(error => {
-          console.error('店舗データの取得に失敗しました:', error);
+          // エラー時は必要に応じてUI表示や通知を追加
         });
 
       // レスポンシブ対応：ウィンドウリサイズ時のマーカーサイズ調整
