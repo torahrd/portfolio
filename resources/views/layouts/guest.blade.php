@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ $title ?? 'Tabelog+' }} - 美味しいの発見と共有</title>
-    <meta name="description" content="Tabelog+で美味しいお店を発見し、グルメ体験を共有しましょう。">
+    <title>{{ $title ?? 'TasteRetreat' }} - 美味しいの発見と共有</title>
+    <meta name="description" content="TasteRetreatで美味しいお店を発見し、グルメ体験を共有しましょう。">
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -38,7 +38,7 @@
                             <div class="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
                                 <span class="text-white font-bold text-lg">T+</span>
                             </div>
-                            <span class="text-xl font-bold text-neutral-900">Tabelog+</span>
+                            <span class="text-xl font-bold text-neutral-900">TasteRetreat</span>
                         </a>
                     </div>
 
@@ -51,7 +51,7 @@
                             店舗検索
                         </a>
                         <a href="/about" class="text-neutral-600 hover:text-primary-500 transition-colors duration-200">
-                            Tabelog+とは
+                            TasteRetreatとは
                         </a>
                     </nav>
 
@@ -82,7 +82,7 @@
                             <div class="w-6 h-6 bg-primary-500 rounded flex items-center justify-center">
                                 <span class="text-white font-bold text-sm">T+</span>
                             </div>
-                            <span class="text-lg font-bold text-neutral-900">Tabelog+</span>
+                            <span class="text-lg font-bold text-neutral-900">TasteRetreat</span>
                         </div>
                         <p class="text-sm text-neutral-600 mb-4">
                             美味しいお店を発見し、グルメ体験を共有する新しいプラットフォーム
@@ -105,7 +105,7 @@
                         <ul class="space-y-2 text-sm text-neutral-600">
                             <li><a href="{{ route('home') }}" class="hover:text-primary-500 transition-colors duration-200">ホーム</a></li>
                             <li><a href="{{ route('search') }}" class="hover:text-primary-500 transition-colors duration-200">店舗検索</a></li>
-                            <li><a href="/about" class="hover:text-primary-500 transition-colors duration-200">Tabelog+とは</a></li>
+                            <li><a href="/about" class="hover:text-primary-500 transition-colors duration-200">TasteRetreatとは</a></li>
                         </ul>
                     </div>
                     <div>
@@ -120,7 +120,7 @@
                 </div>
 
                 <div class="mt-8 pt-8 border-t border-neutral-200 text-center">
-                    <p class="text-sm text-neutral-500">© 2025 Tabelog+. All rights reserved.</p>
+                    <p class="text-sm text-neutral-500">© 2025 TasteRetreat. All rights reserved.</p>
                 </div>
             </div>
         </footer>
