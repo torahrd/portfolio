@@ -57,7 +57,7 @@ class GooglePlacesService
           // Google Places API (New)のtextSearchエンドポイントを呼び出し
           $response = Http::withHeaders([
             'X-Goog-Api-Key' => $this->apiKey,
-            'X-Goog-FieldMask' => 'places.id,places.displayName,places.formattedAddress,places.location,places.types,places.nationalPhoneNumber,places.websiteUri,places.businessStatus,places.priceLevel,places.rating,places.userRatingCount,places.utcOffsetMinutes,places.primaryType,places.primaryTypeDisplayName'
+            'X-Goog-FieldMask' => 'places.id,places.displayName,places.formattedAddress,places.location'
           ])->post("{$this->baseUrl}/places:searchText", [
             'textQuery' => $query,
             'languageCode' => $language,
@@ -197,9 +197,7 @@ class GooglePlacesService
   public function transformPlacesToShops(array $places, string $query): array
   {
     return collect($places)->map(function ($place) use ($query) {
-      // 既存の店舗かチェック
       $existingShop = Shop::findByGooglePlaceId($place['id'] ?? '');
-
       return [
         'id' => $existingShop?->id,
         'name' => $place['displayName']['text'] ?? '',
@@ -207,21 +205,6 @@ class GooglePlacesService
         'latitude' => $place['location']['latitude'] ?? null,
         'longitude' => $place['location']['longitude'] ?? null,
         'google_place_id' => $place['id'] ?? '',
-        'phone_number' => $place['nationalPhoneNumber'] ?? '',
-        'website' => $place['websiteUri'] ?? '',
-        'types' => $place['types'] ?? [],
-        'business_status' => $place['businessStatus'] ?? '',
-        'price_level' => $place['priceLevel'] ?? null,
-        'rating' => $place['rating'] ?? null,
-        'user_rating_count' => $place['userRatingCount'] ?? null,
-        'utc_offset_minutes' => $place['utcOffsetMinutes'] ?? null,
-        'primary_type' => $place['primaryType'] ?? '',
-        'primary_type_display_name' => $place['primaryTypeDisplayName']['text'] ?? '',
-        'editorial_summary' => $place['editorialSummary']['text'] ?? '',
-        'current_opening_hours' => $place['currentOpeningHours'] ?? null,
-        'regular_opening_hours' => $place['regularOpeningHours'] ?? null,
-        'international_phone_number' => $place['internationalPhoneNumber'] ?? '',
-        'national_phone_number' => $place['nationalPhoneNumber'] ?? '',
         'is_existing' => $existingShop !== null,
         'match_score' => $this->calculateMatchScore($place['displayName']['text'] ?? '', $query),
         'data_source' => 'google'

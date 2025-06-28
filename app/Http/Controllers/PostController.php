@@ -66,9 +66,19 @@ class PostController extends Controller
 
     public function store(Request $request, Post $post)
     {
+        // 到達確認用ログ（バリデーション前）
+        Log::info('PostController@store: メソッド開始', [
+            'request_all' => $request->all(),
+            'request_post' => $request->input('post'),
+            'method' => $request->method(),
+            'url' => $request->url(),
+        ]);
+
         // 画像バリデーション追加
         $request->validate([
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:4096',
+            'post.shop_id' => 'required_without:post.google_place_id',
+            'post.google_place_id' => 'required_without:post.shop_id',
         ]);
 
         $input = $request['post'];
@@ -77,13 +87,37 @@ class PostController extends Controller
         // 店舗処理（Google Places API連携）
         $shopId = $input['shop_id'] ?? null;
         $googlePlaceId = $input['google_place_id'] ?? null;
+        $shopName = $input['shop_name'] ?? null;
+        $shopAddress = $input['shop_address'] ?? null;
+        Log::info('投稿store: 受信値', [
+            'shop_id' => $shopId,
+            'google_place_id' => $googlePlaceId,
+            'shop_name' => $shopName,
+            'shop_address' => $shopAddress,
+            'input' => $input,
+        ]);
 
         // 新規店舗の場合（shop_idが空でgoogle_place_idがある場合）
         if (empty($shopId) && !empty($googlePlaceId)) {
-            $shop = $this->createShopFromGooglePlaces($googlePlaceId, $request);
+            Log::info('投稿store: createShopFromGooglePlaces呼び出し直前', [
+                'google_place_id' => $googlePlaceId,
+                'shop_name' => $shopName,
+                'shop_address' => $shopAddress,
+            ]);
+            $shop = $this->createShopFromGooglePlaces($googlePlaceId, $request, $shopName, $shopAddress);
+            Log::info('投稿store: createShopFromGooglePlaces呼び出し直後', [
+                'shop' => $shop,
+            ]);
             if ($shop) {
                 $input['shop_id'] = $shop->id;
             }
+        }
+        // shop_idがnullのままならバリデーションエラー
+        if (empty($input['shop_id'])) {
+            Log::error('投稿store: shop_idがセットできずバリデーションエラー', [
+                'input' => $input
+            ]);
+            return back()->withErrors(['shop_id' => '店舗情報の取得に失敗しました。もう一度お試しください。'])->withInput();
         }
 
         // Cloudinary画像アップロード処理
@@ -112,7 +146,7 @@ class PostController extends Controller
     /**
      * Google Places APIから店舗情報を取得してデータベースに保存
      */
-    private function createShopFromGooglePlaces(string $placeId, Request $request): ?Shop
+    private function createShopFromGooglePlaces(string $placeId, Request $request, ?string $fallbackName = null, ?string $fallbackAddress = null): ?Shop
     {
         try {
             // 既に同じPlace IDの店舗が存在するかチェック
@@ -124,28 +158,25 @@ class PostController extends Controller
             // Google Places APIから詳細情報を取得
             $googlePlacesService = app(\App\Services\GooglePlacesService::class);
             $placeDetails = $googlePlacesService->getPlaceDetails($placeId);
-
-            // 取得した詳細情報を詳細にログ出力
-            Log::info('Google Places API (New) 店舗詳細取得', [
-                'place_id' => $placeId,
-                'details' => $placeDetails
-            ]);
+            Log::info('Google Places API placeDetails取得後', ['place_id' => $placeId, 'placeDetails' => $placeDetails]);
 
             // 店舗データを作成（Google Places API (New)仕様に合わせてフィールド名修正）
             $shopData = [
-                'name' => $placeDetails['displayName']['text'] ?? 'Unknown Shop',
-                'address' => $placeDetails['formattedAddress'] ?? '',
+                'name' => $placeDetails['displayName']['text'] ?? $fallbackName ?? 'Unknown Shop',
+                'address' => $placeDetails['formattedAddress'] ?? $fallbackAddress ?? '',
                 'formatted_phone_number' => $placeDetails['nationalPhoneNumber'] ?? '',
                 'website' => $placeDetails['websiteUri'] ?? '',
                 'google_place_id' => $placeId,
                 'created_by' => Auth::user()->id,
             ];
+            Log::info('Shop作成データ直前', $shopData);
 
             // 座標情報があれば追加
             if (isset($placeDetails['location'])) {
                 $shopData['latitude'] = $placeDetails['location']['latitude'] ?? null;
                 $shopData['longitude'] = $placeDetails['location']['longitude'] ?? null;
             }
+            Log::info('Shop作成データ(座標追加後)', $shopData);
 
             // 店舗を作成
             $shop = Shop::create($shopData);
@@ -159,16 +190,23 @@ class PostController extends Controller
         } catch (\Exception $e) {
             Log::error('Google Places API店舗作成エラー', [
                 'place_id' => $placeId,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
             ]);
 
+            // fallback: 店舗名または住所がなければ例外
+            if (empty($fallbackName) || empty($fallbackAddress)) {
+                throw new \Exception('店舗名または住所が取得できませんでした');
+            }
             // エラーが発生した場合は基本的な店舗情報で作成
-            return Shop::create([
-                'name' => 'Unknown Shop',
-                'address' => '',
+            $fallbackData = [
+                'name' => $fallbackName,
+                'address' => $fallbackAddress,
                 'google_place_id' => $placeId,
                 'created_by' => Auth::user()->id,
-            ]);
+            ];
+            Log::info('Shop作成データ(fallback)', $fallbackData);
+            return Shop::create($fallbackData);
         }
     }
 

@@ -7,17 +7,10 @@
         @csrf
         @method('PUT')
 
-        <!-- 店舗選択 -->
+        <!-- 店舗選択（Bladeコンポーネント化） -->
         <div class="bg-white rounded-lg shadow p-6 mb-6">
           <h3 class="text-lg font-bold mb-4">1. 店舗を選択 <span class="text-red-500">*</span></h3>
-          <select name="post[shop_id]" id="shop_id" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
-            <option value="">店舗を選択してください</option>
-            @foreach($shops as $shop)
-            <option value="{{ $shop->id }}" {{ $post->shop_id == $shop->id ? 'selected' : '' }}>
-              {{ $shop->name }}
-            </option>
-            @endforeach
-          </select>
+          <x-shop-search name="post[shop_id]" :initial-shop="$post->shop" label="店舗名を検索してください" />
         </div>
 
         <!-- 写真（Cloudinary 1枚、既存画像プレビュー＋差し替え可） -->
@@ -117,29 +110,6 @@
             </label>
           </div>
         </div>
-
-        <!-- フォルダ -->
-        @auth
-        <div class="bg-white rounded-lg shadow p-6 mb-6">
-          <label class="block text-sm font-medium text-gray-700 mb-2">フォルダ</label>
-          <div class="space-y-2">
-            @foreach($folders as $folder)
-            <div class="flex items-center">
-              <input
-                type="checkbox"
-                name="folders[]"
-                value="{{ $folder->id }}"
-                id="folder_{{ $folder->id }}"
-                class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                {{ $post->folders->contains($folder->id) ? 'checked' : '' }}>
-              <label for="folder_{{ $folder->id }}" class="ml-2 block text-sm text-gray-900">
-                {{ $folder->name }}
-              </label>
-            </div>
-            @endforeach
-          </div>
-        </div>
-        @endauth
 
         <!-- ボタン -->
         <div class="flex justify-between">

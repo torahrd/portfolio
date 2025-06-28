@@ -1,5 +1,5 @@
 // 店舗検索用Alpine.js関数
-export function shopSearch() {
+export function shopSearch({ initialShop = null, mode = "post" } = {}) {
     return {
         searchQuery: "",
         searchResults: [],
@@ -8,12 +8,17 @@ export function shopSearch() {
         isLoading: false,
         errorMessage: "",
         searchTimeout: null,
+        mode: mode,
 
         init() {
-            // 初期化処理
-            this.searchQuery = "";
+            if (initialShop) {
+                this.selectedShop = initialShop;
+                this.searchQuery = initialShop.name;
+            } else {
+                this.selectedShop = null;
+                this.searchQuery = "";
+            }
             this.searchResults = [];
-            this.selectedShop = null;
             this.showResults = false;
             this.isLoading = false;
             this.errorMessage = "";

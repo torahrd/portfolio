@@ -39,7 +39,7 @@
 
 ## 完了済みタスク（最新）
 
-### Phase 16-1: デプロイ後緊急修正（2025年6月28日完了）
+### Phase 16-1: デプロイ後緊急修正（2025年6月29日完了）
 
 - [x] ログイン後の遷移先をダッシュボードから/postsに変更
   - [x] `RouteServiceProvider.php`の`HOME`定数を`/dashboard`から`/posts`に変更
@@ -50,7 +50,20 @@
   - [x] プロフィールカードをパーシャル化し、PCは左カラムsticky＋高さ揃え、モバイルは投稿一覧上部に表示するようBladeを修正
   - [x] Tailwind CSSの`sticky top-16 h-[calc(100vh-4rem)]`でヘッダー下に固定し、左右カラムの高さ問題を解消
   - [x] 動作確認：PC/モバイル両方でプロフィールカードが正しく表示されることを確認
-- **まとめ**: ユーザーページのUIが全デバイスで統一され、プロフィールカードの高さ・表示位置・固定挙動が要件通りになったことを確認。
+- [x] 新規店舗選択→投稿作成バグ修正
+  - [x] 根本原因の特定：shop-search.blade.phpのhiddenフィールドname属性不一致
+    - google_place_idがpost[google_place_id]になっていない問題を発見
+    - コントローラーでは$input['google_place_id']を期待していたが、フォームではgoogle_place_idとして送信
+  - [x] PostController@storeの冒頭に到達確認ログ追加
+    - Log::info('PostController@store: メソッド開始', [...])でリクエスト到達を可視化
+  - [x] storeメソッドのバリデーション強化
+    - post.shop_idまたはpost.google_place_idのいずれか必須に設定
+    - 画像バリデーションと併せて適切なバリデーションルールを実装
+  - [x] 動作確認：新規店舗選択→投稿作成が正常に完了することを確認
+    - Google Places API連携のplaceDetails取得は正常動作
+    - フォーム送信→DB保存→リダイレクトの全フローが正常化
+  - [x] ブランチ`phase16-1-fix-shop-post`で作業完了
+- **まとめ**: ログイン後遷移・ユーザーページUI・新規店舗選択→投稿作成の全問題を解決。特にhiddenフィールドのname属性不一致という根本原因を特定・修正し、Google Places API連携の新規店舗選択時も投稿が保存できるようになった。
 
 ---
 
