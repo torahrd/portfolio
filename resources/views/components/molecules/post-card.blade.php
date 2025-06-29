@@ -77,8 +77,9 @@
     @if($showActions)
     <x-molecules.post-actions
       :post-id="$post->id"
-      :likes-count="$post->likes_count ?? 0"
-      :comments-count="$post->comments_count ?? 0" />
+      :likes-count="$post->favorite_users_count"
+      :comments-count="$post->comments_count"
+      :is-favorited="auth()->check() ? $post->isFavoritedBy(auth()->id()) : false" />
     @endif
   </div>
 </article>

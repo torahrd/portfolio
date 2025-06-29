@@ -35,6 +35,14 @@
                 </svg>
               </span>
               @endif
+
+              <!-- いいねボタン -->
+              <x-molecules.post-actions
+                :post-id="$post->id"
+                :likes-count="$post->favorite_users_count"
+                :comments-count="$post->comments_count"
+                :is-favorited="auth()->check() ? $post->isFavoritedBy(auth()->id()) : false"
+                class="ml-4" />
             </div>
 
             <div class="flex items-center space-x-4 text-sm text-neutral-600 mt-1">

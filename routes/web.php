@@ -54,6 +54,8 @@ Route::controller(PostController::class)->middleware(['auth'])->group(function (
     Route::put('/posts/{post}', 'update')->name('posts.update');
     Route::get('/posts/{post}/edit', 'edit')->name('posts.edit');
     Route::delete('/posts/{post}', 'destroy')->name('posts.destroy');
+    Route::post('/posts/{post}/favorite', 'favorite')->name('posts.favorite');
+    Route::delete('/posts/{post}/favorite', 'unfavorite')->name('posts.unfavorite');
 });
 
 // ===== ユーザー機能のルート =====

@@ -10,6 +10,8 @@ use App\Models\Folder;
 use App\Models\Shop;
 use App\Models\User;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use App\Models\Favorite;
+use Illuminate\Support\Facades\DB;
 
 class PostController extends Controller
 {
@@ -25,6 +27,7 @@ class PostController extends Controller
                     ->limit(5);              // 最新5件のみ
             }
         ])
+            ->withCount(['favorite_users', 'comments'])  // いいね数とコメント数を効率的に取得
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -212,6 +215,9 @@ class PostController extends Controller
 
     public function show(Post $post)
     {
+        // いいね数とコメント数を効率的に取得
+        $post->loadCount(['favorite_users', 'comments']);
+
         return view('post.show', compact('post'));
     }
 
@@ -304,5 +310,45 @@ class PostController extends Controller
 
         $post->delete();
         return redirect('/posts')->with('success', '削除しました');
+    }
+
+    /**
+     * 投稿にいいねを追加
+     */
+    public function favorite(Request $request, Post $post)
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => '認証が必要です'], 200);
+        }
+        if ($post->favorite_users()->where('user_id', $user->id)->exists()) {
+            return response()->json(['success' => false, 'message' => '既にいいね済みです'], 200);
+        }
+        // favoritesテーブルに直接insert
+        DB::table('favorites')->insert([
+            'user_id' => $user->id,
+            'post_id' => $post->id,
+            'created_at' => now(),
+        ]);
+        $count = $post->favorite_users()->count();
+        return response()->json(['success' => true, 'is_favorited' => true, 'favorites_count' => $count], 200);
+    }
+
+    /**
+     * 投稿のいいねを解除
+     */
+    public function unfavorite(Request $request, Post $post)
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => '認証が必要です'], 200);
+        }
+        if (!$post->favorite_users()->where('user_id', $user->id)->exists()) {
+            return response()->json(['success' => false, 'message' => 'まだいいねしていません'], 200);
+        }
+        // favoritesテーブルから該当レコードを削除
+        DB::table('favorites')->where('user_id', $user->id)->where('post_id', $post->id)->delete();
+        $count = $post->favorite_users()->count();
+        return response()->json(['success' => true, 'is_favorited' => false, 'favorites_count' => $count], 200);
     }
 }

@@ -22,3 +22,6 @@ Alpine.start();
 
 // Import post-reply functionality
 import "./post-reply.js";
+
+// Import post-like functionality
+import "./post-like.js";
