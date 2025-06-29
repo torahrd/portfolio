@@ -255,7 +255,10 @@ class FollowController extends Controller
             ->orderBy('followers.created_at', 'desc')
             ->paginate(20);
 
-        return view('profile.followers', compact('user', 'followers'));
+        return view('profile.followers', [
+            'user' => $user,
+            'followers' => $followers,
+        ]);
     }
 
     /**
@@ -280,6 +283,9 @@ class FollowController extends Controller
             ->orderBy('followers.created_at', 'desc')
             ->paginate(20);
 
-        return view('profile.following', compact('user', 'following'));
+        return view('profile.followings', [
+            'user' => $user,
+            'followings' => $following,
+        ]);
     }
 }

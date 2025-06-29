@@ -50,6 +50,16 @@ $typeClass = $typeClasses[$notification->type] ?? $typeClasses['system'];
     <div class="flex-1 min-w-0">
       <div class="flex items-start justify-between">
         <div class="flex-1">
+          @if($notification->type === 'App\\Notifications\\FollowRequestNotification')
+          <div class="flex items-center space-x-2 mb-2">
+            <a href="{{ $notification->data['profile_url'] ?? '#' }}">
+              <img src="{{ $notification->data['from_user_avatar'] ?? asset('images/default-avatar.png') }}" alt="avatar" class="w-8 h-8 rounded-full object-cover">
+            </a>
+            <a href="{{ $notification->data['profile_url'] ?? '#' }}" class="font-semibold text-primary-700 hover:underline">
+              {{ $notification->data['from_user_name'] ?? 'ユーザー' }}
+            </a>
+          </div>
+          @endif
           <p class="text-sm text-neutral-900">
             {!! $notification->message !!}
           </p>

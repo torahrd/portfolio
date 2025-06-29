@@ -39,11 +39,11 @@
               <div class="text-sm text-gray-500">投稿</div>
             </div>
             <div class="text-center">
-              <div class="text-lg font-semibold text-gray-800">{{ $user->followers_count }}</div>
+              <div class="text-lg font-semibold text-gray-800">{{ $user->followers()->count() }}</div>
               <div class="text-sm text-gray-500">フォロワー</div>
             </div>
             <div class="text-center">
-              <div class="text-lg font-semibold text-gray-800">{{ $user->following_count }}</div>
+              <div class="text-lg font-semibold text-gray-800">{{ $user->following()->count() }}</div>
               <div class="text-sm text-gray-500">フォロー中</div>
             </div>
           </div>
