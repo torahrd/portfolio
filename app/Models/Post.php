@@ -57,6 +57,14 @@ class Post extends Model
 
     public function favorite_users()
     {
-        return $this->belongsToMany(User::class, 'favorites', 'post_id', 'user_id')->withTimestamps();
+        return $this->belongsToMany(User::class, 'favorites', 'post_id', 'user_id');
+    }
+
+    /**
+     * 指定されたユーザーがこの投稿にいいねしているかどうかを判定
+     */
+    public function isFavoritedBy($userId): bool
+    {
+        return $this->favorite_users()->where('user_id', $userId)->exists();
     }
 }
