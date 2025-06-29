@@ -14,32 +14,6 @@
         </aside>
         <!-- 右カラム: 投稿一覧 -->
         <main class="lg:w-2/3 w-full">
-          <!-- フォロー申請一覧セクション -->
-          @if(isset($pendingFollowRequests) && count($pendingFollowRequests) > 0)
-          <div class="bg-white rounded-xl shadow p-6 mb-8">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4">フォロー申請一覧</h2>
-            <ul class="space-y-4">
-              @foreach($pendingFollowRequests as $requestUser)
-              <li class="flex items-center justify-between">
-                <div class="flex items-center space-x-4">
-                  <x-atoms.avatar :user="$requestUser" size="small" />
-                  <span class="font-medium text-gray-900">{{ $requestUser->name }}</span>
-                </div>
-                <div class="flex space-x-2">
-                  <form method="POST" action="{{ route('users.accept', $requestUser) }}">
-                    @csrf
-                    <button type="submit" class="btn btn-primary btn-sm">承認</button>
-                  </form>
-                  <form method="POST" action="{{ route('users.reject', $requestUser) }}">
-                    @csrf
-                    <button type="submit" class="btn btn-danger btn-sm">拒否</button>
-                  </form>
-                </div>
-              </li>
-              @endforeach
-            </ul>
-          </div>
-          @endif
           <div class="bg-white rounded-xl shadow p-6">
             <h2 class="text-xl font-semibold text-gray-800 mb-6">投稿 ({{ $user->posts_count }}件)</h2>
             @if($posts->count() > 0)

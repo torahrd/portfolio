@@ -18,8 +18,15 @@ $typeClass = $typeClasses[$notification->type] ?? $typeClasses['system'];
 <div class="bg-white rounded-xl shadow-card p-4 hover:shadow-card-hover transition-shadow duration-300 {{ $notification->read_at ? '' : 'border-l-4 border-primary-500 bg-primary-50' }}">
   <div class="flex items-start space-x-3">
     <!-- アイコン -->
-    <div class="flex-shrink-0">
-      @if($notification->type === 'like')
+    <div class="flex-shrink-0 flex items-center justify-center">
+      @if($notification->type === 'App\\Notifications\\FollowRequestNotification')
+      @php
+      $fromUser = isset($notification->data['from_user_id']) ? \App\Models\User::find($notification->data['from_user_id']) : null;
+      @endphp
+      <a href="{{ $notification->data['profile_url'] ?? '#' }}">
+        <x-atoms.avatar :user="$fromUser" size="large" />
+      </a>
+      @elseif($notification->type === 'like')
       <div class="w-8 h-8 bg-pink-100 rounded-full flex items-center justify-center">
         <svg class="w-4 h-4 {{ $typeClass }}" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
@@ -52,10 +59,7 @@ $typeClass = $typeClasses[$notification->type] ?? $typeClasses['system'];
         <div class="flex-1">
           @if($notification->type === 'App\\Notifications\\FollowRequestNotification')
           <div class="flex items-center space-x-2 mb-2">
-            <a href="{{ $notification->data['profile_url'] ?? '#' }}">
-              <img src="{{ $notification->data['from_user_avatar'] ?? asset('images/default-avatar.png') }}" alt="avatar" class="w-8 h-8 rounded-full object-cover">
-            </a>
-            <a href="{{ $notification->data['profile_url'] ?? '#' }}" class="font-semibold text-primary-700 hover:underline">
+            <a href="{{ $notification->data['profile_url'] ?? '#' }}" class="font-semibold text-neutral-900 hover:underline">
               {{ $notification->data['from_user_name'] ?? 'ユーザー' }}
             </a>
           </div>
