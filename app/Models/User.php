@@ -196,10 +196,13 @@ class User extends Authenticatable
     // フォロー申請の承認・拒否
     public function acceptFollowRequest(User $user): void
     {
-        $this->followers()->updateExistingPivot($user->id, [
-            'status' => 'active',
-            'updated_at' => now()
-        ]);
+        // 「pending」状態のpivotのみ「active」に更新
+        $this->followers()
+            ->wherePivot('status', 'pending')
+            ->updateExistingPivot($user->id, [
+                'status' => 'active',
+                'updated_at' => now()
+            ]);
 
         $this->increment('followers_count');
         $user->increment('following_count');
@@ -207,7 +210,10 @@ class User extends Authenticatable
 
     public function rejectFollowRequest(User $user): void
     {
-        $this->followers()->detach($user->id);
+        // 「pending」状態のpivotのみ削除
+        $this->followers()
+            ->wherePivot('status', 'pending')
+            ->detach($user->id);
     }
 
     // ===== 既存メソッドの維持（変更なし） =====

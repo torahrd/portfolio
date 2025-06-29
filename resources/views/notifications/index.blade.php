@@ -6,9 +6,9 @@
         <h1 class="text-3xl font-bold text-neutral-900">通知</h1>
 
         @if(auth()->user()->unreadNotifications->count() > 0)
-        <x-atoms.button-secondary size="sm">
+        <x-atoms.button-icon size="sm">
           すべて既読にする
-        </x-atoms.button-secondary>
+        </x-atoms.button-icon>
         @endif
       </div>
 
@@ -37,9 +37,9 @@
       <!-- ページネーション（将来の拡張用） -->
       @if(auth()->user()->notifications->count() > 20)
       <div class="mt-8 flex justify-center">
-        <x-atoms.button-secondary>
+        <x-atoms.button-icon>
           さらに読み込む
-        </x-atoms.button-secondary>
+        </x-atoms.button-icon>
       </div>
       @endif
     </div>

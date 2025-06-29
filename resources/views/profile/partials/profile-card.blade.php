@@ -52,6 +52,74 @@
   <div class="w-full mt-6">
     <a href="{{ route('profile.edit') }}" class="w-full btn btn-outline-secondary">プロフィールを編集</a>
   </div>
+  @else
+  <div class="w-full mt-6">
+    <button
+      id="follow-button-{{ $user->id }}"
+      data-user-id="{{ $user->id }}"
+      data-follow-url="{{ route('users.follow', $user) }}"
+      class="w-full btn {{ auth()->user()->isFollowing($user) ? 'btn-outline-secondary' : 'btn-primary' }} follow-button"
+      onclick="toggleFollow('{{ $user->id }}')">
+      @if(auth()->user()->isFollowing($user))
+      フォロー解除
+      @elseif(auth()->user()->hasSentFollowRequest($user))
+      申請中
+      @else
+      フォロー
+      @endif
+    </button>
+  </div>
   @endif
   @endauth
 </div>
+
+<script>
+  function toggleFollow(userId) {
+    const button = document.getElementById(`follow-button-${userId}`);
+    const followUrl = button.dataset.followUrl;
+
+    // ボタンを無効化
+    button.disabled = true;
+    button.textContent = '処理中...';
+
+    fetch(followUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // ボタンの表示を更新
+          if (data.is_following) {
+            button.textContent = 'フォロー解除';
+            button.className = 'w-full btn btn-outline-secondary follow-button';
+          } else {
+            button.textContent = data.is_pending ? '申請中' : 'フォロー';
+            button.className = 'w-full btn btn-primary follow-button';
+          }
+
+          // フォロワー数を更新
+          const followersElement = document.querySelector(`a[href*="/users/${userId}/followers"]`);
+          if (followersElement) {
+            followersElement.textContent = data.followers_count;
+          }
+
+          // 成功メッセージを表示（オプション）
+          console.log(data.message);
+        } else {
+          alert('フォロー処理に失敗しました。');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('フォロー処理に失敗しました。');
+      })
+      .finally(() => {
+        // ボタンを再有効化
+        button.disabled = false;
+      });
+  }
+</script>

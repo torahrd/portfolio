@@ -11,6 +11,7 @@ use App\Http\Controllers\FavoriteShopController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\MapController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -81,6 +82,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/shops', [ShopController::class, 'store'])->name('shops.store');
     // 店舗詳細（既存）
     Route::get('/shops/{shop}', [ShopController::class, 'show'])->name('shops.show');
+    Route::post('/notifications/{notification}/accept', [NotificationController::class, 'accept'])->name('notifications.accept');
+    Route::post('/notifications/{notification}/reject', [NotificationController::class, 'reject'])->name('notifications.reject');
 });
 
 // ===== お気に入り機能のルート =====

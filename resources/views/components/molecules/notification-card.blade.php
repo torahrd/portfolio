@@ -60,27 +60,38 @@ $typeClass = $typeClasses[$notification->type] ?? $typeClasses['system'];
 
         @if($showActions)
         <div class="flex items-center space-x-1 ml-4">
+          @if($notification->type === 'App\\Notifications\\FollowRequestNotification')
+          <form method="POST" action="{{ route('notifications.accept', $notification->id) }}" class="inline">
+            @csrf
+            <x-atoms.button-primary type="submit">
+              承認
+            </x-atoms.button-primary>
+          </form>
+          <form method="POST" action="{{ route('notifications.reject', $notification->id) }}" class="inline ml-2">
+            @csrf
+            <x-atoms.button-secondary type="submit">
+              拒否
+            </x-atoms.button-secondary>
+          </form>
+          @else
           @if(!$notification->read_at)
-          <x-atoms.icon-button
-            variant="ghost"
-            size="sm"
+          <x-atoms.button-icon
             wire:click="markAsRead('{{ $notification->id }}')"
             title="既読にする">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
             </svg>
-          </x-atoms.icon-button>
+          </x-atoms.button-icon>
           @endif
 
-          <x-atoms.icon-button
-            variant="ghost"
-            size="sm"
+          <x-atoms.button-icon
             wire:click="deleteNotification('{{ $notification->id }}')"
             title="削除">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
             </svg>
-          </x-atoms.icon-button>
+          </x-atoms.button-icon>
+          @endif
         </div>
         @endif
       </div>
