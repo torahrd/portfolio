@@ -39,11 +39,19 @@ class ProfileController extends Controller
         $isFollowing = $currentUser?->isFollowing($user) ?? false;
         $hasPendingRequest = $currentUser?->hasPendingFollowRequest($user) ?? false;
 
+        // フォロー申請一覧（自分自身のプロフィールのみ）
+        $pendingFollowRequests = [];
+        if ($currentUser && $currentUser->id === $user->id) {
+            $user->refresh(); // 最新状態を取得
+            $pendingFollowRequests = $user->pendingFollowRequests()->get();
+        }
+
         return view('profile.show', compact(
             'user',
             'posts',
             'isFollowing',
-            'hasPendingRequest'
+            'hasPendingRequest',
+            'pendingFollowRequests'
         ));
     }
 

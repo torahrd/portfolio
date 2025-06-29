@@ -27,8 +27,8 @@
       <div class="flex items-center space-x-4">
         @auth
         <!-- 通知（リンク型・アイコン＋テキスト） -->
-        <div class="relative" x-data="{ open: false }">
-          <a href="#" x-on:click.prevent="open = !open" class="flex items-center px-3 py-2 rounded-lg hover:bg-primary-50 text-primary-600 font-semibold transition-colors relative">
+        <div class="relative">
+          <a href="{{ route('notifications.index') }}" class="flex items-center px-3 py-2 rounded-lg hover:bg-primary-50 text-primary-600 font-semibold transition-colors relative">
             <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4 17h5l-5 5v-5z"></path>
             </svg>
@@ -39,39 +39,6 @@
             </span>
             @endif
           </a>
-          <!-- 通知ドロップダウン -->
-          <div
-            x-show="open"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 scale-95"
-            x-transition:enter-end="opacity-100 scale-100"
-            x-transition:leave="transition ease-in duration-75"
-            x-transition:leave-start="opacity-100 scale-100"
-            x-transition:leave-end="opacity-0 scale-95"
-            x-on:click.outside="open = false"
-            class="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-neutral-200 py-1 z-50">
-            <div class="px-4 py-3 border-b border-neutral-200">
-              <h3 class="text-sm font-semibold text-neutral-900">通知</h3>
-            </div>
-            <div class="max-h-96 overflow-y-auto">
-              @forelse(auth()->user()->notifications->take(5) as $notification)
-              <div class="px-4 py-3 border-b border-neutral-100 last:border-b-0">
-                <x-molecules.notification-card :notification="$notification" :show-actions="false" />
-              </div>
-              @empty
-              <div class="px-4 py-8 text-center text-neutral-500">
-                <p class="text-sm">新しい通知はありません</p>
-              </div>
-              @endforelse
-            </div>
-            @if(auth()->user()->notifications->count() > 5)
-            <div class="px-4 py-3 border-t border-neutral-200">
-              <a href="{{ route('notifications.index') }}" class="text-sm text-primary-500 hover:text-primary-600 font-medium">
-                すべての通知を見る
-              </a>
-            </div>
-            @endif
-          </div>
         </div>
 
         <!-- 投稿（リンク型・アイコン＋テキスト） -->
