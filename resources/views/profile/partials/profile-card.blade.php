@@ -86,7 +86,8 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+          'Accept': 'application/json'
         }
       })
       .then(response => response.json())
@@ -109,6 +110,9 @@
 
           // 成功メッセージを表示（オプション）
           console.log(data.message);
+
+          // ページ全体をリロードして全てのUI要素を即時反映
+          window.location.reload();
         } else {
           alert('フォロー処理に失敗しました。');
         }
