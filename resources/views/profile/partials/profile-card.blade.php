@@ -7,11 +7,11 @@
       <div class="text-xs text-gray-500">投稿</div>
     </div>
     <div class="text-center">
-      <a href="{{ route('profile.followers', $user) }}" class="text-lg font-semibold text-blue-600 hover:underline">{{ $user->followers_count }}</a>
+      <a href="{{ route('profile.followers', $user) }}" class="text-lg font-semibold text-blue-600 hover:underline">{{ $user->followers()->count() }}</a>
       <div class="text-xs text-gray-500">フォロワー</div>
     </div>
     <div class="text-center">
-      <a href="{{ route('profile.following', $user) }}" class="text-lg font-semibold text-blue-600 hover:underline">{{ $user->following_count }}</a>
+      <a href="{{ route('profile.following', $user) }}" class="text-lg font-semibold text-blue-600 hover:underline">{{ $user->following()->count() }}</a>
       <div class="text-xs text-gray-500">フォロー中</div>
     </div>
   </div>
