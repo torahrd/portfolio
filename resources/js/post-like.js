@@ -3,11 +3,28 @@
  */
 document.addEventListener("DOMContentLoaded", function () {
     // いいねボタンのクリックイベントを設定
-    document.addEventListener("click", function (e) {
-        if (e.target.closest(".like-button")) {
-            e.preventDefault();
-            handleLikeClick(e.target.closest(".like-button"));
+    document.addEventListener("click", function (event) {
+        const button = event.target.closest(".like-button");
+        if (!button) return;
+
+        // SVG取得の堅牢化: クリックされた要素がlike-iconならそれを使う
+        let icon = null;
+        if (
+            event.target.classList &&
+            event.target.classList.contains("like-icon")
+        ) {
+            icon = event.target;
+        } else {
+            icon = button.querySelector(".like-icon");
         }
+        if (!icon) {
+            showError("「いいね」ボタンの表示に問題が発生しました。");
+            console.error("like-iconが見つかりません", button, event.target);
+            return;
+        }
+
+        event.preventDefault();
+        handleLikeClick(button);
     });
 });
 
@@ -26,16 +43,10 @@ function handleLikeClick(button) {
     // ボタンを一時的に無効化（二重クリック防止）
     button.disabled = true;
 
-    // ローディング状態の表示
-    const originalContent = button.innerHTML;
-    button.innerHTML = `
-        <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-        </svg>
-        <span class="text-sm">${
-            button.querySelector(".like-count").textContent
-        }</span>
-    `;
+    // ローディング状態の表示（構造を維持しつつアニメーションのみ付与）
+    const icon = button.querySelector(".like-icon");
+    const countElement = button.querySelector(".like-count");
+    if (icon) icon.classList.add("animate-spin");
 
     // APIリクエストの設定
     const url = `/posts/${postId}/favorite`;
@@ -54,13 +65,20 @@ function handleLikeClick(button) {
             "X-CSRF-TOKEN": token,
         },
     })
-        .then((response) => response.json())
+        // サーバーからのレスポンスが必ずJSONとは限らない場合（例: セッション切れでHTMLが返る等）
+        .then(async (response) => {
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+                return response.json();
+            } else {
+                // 予期しないHTMLや空レスポンスの場合はcatchに送る
+                throw new Error("サーバーから不正なレスポンスが返されました");
+            }
+        })
         .then((data) => {
             if (data.success) {
-                // UI更新
                 updateLikeUI(button, data.is_favorited, data.favorites_count);
             } else {
-                // エラー時の処理
                 showError(
                     data.message ||
                         "いいねの処理に失敗しました。しばらく時間をおいてから再度お試しください。"
@@ -68,47 +86,68 @@ function handleLikeClick(button) {
             }
         })
         .catch((error) => {
-            // ネットワークエラー時のみ
+            // エラー内容を詳細に出力し、セッション切れ等も考慮
+            console.error("いいねAPIエラー:", error);
             showError(
-                "ネットワークエラーが発生しました。しばらく時間をおいてから再度お試しください。"
+                error.message.includes("CSRF") ||
+                    error.message.includes("token")
+                    ? "セッションが切れています。再度ログインしてください。"
+                    : error.message.includes("不正なレスポンス")
+                    ? "サーバーから不正なレスポンスが返されました。再度ログインするか、時間をおいてお試しください。"
+                    : "ネットワークエラーが発生しました。しばらく時間をおいてから再度お試しください。"
             );
         })
         .finally(() => {
             // ボタンを再度有効化
             button.disabled = false;
-            button.innerHTML = originalContent;
+            if (icon) icon.classList.remove("animate-spin");
         });
 }
 
 /**
  * いいねUIの更新
  */
-function updateLikeUI(button, isFavorited, count) {
-    const icon = button.querySelector(".like-icon");
-    const countElement = button.querySelector(".like-count");
+function updateLikeUI(button, isFavorited, favoritesCount) {
+    try {
+        // SVGアイコンが見つからない場合はUI更新を中断し、エラー表示
+        const icon = button.querySelector(".like-icon");
+        if (!icon) {
+            // 一般ユーザー向けの分かりやすい文言でエラー表示
+            showError(
+                "「いいね」ボタンの表示に問題が発生しました。ページを再読み込みしてください。"
+            );
+            console.error("like-iconが見つかりません", button);
+            return;
+        }
+        const countElement = button.querySelector(".like-count");
 
-    // いいね状態の更新
-    button.dataset.isFavorited = isFavorited.toString();
+        // いいね状態の更新
+        button.dataset.isFavorited = isFavorited.toString();
 
-    // アイコンの更新
-    if (isFavorited) {
-        icon.setAttribute("fill", "currentColor");
-        button.classList.remove("text-neutral-500", "hover:text-red-500");
-        button.classList.add("text-red-500");
-    } else {
-        icon.setAttribute("fill", "none");
-        button.classList.remove("text-red-500");
-        button.classList.add("text-neutral-500", "hover:text-red-500");
+        // アイコンの更新
+        if (isFavorited) {
+            icon.setAttribute("fill", "currentColor");
+            button.classList.remove("text-neutral-500", "hover:text-red-500");
+            button.classList.add("text-red-500");
+        } else {
+            icon.setAttribute("fill", "none");
+            button.classList.remove("text-red-500");
+            button.classList.add("text-neutral-500", "hover:text-red-500");
+        }
+
+        // カウントの更新
+        countElement.textContent = favoritesCount;
+
+        // アニメーション効果
+        button.classList.add("scale-110");
+        setTimeout(() => {
+            button.classList.remove("scale-110");
+        }, 150);
+    } catch (e) {
+        // 予期しない例外もユーザーに分かりやすく通知
+        showError("「いいね」ボタンの更新中にエラーが発生しました。");
+        console.error("updateLikeUI例外:", e);
     }
-
-    // カウントの更新
-    countElement.textContent = count;
-
-    // アニメーション効果
-    button.classList.add("scale-110");
-    setTimeout(() => {
-        button.classList.remove("scale-110");
-    }, 150);
 }
 
 /**
