@@ -218,31 +218,133 @@
 **要約:**
 - 投稿画像アップロード機能をCloudinaryに統一し、1枚のみアップロード仕様でリリース。複数画像やリッチUIは今後の拡張候補としてtodo.mdに記載。 
 
+### Phase 15-1: 基盤構築（2025年6月27日完了）
+
+- [x] **環境設定**
+  - [x] Google Maps APIキーの設定（.envファイルにGOOGLE_MAPS_API_KEY追加）
+  - [x] config/google.phpの作成（Google API設定ファイル）
+  - [x] config/services.phpの更新（Google Places API設定追加）
+  - [x] 環境変数の設定確認（GOOGLE_MAPS_API_KEY, GOOGLE_PLACES_LANGUAGE, GOOGLE_PLACES_REGION）
+- [x] **データベース設計**
+  - [x] shopsテーブルにGoogle Places API連携用カラムを追加
+    - google_place_id（Google Places APIのPlace ID）
+    - latitude（緯度）
+    - longitude（経度）
+    - formatted_phone_number（Google Places APIから取得した電話番号）
+    - website（Google Places APIから取得した公式サイトURL）
+  - [x] インデックスの追加（検索性能向上）
+    - google_place_idのインデックス
+    - latitude, longitudeの複合インデックス
+  - [x] マイグレーションファイルの作成（2025_06_25_204612_add_google_places_fields_to_shops_table.php）
+- [x] **サービス層実装**
+  - [x] GooglePlacesService.phpの作成
+    - Google Places API (New)のtextSearchエンドポイント実装
+    - Google Places API (New)のplaceDetailsエンドポイント実装
+    - レート制限機能の実装（日次300回・月次9000回）
+    - キャッシュ機能の実装（検索結果1時間・詳細情報24時間・ジオコーディング1週間）
+    - 使用量監視機能の実装（getUsageStats()メソッド）
+    - エラーハンドリング・ログ出力の実装
+  - [x] TextNormalizationService.phpの作成（検索クエリの正規化）
+- [x] **モデル層実装**
+  - [x] Shopモデルの拡張
+    - findByGooglePlaceId()メソッドの実装
+    - updateFromGooglePlaces()メソッドの実装
+    - updateBusinessHoursFromGooglePlaces()メソッドの実装
+    - スコープメソッドの追加（byGooglePlaceId, withGooglePlaceId, withoutGooglePlaceId, withCoordinates, nearby）
+  - [x] 既存データとの整合性確保
+    - 既存店舗データのGoogle Place ID設定確認
+    - 座標データの型変換処理（文字列→数値）
+- [x] **評価機能削除**
+  - [x] 既存の評価関連カラム・機能の削除
+  - [x] 評価機能に依存していたUI・ロジックの削除
+  - [x] データベースのクリーンアップ
+
+**まとめ**: Google Places API連携の基盤が完成。環境設定・データベース設計・サービス層・モデル層が全て実装され、レート制限・キャッシュ・監視機能も含めて包括的な基盤が構築された。
+
+### Phase 15-2: 情報取得機能実装（2025年6月27日完了）
+
+- [x] **店舗検索機能の実装**
+  - [x] ShopSearchController.phpの作成
+    - Google Places API (New)を使用した店舗検索機能
+    - 既存データベースからのフォールバック検索機能
+    - 検索結果のマージ・重複排除機能
+    - マッチスコアによる結果ソート機能
+  - [x] APIルートの設定
+    - /api/shops/search-places（Google Places API + 既存DB検索）
+    - /api/shops/place-details（Google Places API詳細情報取得）
+    - 認証ミドルウェアの適用
+  - [x] フロントエンド連携
+    - shop-search.jsの更新（Google Places API対応）
+    - 検索結果の表示・選択機能
+    - エラーハンドリング・フォールバック機能
+- [x] **重複対策の実装**
+  - [x] Google Place IDによる重複チェック機能
+    - Shop::findByGooglePlaceId()メソッドの活用
+    - 既存店舗との重複判定ロジック
+  - [x] 店舗名による重複チェック機能
+    - 正規化された店舗名での比較
+    - 部分一致・前方一致・完全一致の判定
+  - [x] 検索結果のマージ機能
+    - Google Places API結果と既存DB結果の統合
+    - 重複排除後の結果ソート
+    - マッチスコアによる優先順位付け
+- [x] **データ変換機能の実装**
+  - [x] Google Places API (New)レスポンスの変換
+    - displayName.text → name
+    - formattedAddress → address
+    - location.latitude/longitude → latitude/longitude
+    - その他フィールドの適切な変換
+  - [x] 既存DBデータの変換
+    - Shopモデルからフロントエンド用データへの変換
+    - マッチスコアの計算・付与
+  - [x] 統合データの生成
+    - Google Places APIと既存DBデータの統合
+    - 一貫性のあるレスポンス形式の提供
+
+**まとめ**: Google Places API (New)を使用した店舗検索機能が完成。既存データベースとの重複対策も実装され、高精度な検索結果を提供できるようになった。
+
 ### Phase 15-3: マッピング機能実装（2025年6月27日動作確認完了）
 
-- [x] 地図表示基盤
+- [x] **地図表示基盤**
   - [x] 専用地図ページの作成（レスポンシブ対応・モバイル最適化）
     - Tailwindのh-[300px] md:h-[400px] lg:h-[500px]で統一、全デバイスで動作確認済み
     - 他ページと同じcontainer設計で余白・中央寄せも統一
+    - map/index.blade.phpの作成・実装
   - [x] Google Maps JavaScript API統合（地図表示・API連携完了）
     - マップID設定（仮IDで設定済み、今後本番用IDに切り替え）
     - 最新のAdvancedMarkerElement実装（警告のみ、今後対応）
-    - 地図スタイルのカスタマイズ（未着手、今後実装）
-- [x] マーカー表示
+    - 地図スタイルのカスタマイズ（レトロスタイル実装済み）
+    - 現在地取得機能の実装（navigator.geolocation使用）
+- [x] **マーカー表示**
   - [x] 店舗マーカーの表示（lat/lng型変換バグ解消・標準マーカー・詳細遷移）
     - lat/lngの型変換（Number()）でAPIレスポンスの文字列→数値変換バグを解消
     - Google Maps標準マーカーで地図上に表示、クリックで店舗詳細ページ遷移もOK
+    - 現在地マーカーの実装（青色円形アイコン）
   - [x] マーカークラスタリング（Google公式MarkerClustererでクラスタ表示・拡大縮小で自動分解）
     - 複数店舗が近接している場合に自動的にクラスタ表示
     - 拡大・縮小でクラスタ⇔個別マーカーが切り替わることを確認
     - 詳細遷移も維持
+    - MarkerClustererライブラリの統合
   - [ ] カスタムマーカーアイコン（未着手、今後実装）
   - [ ] ビューポート内レンダリング最適化（未着手、今後実装）
-- [ ] インタラクティブ機能
-  - [ ] クリック時の店舗詳細画面遷移（基本動作はOK、今後UI強化）
-  - [ ] ホバー時の情報表示
-  - [ ] ズーム・パン機能
-- [x] 現在の課題と暫定対応
+- [x] **インタラクティブ機能**
+  - [x] クリック時の店舗詳細画面遷移（基本動作はOK、今後UI強化）
+    - マーカークリック時のwindow.location.href遷移
+    - 店舗詳細ページへの正常な遷移確認
+  - [ ] ホバー時の情報表示（未着手、今後実装）
+  - [x] ズーム・パン機能（基本機能は実装済み、今後UI強化）
+    - Google Maps標準のズーム・パン機能
+    - レスポンシブ対応（window.addEventListener('resize')）
+- [x] **API連携**
+  - [x] ShopMapApiController.phpの実装
+    - 投稿が1件以上あり、かつ緯度・経度が設定されている店舗のみ取得
+    - 最新投稿の画像URL取得
+    - 営業時間情報の取得
+    - 店舗詳細ページURLの生成
+  - [x] MapController.phpの実装
+    - 地図ページの表示制御
+    - 今後拡張用のパラメータ受け渡し準備
+- [x] **現在の課題と暫定対応**
   - [x] 地図divの高さ指定（Tailwindのh-[500px]が効かない）
     - 恒久対応：Tailwindのカスタムユーティリティ（.map-height）で高さ指定し、全画面で安定動作を確認
     - h-[500px]クラスのJIT未出力問題は、@layer utilitiesで独自クラスを定義することで解決
@@ -251,31 +353,103 @@
   - [ ] レスポンシブ未確認：スマホ・タブレット幅での地図高さ・UI崩れは今後確認
   - [ ] Google Mapsの警告（Marker非推奨、loading=async未使用）は今後のリファクタリング課題として記録
 
-**まとめ**: 地図表示・マーカー表示・クラスタリング機能が全て正常動作。レスポンシブ対応も完了し、全デバイスで安定動作を確認。
+**まとめ**: 地図表示・マーカー表示・クラスタリング機能が全て正常動作。レスポンシブ対応も完了し、全デバイスで安定動作を確認。API連携も正常に動作し、店舗データの表示・遷移が可能。
 
 ### Phase 15-4: 最適化・セキュリティ（2025年6月27日完了）
 
-- [x] キャッシュ戦略の実装
+- [x] **キャッシュ戦略の実装**
   - [x] Redisキャッシュ（Google Places APIレスポンス・検索結果・地図データ）
     - 検索結果: 1時間キャッシュ（3600秒）
     - 詳細情報: 24時間キャッシュ（86400秒）
     - ジオコーディング: 1週間キャッシュ（604800秒）
+    - Cache::remember()を使用した自動キャッシュ管理
   - [x] データベースキャッシュ（店舗情報・営業時間データ）
     - 使用量統計の日次・月次カウント
+    - 店舗情報の効率的な取得・更新
   - [x] ブラウザキャッシュ（静的リソース・APIレスポンス）
     - 静的リソース用の設定済み
-- [x] レート制限実装
+    - Nginx設定によるブラウザキャッシュ最適化
+- [x] **レート制限実装**
   - [x] アプリケーションレベル制限（日次300回・月次9000回）
     - GooglePlacesService.phpで日次300回・月次9000回の制限
+    - isLimitExceeded()メソッドによる制限チェック
+    - recordUsage()メソッドによる使用量記録
   - [x] ユーザー別制限（API 60回/分）
     - RouteServiceProvider.phpでAPI 60回/分
+    - RateLimiter::for('api')による制限設定
     - 個別ルートにthrottle:60,1等を設定
-- [x] 監視システム導入
+    - 店舗検索: throttle:60,1
+    - ユーザー検索: throttle:60,1
+    - フォロー関連: throttle:30,1
+- [x] **監視システム導入**
   - [x] 使用量監視（getUsageStats()メソッド）
     - 日次・月次使用量を取得するメソッド実装
+    - 残り使用量の計算機能
+    - 使用量上限との比較機能
   - [x] エラー監視（詳細ログ出力）
     - Log::info, Log::errorによる詳細なログ出力
+    - API呼び出し前後のログ記録
+    - エラー発生時の詳細情報記録
   - [x] コスト監視（使用量上限チェック）
     - 使用量上限チェック機能
+    - 上限到達時の適切なエラーメッセージ表示
+    - フォールバック機能の自動発動
 
-**まとめ**: キャッシュ戦略・レート制限・監視システムが全て実装済み。GooglePlacesService.phpで包括的な最適化・セキュリティ機能を提供。 
+**まとめ**: キャッシュ戦略・レート制限・監視システムが全て実装済み。GooglePlacesService.phpで包括的な最適化・セキュリティ機能を提供。API使用量の制御・監視・最適化が可能になり、本番環境での安定運用が可能。
+
+### Phase 16-1: デプロイ後緊急修正（2025年6月29日完了）
+
+- [x] ログイン後の遷移先をダッシュボードから/postsに変更
+  - [x] `RouteServiceProvider.php`の`HOME`定数を`/dashboard`から`/posts`に変更
+  - [x] `AuthenticatedSessionController.php`の`store`メソッドでリダイレクト先確認
+  - [x] 動作確認：ログイン後に投稿一覧ページに遷移することを確認
+  - [x] ブランチ`phase16-1-deploy-fixes`で作業完了
+- [x] ユーザーページのCSS適用・UI高さ揃え・レスポンシブ修正
+  - [x] プロフィールカードをパーシャル化し、PCは左カラムsticky＋高さ揃え、モバイルは投稿一覧上部に表示するようBladeを修正
+  - [x] Tailwind CSSの`sticky top-16 h-[calc(100vh-4rem)]`でヘッダー下に固定し、左右カラムの高さ問題を解消
+  - [x] 動作確認：PC/モバイル両方でプロフィールカードが正しく表示されることを確認
+- [x] 新規店舗選択→投稿作成バグ修正
+  - [x] 根本原因の特定：shop-search.blade.phpのhiddenフィールドname属性不一致
+    - google_place_idがpost[google_place_id]になっていない問題を発見
+    - コントローラーでは$input['google_place_id']を期待していたが、フォームではgoogle_place_idとして送信
+  - [x] PostController@storeの冒頭に到達確認ログ追加
+    - Log::info('PostController@store: メソッド開始', [...])でリクエスト到達を可視化
+  - [x] storeメソッドのバリデーション強化
+    - post.shop_idまたはpost.google_place_idのいずれか必須に設定
+    - 画像バリデーションと併せて適切なバリデーションルールを実装
+  - [x] 動作確認：新規店舗選択→投稿作成が正常に完了することを確認
+    - Google Places API連携のplaceDetails取得は正常動作
+    - フォーム送信→DB保存→リダイレクトの全フローが正常化
+  - [x] ブランチ`phase16-1-fix-shop-post`で作業完了
+- [x] 投稿編集ページの追加修正
+  - [x] 店舗選択をAPI連携の検索・選択UIに変更（投稿作成時と同様の体験）
+  - [x] 画像変更が反映されるよう修正（新規アップロード・既存画像削除機能追加）
+  - [x] フォルダ機能のUI・処理を削除（edit・updateメソッドから完全削除）
+  - [x] updateメソッドの強化（storeメソッドと同様の店舗処理・バリデーション・ログ追加）
+  - [x] 画像変更時のUI改善（新規画像選択時に削除ボタンを非表示）
+  - [x] 動作確認：店舗検索・画像変更・削除・UI改善が正常動作することを確認
+  - [x] ブランチ`phase16-1-edit-post-ui`で作業完了
+- [x] フォロー機能の動作確認・修正
+  - [x] 通知一覧での承認・拒否UI実装
+  - [x] followersテーブルのpending→active/削除のDB連携
+  - [x] 通知消去・認可動作確認
+  - [x] 申請側プロフィール閲覧・認可もOK
+  - [x] UI不要ボタン非表示対応
+  - [x] エラー対応（status=active, カラム名修正）
+  - [x] 動作確認済み
+- [x] フォロワー・フォロー中リスト表示機能の修正
+  - [x] profile/followers.blade.phpの新規作成
+  - [x] profile/followings.blade.phpの新規作成
+  - [x] FollowControllerで正しいビューを返すよう修正
+  - [x] ユーザー一覧リストのUI実装（最低限のカード表示でOK）
+  - [x] 動作確認：リストが正しく表示されること
+- [x] フォロー/フォロワーリスト・通知UI/ロジック修正
+  - [x] アバター画像の表示不具合修正（デフォルト画像fallback強化）
+  - [x] usernameが空の場合「@」非表示
+  - [x] フォロー/フォロワー数カウントの不整合修正（activeのみカウント）
+  - [x] プライベートアカウントのフォロー解除時エラー修正
+  - [x] フォロー・アンフォロー後のUI即時反映（リロード/リダイレクト方式）
+  - [x] 通知欄の不要通知削除・アイコン未表示修正
+  - [x] 動作確認
+
+**まとめ**: ログイン後遷移・ユーザーページUI・新規店舗選択→投稿作成・投稿編集・フォロー機能の全問題を解決。特にhiddenフィールドのname属性不一致という根本原因を特定・修正し、Google Places API連携の新規店舗選択時も投稿が保存できるようになった。 
