@@ -33,6 +33,7 @@ class ProfileController extends Controller
 
         $posts = $user->posts()
             ->with('user', 'shop')
+            ->withCount(['favorite_users', 'comments'])
             ->latest()
             ->paginate(12);
 
@@ -74,6 +75,7 @@ class ProfileController extends Controller
 
         $posts = $user->posts()
             ->with('user', 'shop')
+            ->withCount(['favorite_users', 'comments'])
             ->latest()
             ->paginate(12);
 
