@@ -47,6 +47,19 @@
       <input type="hidden" name="post[shop_address]" x-bind:value="selectedShop && selectedShop.address ? selectedShop.address : ''">
     </div>
   </template>
+  <!-- バリデーションUI（選択済みかつバリデーションOK時のみ） -->
+  <div x-show="selectedShop && isSelectionValid" class="mt-2 p-2 bg-green-50 border border-green-200 rounded flex items-center gap-2">
+    <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+    </svg>
+    <span class="text-green-700 text-sm">店舗選択が有効です</span>
+  </div>
+  <div x-show="selectedShop && !isSelectionValid" class="mt-2 p-2 bg-red-50 border border-red-200 rounded flex items-center gap-2">
+    <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+    </svg>
+    <span class="text-red-700 text-sm">店舗選択が無効です</span>
+  </div>
   <div x-show="errorMessage" class="mt-2 text-sm text-red-600" x-text="errorMessage"></div>
   <p class="text-sm text-gray-600 mt-2">
     店舗名を入力すると、Google Places APIからリアルタイムで検索結果が表示されます。
