@@ -63,3 +63,5 @@ Route::get('/shops/map-data', [ShopMapApiController::class, 'index']);
 
 // 店舗名サジェストAPI
 Route::get('/search/suggestions', [SearchSuggestionController::class, 'shopNameSuggestions']);
+
+Route::post('/shops/validate-selection', [\App\Http\Controllers\Api\ShopSearchController::class, 'validateSelection']);

@@ -9,11 +9,13 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
         errorMessage: "",
         searchTimeout: null,
         mode: mode,
+        isSelectionValid: false,
 
         init() {
             if (initialShop) {
                 this.selectedShop = initialShop;
                 this.searchQuery = initialShop.name;
+                this.validateSelection();
             } else {
                 this.selectedShop = null;
                 this.searchQuery = "";
@@ -130,6 +132,7 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
             this.searchQuery = shop.name;
             this.showResults = false;
             this.errorMessage = "";
+            this.validateSelection();
 
             // 新規店舗の場合は、Google Places APIから詳細情報を取得
             if (!shop.is_existing && shop.google_place_id) {
@@ -164,6 +167,7 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
                         ...this.selectedShop,
                         ...this.formatPlaceDetails(data.data),
                     };
+                    this.validateSelection();
                 }
             } catch (error) {
                 console.error("店舗詳細取得エラー:", error);
@@ -196,6 +200,7 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
             this.searchResults = [];
             this.showResults = false;
             this.errorMessage = "";
+            this.isSelectionValid = false;
         },
 
         // 外部クリックで結果を非表示
@@ -203,6 +208,57 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
             if (!this.$el.contains(event.target)) {
                 this.showResults = false;
             }
+        },
+
+        // 店舗選択の検証
+        async validateSelection() {
+            if (!this.selectedShop) {
+                this.isSelectionValid = false;
+                return;
+            }
+
+            try {
+                await fetch("/sanctum/csrf-cookie", { credentials: "include" });
+                const response = await fetch("/api/shops/validate-selection", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-Requested-With": "XMLHttpRequest",
+                    },
+                    credentials: "include",
+                    body: JSON.stringify({
+                        selected_shop: this.selectedShop,
+                    }),
+                });
+
+                const data = await response.json();
+                this.isSelectionValid = data.success;
+
+                if (!data.success) {
+                    this.errorMessage = data.message || "店舗選択が無効です";
+                } else {
+                    this.errorMessage = "";
+                }
+            } catch (error) {
+                console.error("店舗選択検証エラー:", error);
+                this.isSelectionValid = false;
+                this.errorMessage = "店舗選択の検証に失敗しました";
+            }
+        },
+
+        // フォーム送信前の検証
+        validateBeforeSubmit() {
+            if (!this.selectedShop) {
+                this.errorMessage = "店舗を選択してください";
+                return false;
+            }
+
+            if (!this.isSelectionValid) {
+                this.errorMessage = "店舗を候補から選択してください";
+                return false;
+            }
+
+            return true;
         },
     };
 }

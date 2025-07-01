@@ -57,7 +57,7 @@ class GooglePlacesService
           // Google Places API (New)のtextSearchエンドポイントを呼び出し
           $response = Http::withHeaders([
             'X-Goog-Api-Key' => $this->apiKey,
-            'X-Goog-FieldMask' => 'places.id,places.displayName,places.formattedAddress,places.location'
+            'X-Goog-FieldMask' => 'places.id,places.displayName,places.formattedAddress,places.location,places.types,places.primaryType'
           ])->post("{$this->baseUrl}/places:searchText", [
             'textQuery' => $query,
             'languageCode' => $language,
@@ -75,11 +75,36 @@ class GooglePlacesService
 
           if ($response->successful()) {
             $data = $response->json();
+            $places = $data['places'] ?? [];
+
+            // 飲食店のみをフィルタリング
+            $filteredPlaces = array_filter($places, function ($place) {
+              $types = $place['types'] ?? [];
+              $primaryType = $place['primaryType'] ?? '';
+
+              // 飲食店関連のタイプをチェック
+              $foodTypes = [
+                'restaurant',
+                'food',
+                'cafe',
+                'bar',
+                'bakery',
+                'meal_takeaway',
+                'meal_delivery',
+                'liquor_store'
+              ];
+
+              return !empty(array_intersect($types, $foodTypes)) ||
+                in_array($primaryType, $foodTypes);
+            });
+
             Log::info('Google Places API (New) textSearch成功', [
               'query' => $query,
-              'result_count' => count($data['places'] ?? [])
+              'result_count' => count($places),
+              'filtered_count' => count($filteredPlaces)
             ]);
-            return $data['places'] ?? [];
+
+            return array_values($filteredPlaces);
           } else {
             Log::error('Google Places API (New) textSearchエラー', [
               'query' => $query,

@@ -13,13 +13,38 @@
       </div>
       @endif
 
-      <form method="POST" action="{{ route('posts.store') }}" enctype="multipart/form-data">
+      <form method="POST" action="{{ route('posts.store') }}" enctype="multipart/form-data" x-data="shopSearch()" @submit="validateBeforeSubmit()">
         @csrf
 
         <!-- 店舗選択（Bladeコンポーネント化） -->
         <div class="bg-white rounded-lg shadow p-6 mb-6">
           <h3 class="text-lg font-bold mb-4">1. 店舗を選択 <span class="text-red-500">*</span></h3>
           <x-shop-search name="post[shop_id]" label="店舗名を検索してください" />
+
+          <!-- 店舗選択エラーメッセージ -->
+          <div x-show="errorMessage" x-text="errorMessage" class="mt-2 text-sm text-red-600"></div>
+
+          <!-- 店舗選択状態表示 -->
+          <div x-show="selectedShop" class="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="font-medium text-green-800" x-text="selectedShop.name"></div>
+                <div class="text-sm text-green-600" x-text="selectedShop.address"></div>
+              </div>
+              <div class="flex items-center space-x-2">
+                <div x-show="isSelectionValid" class="text-green-600">
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                  </svg>
+                </div>
+                <button type="button" @click="clearSelection()" class="text-red-500 hover:text-red-700">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- 写真（オプション） -->
@@ -128,7 +153,9 @@
           </a>
           <button
             type="submit"
-            class="px-6 py-3 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors">
+            :disabled="!isSelectionValid"
+            :class="isSelectionValid ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-400 cursor-not-allowed'"
+            class="px-6 py-3 text-white rounded-md transition-colors">
             投稿する
           </button>
         </div>
