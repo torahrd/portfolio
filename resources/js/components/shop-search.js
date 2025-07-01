@@ -128,10 +128,13 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
 
         // 店舗選択
         selectShop(shop) {
+            console.log("selectShop called with:", shop);
             this.selectedShop = shop;
+            this.$dispatch("update-selected-shop", { shop: this.selectedShop });
             this.searchQuery = shop.name;
             this.showResults = false;
             this.errorMessage = "";
+            console.log("Calling validateSelection from selectShop");
             this.validateSelection();
 
             // 新規店舗の場合は、Google Places APIから詳細情報を取得
@@ -196,11 +199,13 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
         // 選択クリア
         clearSelection() {
             this.selectedShop = null;
+            this.$dispatch("update-selected-shop", { shop: null });
             this.searchQuery = "";
             this.searchResults = [];
             this.showResults = false;
             this.errorMessage = "";
             this.isSelectionValid = false;
+            this.$dispatch("update-selection-valid", { valid: false });
         },
 
         // 外部クリックで結果を非表示
@@ -212,8 +217,17 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
 
         // 店舗選択の検証
         async validateSelection() {
+            console.log(
+                "validateSelection called, selectedShop:",
+                this.selectedShop
+            );
+
             if (!this.selectedShop) {
+                console.log(
+                    "No selectedShop, setting isSelectionValid to false"
+                );
                 this.isSelectionValid = false;
+                this.$dispatch("update-selection-valid", { valid: false });
                 return;
             }
 
@@ -232,7 +246,13 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
                 });
 
                 const data = await response.json();
+                console.log("validateSelection response:", data);
+
                 this.isSelectionValid = data.success;
+                this.$dispatch("update-selection-valid", {
+                    valid: this.isSelectionValid,
+                });
+                console.log("isSelectionValid set to:", this.isSelectionValid);
 
                 if (!data.success) {
                     this.errorMessage = data.message || "店舗選択が無効です";
@@ -242,22 +262,30 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
             } catch (error) {
                 console.error("店舗選択検証エラー:", error);
                 this.isSelectionValid = false;
+                this.$dispatch("update-selection-valid", { valid: false });
                 this.errorMessage = "店舗選択の検証に失敗しました";
             }
         },
 
         // フォーム送信前の検証
         validateBeforeSubmit() {
+            console.log("validateBeforeSubmit called");
+            console.log("selectedShop:", this.selectedShop);
+            console.log("isSelectionValid:", this.isSelectionValid);
+
             if (!this.selectedShop) {
+                console.log("No selectedShop, showing error");
                 this.errorMessage = "店舗を選択してください";
                 return false;
             }
 
             if (!this.isSelectionValid) {
+                console.log("isSelectionValid is false, showing error");
                 this.errorMessage = "店舗を候補から選択してください";
                 return false;
             }
 
+            console.log("Validation passed, returning true");
             return true;
         },
     };
