@@ -35,16 +35,16 @@
     <div class="mt-4 p-4 bg-blue-50 rounded-md">
       <div class="flex items-center justify-between">
         <div>
-          <div class="font-medium text-gray-900" x-text="selectedShop ? selectedShop.name : ''"></div>
-          <div class="text-sm text-gray-600" x-text="selectedShop ? selectedShop.address : ''"></div>
-          <div class="text-sm text-gray-600" x-show="selectedShop && selectedShop.formatted_phone_number" x-text="selectedShop ? selectedShop.formatted_phone_number : ''"></div>
+          <div class="font-medium text-gray-900" x-text="selectedShop && selectedShop.name ? selectedShop.name : ''"></div>
+          <div class="text-sm text-gray-600" x-text="selectedShop && selectedShop.address ? selectedShop.address : ''"></div>
+          <div class="text-sm text-gray-600" x-show="selectedShop && selectedShop.formatted_phone_number" x-text="selectedShop && selectedShop.formatted_phone_number ? selectedShop.formatted_phone_number : ''"></div>
         </div>
         <button type="button" @click="clearSelection()" class="text-red-500 hover:text-red-700 text-sm">変更</button>
       </div>
-      <input type="hidden" :name="'{{ $name }}'" x-bind:value="selectedShop ? selectedShop.id : ''">
-      <input type="hidden" name="post[google_place_id]" x-bind:value="selectedShop ? selectedShop.google_place_id : ''">
-      <input type="hidden" name="post[shop_name]" x-bind:value="selectedShop ? selectedShop.name : ''">
-      <input type="hidden" name="post[shop_address]" x-bind:value="selectedShop ? selectedShop.address : ''">
+      <input type="hidden" :name="'{{ $name }}'" x-bind:value="selectedShop && selectedShop.id ? selectedShop.id : ''">
+      <input type="hidden" name="post[google_place_id]" x-bind:value="selectedShop && selectedShop.google_place_id ? selectedShop.google_place_id : ''">
+      <input type="hidden" name="post[shop_name]" x-bind:value="selectedShop && selectedShop.name ? selectedShop.name : ''">
+      <input type="hidden" name="post[shop_address]" x-bind:value="selectedShop && selectedShop.address ? selectedShop.address : ''">
     </div>
   </template>
   <div x-show="errorMessage" class="mt-2 text-sm text-red-600" x-text="errorMessage"></div>

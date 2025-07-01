@@ -25,6 +25,18 @@
         - [x] 10-5. 修正実装・動作確認
     - [x] プロフィール画面で「いいね数0でもハートが赤い」事象の修正（情報取得・UI更新の最適化）
   - [ ] 検索機能の曖昧検索（ひらがな入力等）対応
+    - [~] 【現状の詳細・進捗メモ（2025/06/29時点）】
+      - 投稿作成画面の店舗検索で「店舗選択後に投稿ボタンがグレーアウト」「リロード直後にAlpine.jsのnullアクセスエラー（Cannot read properties of null (reading 'name'/'address')）」が発生中。
+      - 検索・候補選択・バリデーションAPI（/api/shops/validate-selection）は正常に動作し、success: trueが返っている。
+      - ただし、isSelectionValidがtrueにならず、投稿ボタンが有効化されない。
+      - Blade/Alpine.js側でselectedShopがnullのまま.name/.addressにアクセスしている箇所が残っている可能性。
+      - 投稿ボタンのdisabled属性の制御ロジック、Alpine.jsの状態遷移、validateSelectionメソッドの挙動を要再調査。
+    - [ ] 【次回開始時に着手すること】
+      - shop-search.blade.phpの全ての.name/.addressアクセス箇所でガード漏れがないか再点検・修正。
+      - 投稿ボタンのdisabled条件（isSelectionValid, selectedShop, 他必須項目）を確認し、必要に応じて修正。
+      - Alpine.jsの状態遷移（店舗選択→バリデーション→ボタン有効化）が正しく動作しているか、console.log等でデバッグ。
+      - 必要に応じてshop-search.jsのvalidateSelectionメソッドの中身も確認・修正。
+      - 上記の調査・修正後、再度リロード直後のエラー消失・店舗選択後の投稿ボタン有効化を動作確認する。
 
 ### 🟡 重要タスク
 - [ ] **Phase 16-2: デプロイ後重要修正**
