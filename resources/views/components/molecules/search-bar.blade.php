@@ -63,7 +63,7 @@
     </div>
 
     <!-- 検索結果 -->
-    <template x-for="suggestion in suggestions" :key="suggestion.title">
+    <template x-for="suggestion in suggestions" :key="suggestion.title + '-' + suggestion.subtitle">
       <div @click="selectSuggestion(suggestion)"
         class="px-4 py-3 cursor-pointer hover:bg-neutral-50 transition-colors duration-200">
         <div class="flex items-center justify-between">
