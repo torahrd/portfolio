@@ -73,16 +73,34 @@
     border: 1px solid #007bff;
 }
 
+.btn-outline-primary:hover {
+    background: transparent;
+    color: #0056b3;
+    border-color: #0056b3;
+}
+
 .btn-outline-secondary {
     background: transparent;
     color: #6c757d;
     border: 1px solid #6c757d;
 }
 
+.btn-outline-secondary:hover {
+    background: transparent;
+    color: #545b62;
+    border-color: #545b62;
+}
+
 .btn-outline-info {
     background: transparent;
     color: #17a2b8;
     border: 1px solid #17a2b8;
+}
+
+.btn-outline-info:hover {
+    background: transparent;
+    color: #117a8b;
+    border-color: #117a8b;
 }
 
 .btn-small {
