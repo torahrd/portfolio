@@ -158,12 +158,6 @@ class ProfileController extends Controller
         /** @var User $user */
         $user = auth()->user();
 
-        if (!$user->is_private) {
-            return response()->json([
-                'error' => 'プライベートアカウントのみプロフィールリンクを生成できます'
-            ], 400);
-        }
-
         $profileLink = ProfileLink::generateForUser($user);
 
         return response()->json([

@@ -49,8 +49,30 @@
   </div>
   @auth
   @if(auth()->id() === $user->id)
-  <div class="w-full mt-6">
-    <a href="{{ route('profile.edit') }}" class="w-full btn btn-outline-secondary">プロフィールを編集</a>
+  <div class="w-full mt-6 space-y-3">
+    {{-- プロフィールリンク機能（全ユーザー対象） --}}
+    @php
+    $activeProfileLink = $user->profileLinks()->where('is_active', true)->where('expires_at', '>', now())->first();
+    @endphp
+
+    @if($activeProfileLink)
+    {{-- 有効なプロフィールリンクがある場合 --}}
+    <button
+      onclick="showProfileLinkModal()"
+      class="w-full px-4 py-2 border border-blue-500 text-blue-500 rounded-md hover:border-blue-600 hover:text-blue-600 transition-colors duration-200">
+      プロフィールリンク表示
+    </button>
+    @else
+    {{-- 有効なプロフィールリンクがない場合 --}}
+    <button
+      onclick="generateProfileLink()"
+      class="w-full px-4 py-2 border border-blue-500 text-blue-500 rounded-md hover:border-blue-600 hover:text-blue-600 transition-colors duration-200">
+      プロフィールリンク作成
+    </button>
+    @endif
+
+    {{-- プロフィール編集ボタン --}}
+    <a href="{{ route('profile.edit') }}" class="w-full px-4 py-2 border border-gray-500 text-gray-500 rounded-md hover:border-gray-600 hover:text-gray-600 transition-colors duration-200 text-center block">プロフィールを編集</a>
   </div>
   @else
   <div class="w-full mt-6">
@@ -73,7 +95,158 @@
   @endauth
 </div>
 
+{{-- プロフィールリンクモーダル --}}
+@auth
+@if(auth()->id() === $user->id)
+@php
+$modalId = 'profile-link-modal-' . $user->id . '-' . uniqid();
+$urlInputId = 'profile-link-url-' . $user->id . '-' . uniqid();
+$expiresId = 'profile-link-expires-' . $user->id . '-' . uniqid();
+@endphp
+<x-molecules.profile-link-modal :user="$user" />
+@endif
+@endauth
+
 <script>
+  // プロフィールリンク生成
+  async function generateProfileLink() {
+    try {
+      const response = await fetch('{{ route("profile.generate-link") }}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+          'Accept': 'application/json'
+        }
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // リンク生成成功 - ページをリロードしてボタン表示を更新
+        window.location.reload();
+      } else {
+        alert(data.error || 'プロフィールリンクの生成に失敗しました');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('プロフィールリンクの生成に失敗しました');
+    }
+  }
+
+  // プロフィールリンクモーダル表示
+  function showProfileLinkModal() {
+    console.log('showProfileLinkModal called'); // デバッグ用
+
+    // すべてのモーダルを検索
+    const modalElements = document.querySelectorAll('[x-data]');
+    console.log('Found modal elements:', modalElements.length); // デバッグ用
+
+    let targetModal = null;
+    let modalName = null;
+
+    // プロフィールリンクモーダルを特定
+    for (const modal of modalElements) {
+      const modalContent = modal.innerHTML;
+      if (modalContent.includes('プロフィールリンク')) {
+        targetModal = modal;
+        // x-on:open-modal.window属性からモーダル名を取得
+        const openModalAttr = modal.getAttribute('x-on:open-modal.window');
+        console.log('Open modal attribute:', openModalAttr); // デバッグ用
+        if (openModalAttr) {
+          // $event.detail == 'modal-name' の形式から名前を抽出
+          const match = openModalAttr.match(/\$event\.detail\s*==\s*'([^']+)'/);
+          if (match) {
+            modalName = match[1];
+          }
+        }
+        console.log('Found profile link modal, name:', modalName); // デバッグ用
+        break;
+      }
+    }
+
+    if (targetModal && modalName) {
+      // リンク情報を事前に設定
+      const linkUrl = '{{ $activeProfileLink ? route("profile.show-by-token", $activeProfileLink->token) : "" }}';
+      const expiresAt = '{{ $activeProfileLink ? $activeProfileLink->expires_at->format("Y年n月j日 H:i") : "" }}';
+
+      console.log('Link URL:', linkUrl); // デバッグ用
+      console.log('Expires At:', expiresAt); // デバッグ用
+
+      // モーダルを開く
+      window.dispatchEvent(new CustomEvent('open-modal', {
+        detail: modalName
+      }));
+
+      // 少し遅延してからデータを設定
+      setTimeout(() => {
+        const urlInput = targetModal.querySelector('input[readonly]');
+        const expiresText = targetModal.querySelector('p[id*="expires"]');
+
+        if (linkUrl && urlInput) {
+          urlInput.value = linkUrl;
+          console.log('Set URL input value'); // デバッグ用
+        }
+        if (expiresAt && expiresText) {
+          expiresText.textContent = expiresAt + 'まで有効';
+          console.log('Set expires text'); // デバッグ用
+        }
+      }, 200);
+    } else {
+      console.error('Profile link modal not found or modal name not found');
+      console.log('Target modal:', !!targetModal, 'Modal name:', modalName);
+    }
+  }
+
+  // プロフィールリンクコピー
+  async function copyProfileLink(urlInputId, copyStatusId, manualGuideId) {
+    const linkUrl = document.getElementById(urlInputId).value;
+    const copyStatus = document.getElementById(copyStatusId);
+    const manualGuide = document.getElementById(manualGuideId);
+
+    // 状態をリセット
+    copyStatus.classList.add('hidden');
+    manualGuide.classList.add('hidden');
+
+    try {
+      // Clipboard API を試行
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(linkUrl);
+        copyStatus.classList.remove('hidden');
+        setTimeout(() => copyStatus.classList.add('hidden'), 3000);
+        return;
+      }
+
+      // execCommand を試行
+      const textArea = document.createElement('textarea');
+      textArea.value = linkUrl;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      textArea.style.top = '-999999px';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      if (document.execCommand('copy')) {
+        copyStatus.classList.remove('hidden');
+        setTimeout(() => copyStatus.classList.add('hidden'), 3000);
+      } else {
+        throw new Error('execCommand failed');
+      }
+
+      document.body.removeChild(textArea);
+    } catch (error) {
+      console.error('Copy failed:', error);
+      // 手動コピー案内を表示
+      manualGuide.classList.remove('hidden');
+    }
+  }
+
+  // プロフィールリンク無効化（一旦コメントアウト）
+  function deactivateProfileLink() {
+    alert('無効化機能は後で実装します');
+  }
+
   function toggleFollow(userId) {
     const button = document.getElementById(`follow-button-${userId}`);
     const followUrl = button.dataset.followUrl;

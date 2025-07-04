@@ -31,11 +31,11 @@ $maxWidthClass = [
     x-on:keydown.tab.prevent="$event.shiftKey || nextFocusable().focus()"
     x-on:keydown.shift.tab.prevent="prevFocusable().focus()"
     x-show="show"
-    class="fixed inset-0 overflow-y-auto px-4 py-6 sm:px-0 z-50"
+    class="fixed inset-0 overflow-y-auto px-4 py-6 sm:px-0 z-[99999]"
     style="display: none;">
     <div
         x-show="show"
-        class="fixed inset-0 bg-neutral-500 bg-opacity-75 transition-opacity"
+        class="fixed inset-0 bg-neutral-500 bg-opacity-75 transition-opacity z-[99998]"
         x-on:click="show = false"
         x-transition:enter="ease-out duration-300"
         x-transition:enter-start="opacity-0"
@@ -46,13 +46,15 @@ $maxWidthClass = [
 
     <div
         x-show="show"
-        class="mb-6 bg-white rounded-xl overflow-hidden shadow-xl transform transition-all sm:w-full {{ $maxWidthClass }} sm:mx-auto"
+        class="relative z-[99999] flex items-center justify-center min-h-screen px-4 py-6"
         x-transition:enter="ease-out duration-300"
         x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
         x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
         x-transition:leave="ease-in duration-200"
         x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
         x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-        {{ $slot }}
+        <div class="bg-white rounded-xl overflow-hidden shadow-xl transform transition-all w-full {{ $maxWidthClass }} max-w-lg">
+            {{ $slot }}
+        </div>
     </div>
 </div>
