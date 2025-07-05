@@ -130,6 +130,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/profile/generate-link', [ProfileController::class, 'generateProfileLink'])
         ->name('profile.generate-link');
 
+    // プロフィールリンク無効化
+    Route::delete('/profile/deactivate-link', [ProfileController::class, 'deactivateProfileLink'])
+        ->name('profile.deactivate-link');
+
     // フォロー関連（AJAX対応、レート制限付き）
     Route::post('/users/{user}/follow', [FollowController::class, 'follow'])
         ->name('users.follow')

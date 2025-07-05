@@ -3,7 +3,7 @@
 'transparent' => false
 ])
 
-<header class="sticky top-0 z-50 transition-all duration-300 {{ $transparent ? 'bg-transparent' : 'bg-white border-b border-neutral-200' }} backdrop-blur-sm">
+<header class="sticky top-0 z-40 transition-all duration-300 {{ $transparent ? 'bg-transparent' : 'bg-white border-b border-neutral-200' }} backdrop-blur-sm">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-16">
       <!-- ロゴ -->
@@ -80,7 +80,7 @@
             x-transition:leave-start="opacity-100 scale-100"
             x-transition:leave-end="opacity-0 scale-95"
             x-on:click.outside="open = false"
-            class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-neutral-200 py-1 z-50">
+            class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-neutral-200 py-1 z-40">
             <a href="{{ route('profile.show', auth()->user()) }}" class="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors duration-200">
               プロフィール
             </a>

@@ -53,12 +53,14 @@
     {{-- プロフィールリンク機能（全ユーザー対象） --}}
     @php
     $activeProfileLink = $user->profileLinks()->where('is_active', true)->where('expires_at', '>', now())->first();
+    $contextSuffix = $context ?? 'default';
+    $modalName = 'profile-link-modal-' . $user->id . '-' . $contextSuffix;
     @endphp
 
     @if($activeProfileLink)
     {{-- 有効なプロフィールリンクがある場合 --}}
     <button
-      onclick="showProfileLinkModal()"
+      onclick="showProfileLinkModal('{{ $modalName }}')"
       class="w-full px-4 py-2 border border-blue-500 text-blue-500 rounded-md hover:border-blue-600 hover:text-blue-600 transition-colors duration-200">
       プロフィールリンク表示
     </button>
@@ -98,12 +100,7 @@
 {{-- プロフィールリンクモーダル --}}
 @auth
 @if(auth()->id() === $user->id)
-@php
-$modalId = 'profile-link-modal-' . $user->id . '-' . uniqid();
-$urlInputId = 'profile-link-url-' . $user->id . '-' . uniqid();
-$expiresId = 'profile-link-expires-' . $user->id . '-' . uniqid();
-@endphp
-<x-molecules.profile-link-modal :user="$user" />
+<x-molecules.profile-link-modal :user="$user" :activeProfileLink="$activeProfileLink" :context="$context ?? 'default'" />
 @endif
 @endauth
 
@@ -135,66 +132,46 @@ $expiresId = 'profile-link-expires-' . $user->id . '-' . uniqid();
   }
 
   // プロフィールリンクモーダル表示
-  function showProfileLinkModal() {
-    console.log('showProfileLinkModal called'); // デバッグ用
+  function showProfileLinkModal(modalName) {
+    console.log('showProfileLinkModal called with modalName:', modalName); // デバッグ用
 
-    // すべてのモーダルを検索
-    const modalElements = document.querySelectorAll('[x-data]');
-    console.log('Found modal elements:', modalElements.length); // デバッグ用
-
-    let targetModal = null;
-    let modalName = null;
-
-    // プロフィールリンクモーダルを特定
-    for (const modal of modalElements) {
-      const modalContent = modal.innerHTML;
-      if (modalContent.includes('プロフィールリンク')) {
-        targetModal = modal;
-        // x-on:open-modal.window属性からモーダル名を取得
-        const openModalAttr = modal.getAttribute('x-on:open-modal.window');
-        console.log('Open modal attribute:', openModalAttr); // デバッグ用
-        if (openModalAttr) {
-          // $event.detail == 'modal-name' の形式から名前を抽出
-          const match = openModalAttr.match(/\$event\.detail\s*==\s*'([^']+)'/);
-          if (match) {
-            modalName = match[1];
-          }
-        }
-        console.log('Found profile link modal, name:', modalName); // デバッグ用
-        break;
-      }
-    }
-
-    if (targetModal && modalName) {
-      // リンク情報を事前に設定
-      const linkUrl = '{{ $activeProfileLink ? route("profile.show-by-token", $activeProfileLink->token) : "" }}';
-      const expiresAt = '{{ $activeProfileLink ? $activeProfileLink->expires_at->format("Y年n月j日 H:i") : "" }}';
-
-      console.log('Link URL:', linkUrl); // デバッグ用
-      console.log('Expires At:', expiresAt); // デバッグ用
-
+    if (modalName) {
       // モーダルを開く
       window.dispatchEvent(new CustomEvent('open-modal', {
         detail: modalName
       }));
-
-      // 少し遅延してからデータを設定
-      setTimeout(() => {
-        const urlInput = targetModal.querySelector('input[readonly]');
-        const expiresText = targetModal.querySelector('p[id*="expires"]');
-
-        if (linkUrl && urlInput) {
-          urlInput.value = linkUrl;
-          console.log('Set URL input value'); // デバッグ用
-        }
-        if (expiresAt && expiresText) {
-          expiresText.textContent = expiresAt + 'まで有効';
-          console.log('Set expires text'); // デバッグ用
-        }
-      }, 200);
     } else {
-      console.error('Profile link modal not found or modal name not found');
-      console.log('Target modal:', !!targetModal, 'Modal name:', modalName);
+      console.error('Modal name not provided');
+    }
+  }
+
+  // プロフィールリンク無効化
+  async function deactivateProfileLink() {
+    if (!confirm('プロフィールリンクを無効化しますか？\n無効化すると、このリンクは使用できなくなります。')) {
+      return;
+    }
+
+    try {
+      const response = await fetch('{{ route("profile.deactivate-link") }}', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+          'Accept': 'application/json'
+        }
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // 無効化成功 - ページをリロードしてボタン表示を更新
+        window.location.reload();
+      } else {
+        alert(data.message || 'プロフィールリンクの無効化に失敗しました');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('プロフィールリンクの無効化に失敗しました');
     }
   }
 
@@ -242,10 +219,7 @@ $expiresId = 'profile-link-expires-' . $user->id . '-' . uniqid();
     }
   }
 
-  // プロフィールリンク無効化（一旦コメントアウト）
-  function deactivateProfileLink() {
-    alert('無効化機能は後で実装します');
-  }
+
 
   function toggleFollow(userId) {
     const button = document.getElementById(`follow-button-${userId}`);

@@ -54,7 +54,7 @@
     x-transition:leave="transition ease-in duration-75"
     x-transition:leave-start="opacity-100 scale-100"
     x-transition:leave-end="opacity-0 scale-95"
-    class="absolute left-0 right-0 mt-2 bg-white rounded-xl shadow-lg border border-neutral-200 py-2 z-50 max-h-80 overflow-y-auto">
+    class="absolute left-0 right-0 mt-2 bg-white rounded-xl shadow-lg border border-neutral-200 py-2 z-40 max-h-80 overflow-y-auto">
 
     <!-- ローディング中 -->
     <div x-show="isLoading" class="px-4 py-3 text-center text-neutral-500">

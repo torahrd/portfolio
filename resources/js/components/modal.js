@@ -42,9 +42,11 @@ export function modal(showDefault = false) {
             this.$watch("show", (value) => {
                 if (value) {
                     document.body.classList.add("overflow-hidden");
+                    document.body.classList.add("modal-open");
                     setTimeout(() => this.firstFocusable()?.focus(), 100);
                 } else {
                     document.body.classList.remove("overflow-hidden");
+                    document.body.classList.remove("modal-open");
                 }
             });
         },

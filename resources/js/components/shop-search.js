@@ -103,7 +103,7 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
             // 一時的なメッセージ表示（5秒後に自動消去）
             const fallbackDiv = document.createElement("div");
             fallbackDiv.className =
-                "fixed top-4 right-4 bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded z-50 shadow-lg";
+                "fixed top-4 right-4 bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded z-40 shadow-lg";
             fallbackDiv.innerHTML = `
                 <div class="flex items-center">
                     <svg class="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">

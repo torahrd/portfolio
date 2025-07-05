@@ -141,6 +141,13 @@
     background: #a8a8a8;
 }
 
+/* モーダル表示時のz-index制御 */
+body.modal-open article.group img,
+body.modal-open .group img,
+body.modal-open article img {
+    z-index: 1 !important;
+}
+
 /* プリントスタイル */
 @media print {
     .no-print {

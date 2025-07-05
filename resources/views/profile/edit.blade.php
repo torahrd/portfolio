@@ -53,7 +53,7 @@
                                         <i class="fas fa-user"></i>
                                     </div>
                                     @endif
-                                    <label for="avatar" class="position-absolute d-flex align-items-center justify-content-center" style="bottom: 10px; right: 10px; z-index: 2; background: #fff; width: 36px; height: 36px; border-radius: 50%; padding: 0; border: 1px solid rgba(13,110,253,0.5); box-shadow: 0 1px 3px rgba(0,0,0,0.06); cursor: pointer; opacity: 0.85; transition: opacity 0.2s;">
+                                    <label for="avatar" class="position-absolute d-flex align-items-center justify-content-center" style="bottom: 10px; right: 10px; background: #fff; width: 36px; height: 36px; border-radius: 50%; padding: 0; border: 1px solid rgba(13,110,253,0.5); box-shadow: 0 1px 3px rgba(0,0,0,0.06); cursor: pointer; opacity: 0.85; transition: opacity 0.2s;">
                                         <i class="fas fa-camera text-primary" style="font-size: 1rem;"></i>
                                         <span class="visually-hidden">画像を変更</span>
                                     </label>

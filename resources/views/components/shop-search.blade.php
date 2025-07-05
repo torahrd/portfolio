@@ -22,7 +22,7 @@
     </div>
   </div>
   <!-- 検索結果表示エリア -->
-  <div x-show="showResults && searchResults.length > 0" class="absolute left-0 right-0 z-50 w-full bg-white border border-gray-200 rounded-md mt-1 shadow-lg">
+  <div x-show="showResults && searchResults.length > 0" class="absolute left-0 right-0 z-40 w-full bg-white border border-gray-200 rounded-md mt-1 shadow-lg">
     <template x-for="(shop, index) in searchResults" :key="shop.id ? shop.id : index">
       <div @click="selectShop(shop)" class="px-4 py-2 cursor-pointer hover:bg-blue-50">
         <div class="font-medium text-gray-900" x-text="shop.name"></div>

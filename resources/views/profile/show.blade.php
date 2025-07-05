@@ -3,13 +3,13 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- モバイル用: プロフィールカード（上部） -->
       <div class="block lg:hidden mb-6">
-        @include('profile.partials.profile-card', ['user' => $user])
+        @include('profile.partials.profile-card', ['user' => $user, 'context' => 'mobile'])
       </div>
       <div class="flex flex-col lg:flex-row gap-8">
         <!-- PC用: 左カラム -->
         <aside class="lg:w-1/3 w-full hidden lg:block">
           <div class="sticky top-16 h-[calc(100vh-4rem)]">
-            @include('profile.partials.profile-card', ['user' => $user])
+            @include('profile.partials.profile-card', ['user' => $user, 'context' => 'desktop'])
           </div>
         </aside>
         <!-- 右カラム: 投稿一覧 -->
