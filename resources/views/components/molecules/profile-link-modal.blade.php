@@ -1,12 +1,13 @@
 {{-- プロフィールリンクモーダルコンポーネント --}}
-@props(['user'])
+@props(['user', 'activeProfileLink', 'context'])
 
 @php
-$modalId = 'profile-link-modal-' . $user->id . '-' . uniqid();
-$urlInputId = 'profile-link-url-' . $user->id . '-' . uniqid();
-$expiresId = 'profile-link-expires-' . $user->id . '-' . uniqid();
-$copyStatusId = 'copy-status-' . $user->id . '-' . uniqid();
-$manualGuideId = 'manual-copy-guide-' . $user->id . '-' . uniqid();
+$contextSuffix = $context ?? 'default';
+$modalId = 'profile-link-modal-' . $user->id . '-' . $contextSuffix;
+$urlInputId = 'profile-link-url-' . $user->id . '-' . $contextSuffix;
+$expiresId = 'profile-link-expires-' . $user->id . '-' . $contextSuffix;
+$copyStatusId = 'copy-status-' . $user->id . '-' . $contextSuffix;
+$manualGuideId = 'manual-copy-guide-' . $user->id . '-' . $contextSuffix;
 @endphp
 
 <x-atoms.modal name="{{ $modalId }}" max-width="md">
@@ -31,6 +32,7 @@ $manualGuideId = 'manual-copy-guide-' . $user->id . '-' . uniqid();
             type="text"
             id="{{ $urlInputId }}"
             class="flex-1 px-3 py-2 border border-gray-300 rounded-l-md bg-gray-50 text-sm"
+            value="{{ $activeProfileLink ? route('profile.show-by-token', $activeProfileLink->token) : '' }}"
             readonly>
           <button
             onclick="copyProfileLink('{{ $urlInputId }}', '{{ $copyStatusId }}', '{{ $manualGuideId }}')"
@@ -46,7 +48,9 @@ $manualGuideId = 'manual-copy-guide-' . $user->id . '-' . uniqid();
       {{-- 有効期限表示 --}}
       <div>
         <div class="block text-sm font-medium text-gray-700 mb-2">有効期限</div>
-        <p id="{{ $expiresId }}" class="text-sm text-gray-600"></p>
+        <p id="{{ $expiresId }}" class="text-sm text-gray-600">
+          {{ $activeProfileLink ? $activeProfileLink->expires_at->format('Y年n月j日 H:i') . 'まで有効' : '' }}
+        </p>
       </div>
 
       {{-- コピー状況表示 --}}

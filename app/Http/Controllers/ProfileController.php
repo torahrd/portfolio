@@ -168,6 +168,26 @@ class ProfileController extends Controller
     }
 
     /**
+     * プロフィールリンク無効化
+     */
+    public function deactivateProfileLink(Request $request)
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        // 有効なプロフィールリンクを無効化（削除）
+        $user->profileLinks()
+            ->where('is_active', true)
+            ->where('expires_at', '>', now())
+            ->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'プロフィールリンクを無効化しました'
+        ]);
+    }
+
+    /**
      * アバター画像のアップロード処理
      */
     private function handleAvatarUpload($file, User $user): string

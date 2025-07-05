@@ -76,7 +76,7 @@
   </div>
 
   <!-- モバイル用下部ナビゲーション -->
-  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-200 z-50">
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-200 z-30">
     <div class="grid grid-cols-4 h-16">
       <!-- ホーム -->
       <a href="{{ route('posts.index') }}" class="flex flex-col items-center justify-center space-y-1 text-primary-500">

@@ -69,7 +69,7 @@
             <div x-show="open"
               @click.outside="open = false"
               x-transition
-              class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-neutral-200 py-1 z-50">
+              class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-neutral-200 py-1 z-40">
               <a href="{{ route('posts.edit', $post) }}"
                 class="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors duration-200">
                 編集

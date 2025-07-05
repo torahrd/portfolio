@@ -33,7 +33,7 @@
 
     .search-results {
         @apply absolute top-full left-0 right-0 bg-white border border-gray-300 
-               border-t-0 max-h-48 overflow-y-auto z-50 hidden shadow-lg;
+               border-t-0 max-h-48 overflow-y-auto z-40 hidden shadow-lg;
     }
 
     .search-result-item {
