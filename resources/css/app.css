@@ -154,3 +154,26 @@ body.modal-open article img {
         display: none !important;
     }
 }
+
+/* モーダル表示時のtransform無効化 */
+body.modal-open .post-item,
+body.modal-open .group,
+body.modal-open article {
+    transform: none !important;
+}
+
+body.modal-open .post-item:hover,
+body.modal-open .group:hover,
+body.modal-open article:hover {
+    transform: none !important;
+}
+
+body.modal-open img {
+    transform: none !important;
+    z-index: 1 !important;
+}
+
+body.modal-open .group:hover img,
+body.modal-open article:hover img {
+    transform: none !important;
+}

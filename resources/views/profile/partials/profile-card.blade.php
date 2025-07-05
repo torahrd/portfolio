@@ -219,8 +219,6 @@
     }
   }
 
-
-
   function toggleFollow(userId) {
     const button = document.getElementById(`follow-button-${userId}`);
     const followUrl = button.dataset.followUrl;
