@@ -1,4 +1,4 @@
-<div class="bg-white rounded-xl shadow p-6 h-full flex flex-col items-center text-center">
+<div class="bg-white rounded-xl shadow p-6 h-full flex flex-col items-center text-center" style="min-height: calc(100vh - 8rem);">
   <x-atoms.avatar :user="$user" size="large" />
   <h1 class="text-2xl font-bold text-gray-900 mt-4 mb-2">{{ $user->name }}</h1>
   <div class="flex justify-center space-x-6 my-4">
@@ -47,6 +47,9 @@
       <span>{{ $user->created_at->format('Y年n月') }}に参加</span>
     </div>
   </div>
+  <!-- スペーサー -->
+  <div class="flex-grow"></div>
+
   @auth
   @if(auth()->id() === $user->id)
   <div class="w-full mt-6 space-y-3">
@@ -60,10 +63,78 @@
     @if($activeProfileLink)
     {{-- 有効なプロフィールリンクがある場合 --}}
     <button
-      onclick="showProfileLinkModal('{{ $modalName }}')"
+      onclick="toggleProfileLinkDisplay('{{ $contextSuffix }}')"
       class="w-full px-4 py-2 border border-blue-500 text-blue-500 rounded-md hover:border-blue-600 hover:text-blue-600 transition-colors duration-200">
       プロフィールリンク表示
     </button>
+
+    {{-- インライン展開エリア --}}
+    <div id="profile-link-content-{{ $contextSuffix }}" class="hidden w-full mt-3 p-4 bg-white border border-blue-200 rounded-lg shadow-sm space-y-3">
+      {{-- リンクURL表示 --}}
+      <div>
+        <label for="profile-link-url-{{ $contextSuffix }}" class="block text-sm font-medium text-gray-700 mb-2">リンクURL</label>
+        <div class="flex">
+          <input
+            type="text"
+            id="profile-link-url-{{ $contextSuffix }}"
+            class="flex-1 px-3 py-2 border border-gray-300 rounded-l-md bg-white text-sm"
+            value="{{ route('profile.show-by-token', $activeProfileLink->token) }}"
+            readonly>
+          <button
+            onclick="copyProfileLink('profile-link-url-{{ $contextSuffix }}', 'copy-status-{{ $contextSuffix }}', 'manual-copy-guide-{{ $contextSuffix }}')"
+            class="px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-r-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+            </svg>
+          </button>
+        </div>
+        <p class="text-xs text-gray-500 mt-1">このリンクを共有することで、プロフィールを直接表示できます（3日間有効）</p>
+      </div>
+
+      {{-- 有効期限表示 --}}
+      <div>
+        <div class="block text-sm font-medium text-gray-700 mb-2">有効期限</div>
+        <p class="text-sm text-gray-600">
+          {{ $activeProfileLink->expires_at->format('Y年n月j日 H:i') }}まで有効
+        </p>
+      </div>
+
+      {{-- コピー状況表示 --}}
+      <div id="copy-status-{{ $contextSuffix }}" class="hidden">
+        <div class="flex items-center text-green-600 text-sm">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+          リンクをコピーしました！
+        </div>
+      </div>
+
+      {{-- 手動コピー案内 --}}
+      <div id="manual-copy-guide-{{ $contextSuffix }}" class="hidden">
+        <div class="bg-yellow-50 border border-yellow-200 rounded-md p-3">
+          <div class="flex items-center text-yellow-800 text-sm">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16c-.77.833.192 2.5 1.732 2.5z"></path>
+            </svg>
+            自動コピーに失敗しました。上記のリンクを手動でコピーしてください。
+          </div>
+        </div>
+      </div>
+
+      {{-- アクションボタン --}}
+      <div class="flex justify-between items-center pt-3 border-t border-gray-200">
+        <button
+          onclick="deactivateProfileLink()"
+          class="px-4 py-2 text-red-600 text-sm font-medium hover:bg-red-50 rounded-md">
+          リンクを無効化
+        </button>
+        <button
+          onclick="closeProfileLinkDisplay('{{ $contextSuffix }}')"
+          class="px-4 py-2 bg-gray-500 text-white text-sm font-medium rounded-md hover:bg-gray-600">
+          閉じる
+        </button>
+      </div>
+    </div>
     @else
     {{-- 有効なプロフィールリンクがない場合 --}}
     <button
@@ -97,14 +168,21 @@
   @endauth
 </div>
 
-{{-- プロフィールリンクモーダル --}}
-@auth
-@if(auth()->id() === $user->id)
-<x-molecules.profile-link-modal :user="$user" :activeProfileLink="$activeProfileLink" :context="$context ?? 'default'" />
-@endif
-@endauth
+
 
 <script>
+  // ページ読み込み時の自動表示チェック
+  document.addEventListener('DOMContentLoaded', function() {
+    // リロード後にプロフィールリンクを自動表示する
+    if (sessionStorage.getItem('autoShowProfileLink') === 'true') {
+      sessionStorage.removeItem('autoShowProfileLink');
+      // 少し遅延させてDOM要素が確実に読み込まれてから実行
+      setTimeout(() => {
+        toggleProfileLinkDisplay('desktop');
+      }, 100);
+    }
+  });
+
   // プロフィールリンク生成
   async function generateProfileLink() {
     try {
@@ -120,8 +198,8 @@
       const data = await response.json();
 
       if (data.success) {
-        // リンク生成成功 - ページをリロードしてボタン表示を更新
-        window.location.reload();
+        // リンク生成成功 - 動的にUI更新
+        updateProfileLinkUI(data.link, data.expires_at);
       } else {
         alert(data.error || 'プロフィールリンクの生成に失敗しました');
       }
@@ -131,17 +209,80 @@
     }
   }
 
-  // プロフィールリンクモーダル表示
-  function showProfileLinkModal(modalName) {
-    console.log('showProfileLinkModal called with modalName:', modalName); // デバッグ用
+  // プロフィールリンクUI更新
+  function updateProfileLinkUI(linkUrl, expiresAt) {
+    // 作成ボタンを「プロフィールリンク表示」に変更
+    const createButtons = document.querySelectorAll('button[onclick="generateProfileLink()"]');
+    createButtons.forEach(button => {
+      button.textContent = 'プロフィールリンク表示';
+      button.setAttribute('onclick', 'toggleProfileLinkDisplay("desktop")');
+    });
 
-    if (modalName) {
-      // モーダルを開く
-      window.dispatchEvent(new CustomEvent('open-modal', {
-        detail: modalName
-      }));
+    // リンク表示エリアが存在しない場合は、リロード後に自動表示するためのフラグを設定
+    const contentElement = document.getElementById('profile-link-content-desktop');
+    if (!contentElement) {
+      // リロード後に自動表示するためのフラグを設定
+      sessionStorage.setItem('autoShowProfileLink', 'true');
+      window.location.reload();
+      return;
+    }
+
+    // リンク情報を更新
+    const urlInput = document.getElementById('profile-link-url-desktop');
+    if (urlInput) {
+      urlInput.value = linkUrl;
+    }
+
+    // 有効期限を更新
+    const expiresElement = contentElement.querySelector('.text-sm.text-gray-600');
+    if (expiresElement) {
+      expiresElement.textContent = `${expiresAt}まで有効`;
+    }
+
+    // リンク表示エリアを自動的に開く
+    toggleProfileLinkDisplay('desktop');
+  }
+
+  // プロフィールリンクインライン表示（表示専用）
+  function toggleProfileLinkDisplay(contextSuffix) {
+    console.log('toggleProfileLinkDisplay called with contextSuffix:', contextSuffix); // デバッグ用
+
+    const contentElement = document.getElementById(`profile-link-content-${contextSuffix}`);
+    const showButton = document.querySelector(`button[onclick="toggleProfileLinkDisplay('${contextSuffix}')"]`);
+
+    if (contentElement) {
+      // 表示する
+      contentElement.classList.remove('hidden');
+      // 表示ボタンを非表示にする
+      if (showButton) {
+        showButton.style.display = 'none';
+      }
     } else {
-      console.error('Modal name not provided');
+      console.error('Profile link content element not found');
+    }
+  }
+
+  // プロフィールリンクインライン表示を閉じる（閉じる専用）
+  function closeProfileLinkDisplay(contextSuffix) {
+    console.log('closeProfileLinkDisplay called with contextSuffix:', contextSuffix); // デバッグ用
+
+    const contentElement = document.getElementById(`profile-link-content-${contextSuffix}`);
+    const showButton = document.querySelector(`button[onclick="toggleProfileLinkDisplay('${contextSuffix}')"]`);
+
+    if (contentElement) {
+      // 非表示にする
+      contentElement.classList.add('hidden');
+      // 表示ボタンを表示する
+      if (showButton) {
+        showButton.style.display = 'block';
+      }
+      // 閉じる時はコピー状況と手動案内を非表示にする
+      const copyStatus = document.getElementById(`copy-status-${contextSuffix}`);
+      const manualGuide = document.getElementById(`manual-copy-guide-${contextSuffix}`);
+      if (copyStatus) copyStatus.classList.add('hidden');
+      if (manualGuide) manualGuide.classList.add('hidden');
+    } else {
+      console.error('Profile link content element not found');
     }
   }
 
@@ -164,8 +305,8 @@
       const data = await response.json();
 
       if (data.success) {
-        // 無効化成功 - ページをリロードしてボタン表示を更新
-        window.location.reload();
+        // 無効化成功 - 動的にUI更新
+        resetProfileLinkUI();
       } else {
         alert(data.message || 'プロフィールリンクの無効化に失敗しました');
       }
@@ -173,6 +314,12 @@
       console.error('Error:', error);
       alert('プロフィールリンクの無効化に失敗しました');
     }
+  }
+
+  // プロフィールリンクUI初期化
+  function resetProfileLinkUI() {
+    // 無効化後は確実にリロードして状態を初期化
+    window.location.reload();
   }
 
   // プロフィールリンクコピー

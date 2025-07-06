@@ -47,6 +47,21 @@ class ProfileController extends Controller
             $pendingFollowRequests = $user->pendingFollowRequests()->get();
         }
 
+        // Ajax リクエストの場合はJSONレスポンス（無限スクロール用）
+        if (request()->ajax()) {
+            $postsHtml = [];
+            foreach ($posts as $post) {
+                $postsHtml[] = view('components.molecules.post-card', compact('post'))->render();
+            }
+
+            return response()->json([
+                'posts' => $postsHtml,
+                'hasMorePages' => $posts->hasMorePages(),
+                'currentPage' => $posts->currentPage(),
+                'lastPage' => $posts->lastPage()
+            ]);
+        }
+
         return view('profile.show', compact(
             'user',
             'posts',

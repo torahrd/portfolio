@@ -155,25 +155,85 @@ body.modal-open article img {
     }
 }
 
-/* モーダル表示時のtransform無効化 */
+/* モーダル表示時の包括的なGPU加速レイヤー無効化 */
 body.modal-open .post-item,
 body.modal-open .group,
-body.modal-open article {
+body.modal-open article,
+body.modal-open article.group {
     transform: none !important;
+    will-change: auto !important;
+    isolation: auto !important;
+    contain: none !important;
 }
 
 body.modal-open .post-item:hover,
 body.modal-open .group:hover,
-body.modal-open article:hover {
+body.modal-open article:hover,
+body.modal-open article.group:hover {
     transform: none !important;
+    will-change: auto !important;
 }
 
-body.modal-open img {
+body.modal-open img,
+body.modal-open .group img,
+body.modal-open article img,
+body.modal-open article.group img {
     transform: none !important;
+    will-change: auto !important;
     z-index: 1 !important;
 }
 
 body.modal-open .group:hover img,
-body.modal-open article:hover img {
+body.modal-open article:hover img,
+body.modal-open article.group:hover img {
     transform: none !important;
+    will-change: auto !important;
+}
+
+/* Tailwind CSS group-hover:scale-105 の完全無効化 */
+body.modal-open .group:hover *,
+body.modal-open article.group:hover *,
+body.modal-open [class*="group-hover"] {
+    transform: none !important;
+    will-change: auto !important;
+    isolation: auto !important;
+}
+
+/* posts.css の .post-item:hover transform の無効化 */
+body.modal-open .post-item:hover {
+    transform: none !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* モーダル表示時のアニメーション完全無効化 */
+body.modal-open .post-item,
+body.modal-open .group,
+body.modal-open article,
+body.modal-open article.group,
+body.modal-open .post-item *,
+body.modal-open .group *,
+body.modal-open article *,
+body.modal-open article.group *,
+body.modal-open img,
+body.modal-open [class*="hover:"],
+body.modal-open [class*="group-hover:"],
+body.modal-open [class*="scale"],
+body.modal-open [class*="transform"] {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    will-change: auto !important;
+    isolation: auto !important;
+    contain: none !important;
+    backface-visibility: visible !important;
+    perspective: none !important;
+}
+
+/* 特定のTailwind CSSクラスの無効化 */
+body.modal-open .hover\:scale-105:hover,
+body.modal-open .group-hover\:scale-105,
+body.modal-open .group-hover\:scale-110,
+body.modal-open .hover\:shadow-card-hover:hover {
+    transform: none !important;
+    box-shadow: inherit !important;
 }
