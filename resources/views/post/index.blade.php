@@ -24,10 +24,10 @@
       <div class="mb-6">
         <x-molecules.tab-navigation
           :tabs="[
-                        ['key' => 'popular', 'label' => '人気', 'active' => true],
-                        ['key' => 'recent', 'label' => '新着', 'active' => false]
+                        ['key' => 'recent', 'label' => '新着', 'active' => ($tab ?? 'recent') === 'recent'],
+                        ['key' => 'popular', 'label' => '人気', 'active' => ($tab ?? 'recent') === 'popular']
                     ]"
-          active-tab="popular" />
+          :active-tab="$tab ?? 'recent'" />
       </div>
 
       <!-- 投稿グリッド -->

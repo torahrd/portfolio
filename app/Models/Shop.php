@@ -198,6 +198,8 @@ class Shop extends Model
         });
     }
 
+
+
     /**
      * Google Place IDで店舗を検索するスコープ
      */
@@ -346,4 +348,6 @@ class Shop extends Model
     {
         return static::where('google_place_id', $placeId)->first();
     }
+
+
 }

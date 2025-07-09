@@ -15,10 +15,13 @@ use Illuminate\Support\Facades\DB;
 
 class PostController extends Controller
 {
-    public function index(Post $post)
+    public function index(Request $request, Post $post)
     {
-        // Eager Loadingで最適化
-        $posts = Post::with([
+        // タブパラメータの取得（デフォルトは新着）
+        $tab = $request->query('tab', 'recent');
+        
+        // 基本クエリの作成
+        $query = Post::with([
             'shop:id,name,address',        // 店舗情報（必要な列のみ）
             'user:id,name,avatar,is_private',                // ユーザー情報（必要な列のみ）
             'comments' => function ($query) {
@@ -27,11 +30,23 @@ class PostController extends Controller
                     ->limit(5);              // 最新5件のみ
             }
         ])
-            ->withCount(['favorite_users', 'comments'])  // いいね数とコメント数を効率的に取得
-            ->orderBy('created_at', 'desc')
-            ->get();
+        ->withCount(['favorite_users', 'comments']);  // いいね数とコメント数を効率的に取得
 
-        return view('post.index', compact('posts'));
+        // タブに応じた処理
+        if ($tab === 'recent') {
+            // 新着タブ: 現在の実装（新着順）
+            $posts = $query->orderBy('created_at', 'desc')->get();
+        } elseif ($tab === 'popular') {
+            // 人気タブ: 投稿をいいね数の多い順で取得（50件）
+            $posts = $query->orderBy('favorite_users_count', 'desc')
+                           ->limit(10)
+                           ->get();
+        } else {
+            // 不正なタブパラメータの場合は新着を表示
+            $posts = $query->orderBy('created_at', 'desc')->get();
+        }
+
+        return view('post.index', compact('posts', 'tab'));
     }
 
     /**

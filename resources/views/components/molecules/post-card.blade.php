@@ -26,11 +26,15 @@
   <div class="space-y-3">
     <!-- 店舗名 -->
     @if(isset($post->shop))
-    <h3 class="font-semibold text-lg text-neutral-900 hover:text-primary-500 transition-colors duration-200">
-      <a href="{{ route('shops.show', $post->shop) }}" class="line-clamp-2">
-        {{ $post->shop->name }}
-      </a>
-    </h3>
+    <div>
+      <h3 class="font-semibold text-lg text-neutral-900 hover:text-primary-500 transition-colors duration-200">
+        <a href="{{ route('shops.show', $post->shop) }}" class="line-clamp-2">
+          {{ $post->shop->name }}
+        </a>
+      </h3>
+      
+
+    </div>
     @endif
 
     <!-- 投稿者情報 -->
