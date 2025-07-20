@@ -57,11 +57,13 @@ Route::middleware(['auth'])->group(function () {
 
     // 新規店舗作成
     Route::post('/shops', [ShopController::class, 'store'])->name('api.shops.store');
+
+    // 店舗選択検証API
+    Route::post('/shops/validate-selection', [\App\Http\Controllers\Api\ShopSearchController::class, 'validateSelection'])->name('api.shops.validate-selection');
 });
 
-Route::get('/shops/map-data', [ShopMapApiController::class, 'index']);
+// 地図データ取得
+Route::get('/shops/map-data', [ShopMapApiController::class, 'index'])->name('api.shops.map-data');
 
-// 店舗名サジェストAPI
-Route::get('/search/suggestions', [SearchSuggestionController::class, 'shopNameSuggestions']);
-
-Route::post('/shops/validate-selection', [\App\Http\Controllers\Api\ShopSearchController::class, 'validateSelection']);
+ // 店舗名サジェストAPI
+Route::get('/search/suggestions', [SearchSuggestionController::class, 'shopNameSuggestions'])->name('api.search.suggestions');

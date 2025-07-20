@@ -65,7 +65,7 @@ $typeClass = $typeClasses[$notification->type] ?? $typeClasses['system'];
           </div>
           @endif
           <p class="text-sm text-neutral-900">
-            {!! $notification->message !!}
+            {{ $notification->message }}
           </p>
           <p class="text-xs text-neutral-500 mt-1">
             {{ $notification->created_at->diffForHumans() }}
