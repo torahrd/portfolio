@@ -43,6 +43,53 @@
   - [x] 投稿一覧画面で新着タブに移動できない問題修正 
   - [ ] 投稿詳細ページで投稿の編集・削除を3点リーダーからボタンに変更
   - [ ] アカウント削除機能の動作確認・修正
+- [ ] **Phase 16-4: セキュリティ対策実装**
+  - [x] 通知メッセージのXSS修正（FollowRequestNotification.php、notification-card.blade.php）
+  - [ ] **Google Places APIセキュリティ対策実装（APIエンドポイント認証追加の一環）**
+    - [ ] Google Cloud Console設定（デュアルAPIキー作成）
+    - [ ] APIプロキシパターン実装
+    - [ ] 403エラー解消（Places API仕様制約対応）とAPIキー露出防止
+    - [ ] /api/shops/map-data、/api/search/suggestionsの認証強化
+    - [ ] **詳細実装手順**
+      - [ ] **現状の問題と原因（リサーチ結果に基づく）**
+      - [ ] 403エラー: Places APIの根本的なアーキテクチャ制約（仕様による制約）
+      - [ ] APIキー露出: クライアントサイドで見える状態
+      - [ ] セキュリティリスク: 第三者による不正利用可能
+      - [ ] 2025年の変更: Places API (Legacy)がレガシー化、Places API (New)への移行必須
+    - [ ] **解決方針（デュアルAPIキー戦略）**
+      - [ ] クライアント用APIキー: HTTPリファラー制限 + Maps JavaScript API + Places API
+      - [ ] サーバー用APIキー: IP制限 + Places API (New)
+      - [ ] APIプロキシパターン: クライアント → 自社サーバー → Google API
+    - [ ] **事前確認**
+      - [ ] AWS Lightsail Elastic IP: 18.178.239.220
+      - [ ] Google Cloud Consoleアクセス権: 確認済
+      - [ ] ビリング状態確認: 2025年変更によりビリング必須
+      - [ ] バックアップ: .envファイルのコピー作成
+    - [ ] **Phase 3-1: Google Cloud Console設定**
+      - [ ] クライアント用APIキー作成（HTTPリファラー制限）
+      - [ ] サーバー用APIキー作成（IP制限: 18.178.239.220）
+      - [ ] キー作成後、値をメモ
+    - [ ] **Phase 3-2: 環境設定**
+      - [ ] .envファイルに新キー追加
+      - [ ] config/google.php修正
+      - [ ] ローカルで動作確認
+    - [ ] **Phase 3-3: プロキシ実装**
+      - [ ] GooglePlacesProxyController作成
+      - [ ] 認証ミドルウェア適用
+      - [ ] レート制限実装
+    - [ ] **Phase 3-4: 既存コード修正**
+      - [ ] GooglePlacesService.php修正
+      - [ ] フロントエンドAPI呼び出し修正
+      - [ ] map/index.blade.php修正
+    - [ ] **Phase 3-5: テスト**
+      - [ ] 403エラー解消確認
+      - [ ] APIキー非露出確認
+      - [ ] 全機能動作確認
+    - [ ] **ロールバック計画**
+      - [ ] .envを元に戻す
+      - [ ] 旧APIキーは1週間保持
+  - [ ] ログの機密情報修正（PostController.phpの$request->all()使用箇所）
+  - [ ] メンション機能の修復（現在動作していない）
 
 ### 🟡 重要タスク
 - [ ] **Phase 16-3: UI/UX改善**
@@ -193,6 +240,8 @@
   - ドロップダウンと一覧の両立はUI不整合リスクがあるため、今後の課題として記録
 
 ## メモ
+
+
 
 - **重要な教訓**: 段階的アプローチで一歩ずつ進める、動作確認の必須化
 - コメント削除のダイアログは標準confirm()のため、カスタムモーダル化しない限りautofocus制御不可

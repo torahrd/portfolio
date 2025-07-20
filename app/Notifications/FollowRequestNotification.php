@@ -54,7 +54,7 @@ class FollowRequestNotification extends Notification
             'from_user_id' => $this->fromUser->id,
             'from_user_name' => $this->fromUser->name,
             'from_user_avatar' => $this->fromUser->avatar_url ?? null,
-            'message' => $this->fromUser->name . 'さんからフォロー申請が届きました',
+            'message' => e($this->fromUser->name) . 'さんからフォロー申請が届きました',
             'profile_url' => route('profile.show', $this->fromUser),
         ];
     }
