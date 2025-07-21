@@ -18,11 +18,13 @@ return [
     |--------------------------------------------------------------------------
     |
     | Configuration for Google Places API service.
+    | Dual API key strategy: client-side and server-side keys
     |
     */
 
   'places' => [
-    'api_key' => env('GOOGLE_MAPS_API_KEY'),
+    'api_key' => env('GOOGLE_MAPS_API_KEY'), // クライアント用（既存）
+    'server_api_key' => env('GOOGLE_PLACES_SERVER_API_KEY'), // サーバー用（新規）
     'language' => env('GOOGLE_PLACES_LANGUAGE', 'ja'),
     'region' => env('GOOGLE_PLACES_REGION', 'JP'),
   ],
