@@ -54,30 +54,25 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
                 // これによりセッションCookieが発行され、API認証が通るようになります。
                 await fetch("/sanctum/csrf-cookie", { credentials: "include" });
 
-                // APIリクエスト時もcredentials: 'include'を指定し、Cookieを送信します。
-                const response = await fetch(
-                    `/api/shops/search-places?query=${encodeURIComponent(
-                        this.searchQuery
-                    )}`,
-                    {
-                        method: "GET",
+                // 新しいGoogle Places API プロキシを使用
+                const response = await fetch("/api/places/search-text", {
+                    method: "POST",
                         headers: {
                             "Content-Type": "application/json",
                             "X-Requested-With": "XMLHttpRequest",
                         },
                         credentials: "include", // これが重要
-                    }
-                );
+                    body: JSON.stringify({
+                        query: this.searchQuery,
+                        language: "ja"
+                    })
+                });
 
                 const data = await response.json();
 
-                if (data.success) {
-                    this.searchResults = data.data || [];
-
-                    // フォールバックメッセージの表示（Google Places APIが失敗した場合）
-                    if (data.note) {
-                        this.showFallbackMessage(data.note);
-                    }
+                if (response.ok) {
+                    // プロキシAPIからの直接レスポンス
+                    this.searchResults = data || [];
 
                     // 検索結果が0件の場合のメッセージ
                     if (this.searchResults.length === 0) {
@@ -85,7 +80,7 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
                             "該当する店舗が見つかりませんでした。別のキーワードで検索してください。";
                     }
                 } else {
-                    this.errorMessage = data.message || "検索に失敗しました";
+                    this.errorMessage = data.error || "検索に失敗しました";
                     this.searchResults = [];
                 }
             } catch (error) {
@@ -148,27 +143,28 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
             try {
                 // 詳細取得時もSanctum認証を維持
                 await fetch("/sanctum/csrf-cookie", { credentials: "include" });
-                const response = await fetch(
-                    `/api/shops/place-details?place_id=${encodeURIComponent(
-                        placeId
-                    )}`,
-                    {
-                        method: "GET",
+                
+                // 新しいGoogle Places API プロキシを使用
+                const response = await fetch("/api/places/details", {
+                    method: "POST",
                         headers: {
                             "Content-Type": "application/json",
                             "X-Requested-With": "XMLHttpRequest",
                         },
                         credentials: "include",
-                    }
-                );
+                    body: JSON.stringify({
+                        place_id: placeId,
+                        language: "ja"
+                    })
+                });
 
                 const data = await response.json();
 
-                if (data.success) {
+                if (response.ok && data) {
                     // 詳細情報で選択された店舗を更新
                     this.selectedShop = {
                         ...this.selectedShop,
-                        ...this.formatPlaceDetails(data.data),
+                        ...this.formatPlaceDetails(data),
                     };
                     this.validateSelection();
                 }

@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\ShopSearchController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\Api\ShopMapApiController;
 use App\Http\Controllers\Api\SearchSuggestionController;
+use App\Http\Controllers\Api\GooglePlacesProxyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,7 +35,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // Google Places API連携の店舗検索（認証必須）
-Route::middleware(['web', 'auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
     // 店舗検索（Google Places API + 既存データベース）
     Route::get('/shops/search-places', [ShopSearchController::class, 'search'])
         ->name('api.shops.search-places');
@@ -42,6 +43,17 @@ Route::middleware(['web', 'auth:sanctum'])->group(function () {
     // 店舗詳細情報取得（Google Places API）
     Route::get('/shops/place-details', [ShopSearchController::class, 'getPlaceDetails'])
         ->name('api.shops.place-details');
+});
+
+// Google Places API プロキシ（認証必須）
+Route::middleware(['auth:sanctum'])->group(function () {
+    // テキスト検索プロキシ
+    Route::post('/places/search-text', [GooglePlacesProxyController::class, 'searchText'])
+        ->name('api.places.search-text');
+
+    // 場所詳細取得プロキシ
+    Route::post('/places/details', [GooglePlacesProxyController::class, 'getPlaceDetails'])
+        ->name('api.places.details');
 });
 
 // 認証が必要なAPI

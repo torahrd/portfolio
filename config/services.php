@@ -33,7 +33,8 @@ return [
 
     'google' => [
         'maps_api_key' => env('GOOGLE_MAPS_API_KEY'),
-        'places_api_key' => env('GOOGLE_MAPS_API_KEY'), // 同じキーを使用
+        'places_api_key' => env('GOOGLE_MAPS_API_KEY'), // クライアント用（既存）
+        'places_server_api_key' => env('GOOGLE_PLACES_SERVER_API_KEY'), // サーバー用（新規）
     ],
 
 ];

@@ -46,41 +46,43 @@
 - [ ] **Phase 16-4: セキュリティ対策実装**
   - [x] 通知メッセージのXSS修正（FollowRequestNotification.php、notification-card.blade.php）
   - [ ] **Google Places APIセキュリティ対策実装（APIエンドポイント認証追加の一環）**
-    - [ ] Google Cloud Console設定（デュアルAPIキー作成）
-    - [ ] APIプロキシパターン実装
+    - [x] Google Cloud Console設定（デュアルAPIキー作成）
+    - [x] APIプロキシパターン実装
     - [ ] 403エラー解消（Places API仕様制約対応）とAPIキー露出防止
     - [ ] /api/shops/map-data、/api/search/suggestionsの認証強化
-    - [ ] **詳細実装手順**
-      - [ ] **現状の問題と原因（リサーチ結果に基づく）**
-      - [ ] 403エラー: Places APIの根本的なアーキテクチャ制約（仕様による制約）
-      - [ ] APIキー露出: クライアントサイドで見える状態
-      - [ ] セキュリティリスク: 第三者による不正利用可能
-      - [ ] 2025年の変更: Places API (Legacy)がレガシー化、Places API (New)への移行必須
-    - [ ] **解決方針（デュアルAPIキー戦略）**
-      - [ ] クライアント用APIキー: HTTPリファラー制限 + Maps JavaScript API + Places API
-      - [ ] サーバー用APIキー: IP制限 + Places API (New)
-      - [ ] APIプロキシパターン: クライアント → 自社サーバー → Google API
-    - [ ] **事前確認**
-      - [ ] AWS Lightsail Elastic IP: 18.178.239.220
-      - [ ] Google Cloud Consoleアクセス権: 確認済
-      - [ ] ビリング状態確認: 2025年変更によりビリング必須
-      - [ ] バックアップ: .envファイルのコピー作成
-    - [ ] **Phase 3-1: Google Cloud Console設定**
-      - [ ] クライアント用APIキー作成（HTTPリファラー制限）
-      - [ ] サーバー用APIキー作成（IP制限: 18.178.239.220）
-      - [ ] キー作成後、値をメモ
-    - [ ] **Phase 3-2: 環境設定**
-      - [ ] .envファイルに新キー追加
-      - [ ] config/google.php修正
-      - [ ] ローカルで動作確認
-    - [ ] **Phase 3-3: プロキシ実装**
-      - [ ] GooglePlacesProxyController作成
-      - [ ] 認証ミドルウェア適用
-      - [ ] レート制限実装
-    - [ ] **Phase 3-4: 既存コード修正**
-      - [ ] GooglePlacesService.php修正
-      - [ ] フロントエンドAPI呼び出し修正
-      - [ ] map/index.blade.php修正
+    - [x] **詳細実装手順**
+      - [x] **現状の問題と原因（リサーチ結果に基づく）**
+      - [x] 403エラー: Places APIの根本的なアーキテクチャ制約（仕様による制約）
+      - [x] APIキー露出: クライアントサイドで見える状態
+      - [x] セキュリティリスク: 第三者による不正利用可能
+      - [x] 2025年の変更: Places API (Legacy)がレガシー化、Places API (New)への移行必須
+    - [x] **解決方針（デュアルAPIキー戦略）**
+      - [x] クライアント用APIキー: HTTPリファラー制限 + Maps JavaScript API + Places API
+      - [x] サーバー用APIキー: IP制限 + Places API (New)
+      - [x] APIプロキシパターン: クライアント → 自社サーバー → Google API
+    - [x] **事前確認**
+      - [x] AWS Lightsail Elastic IP: 18.178.239.220
+      - [x] Google Cloud Consoleアクセス権: 確認済
+      - [x] ビリング状態確認: 2025年変更によりビリング必須
+      - [x] バックアップ: .envファイルのコピー作成
+    - [x] **Phase 3-1: Google Cloud Console設定**
+      - [x] クライアント用APIキー作成（HTTPリファラー制限）
+      - [x] サーバー用APIキー作成（IP制限: 18.178.239.220）
+      - [x] キー作成後、値をメモ
+    - [x] **Phase 3-2: 環境設定**
+      - [x] .envファイルに新キー追加
+      - [x] config/google.php修正
+      - [x] config/services.php修正
+      - [x] ローカルで動作確認
+    - [x] **Phase 3-3: プロキシ実装**
+      - [x] GooglePlacesProxyController作成
+      - [x] 認証ミドルウェア適用
+      - [x] レート制限実装
+      - [x] APIルート追加
+    - [x] **Phase 3-4: 既存コード修正**
+      - [x] GooglePlacesService.php修正（サーバー用APIキー使用）
+      - [x] フロントエンドAPI呼び出し修正（shop-search.js）
+      - [x] map/index.blade.php修正（確認済み - 修正不要）
     - [ ] **Phase 3-5: テスト**
       - [ ] 403エラー解消確認
       - [ ] APIキー非露出確認
