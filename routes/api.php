@@ -20,7 +20,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 // フォロー申請関連のAPI（認証必須）
-Route::middleware('auth')->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     // フォロー申請一覧取得
     Route::get('/follow-requests', [FollowRequestController::class, 'index'])
         ->name('api.follow-requests.index');
@@ -62,8 +62,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/shops/recent', [ShopController::class, 'recent'])->name('api.shops.recent');
 });
 
-// 認証が必要な店舗関連API（web.phpにも追加）
-Route::middleware(['auth'])->group(function () {
+// 認証が必要な店舗関連API（認証方式統一）
+Route::middleware(['auth:sanctum'])->group(function () {
     // 店舗検索（投稿作成画面用）
     Route::get('/shops/search', [ShopController::class, 'search'])->name('api.shops.search');
 

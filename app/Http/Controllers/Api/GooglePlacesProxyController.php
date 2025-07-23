@@ -33,7 +33,7 @@ class GooglePlacesProxyController extends Controller
             // 入力バリデーション
             $request->validate([
                 'query' => 'required|string|max:255',
-                'language' => 'string|max:10|default:ja'
+                'language' => 'string|max:10'
             ]);
 
             $query = $request->input('query');
@@ -67,10 +67,13 @@ class GooglePlacesProxyController extends Controller
 
             $result = $this->placesService->searchPlaceNew($query, $language);
 
-            // 結果をキャッシュ（30分）
-            Cache::put($cacheKey, $result, 1800);
+            // フロントエンド用の形式に変換
+            $transformedResult = $this->placesService->transformPlacesToShops($result, $query);
 
-            return response()->json($result);
+            // 結果をキャッシュ（30分）
+            Cache::put($cacheKey, $transformedResult, 1800);
+
+            return response()->json($transformedResult);
 
         } catch (Exception $e) {
             Log::error('Google Places API プロキシ: 検索エラー', [
@@ -97,7 +100,7 @@ class GooglePlacesProxyController extends Controller
             // 入力バリデーション
             $request->validate([
                 'place_id' => 'required|string|max:255',
-                'language' => 'string|max:10|default:ja'
+                'language' => 'string|max:10'
             ]);
 
             $placeId = $request->input('place_id');

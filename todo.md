@@ -45,11 +45,11 @@
   - [ ] アカウント削除機能の動作確認・修正
 - [ ] **Phase 16-4: セキュリティ対策実装**
   - [x] 通知メッセージのXSS修正（FollowRequestNotification.php、notification-card.blade.php）
-  - [ ] **Google Places APIセキュリティ対策実装（APIエンドポイント認証追加の一環）**
+  - [x] **Google Places APIセキュリティ対策実装（APIエンドポイント認証追加の一環）**
     - [x] Google Cloud Console設定（デュアルAPIキー作成）
     - [x] APIプロキシパターン実装
-    - [ ] 403エラー解消（Places API仕様制約対応）とAPIキー露出防止
-    - [ ] /api/shops/map-data、/api/search/suggestionsの認証強化
+    - [x] 403エラー解消（Places API仕様制約対応）とAPIキー露出防止
+    - [x] /api/shops/map-data、/api/search/suggestionsの認証強化
     - [x] **詳細実装手順**
       - [x] **現状の問題と原因（リサーチ結果に基づく）**
       - [x] 403エラー: Places APIの根本的なアーキテクチャ制約（仕様による制約）
@@ -83,13 +83,10 @@
       - [x] GooglePlacesService.php修正（サーバー用APIキー使用）
       - [x] フロントエンドAPI呼び出し修正（shop-search.js）
       - [x] map/index.blade.php修正（確認済み - 修正不要）
-    - [ ] **Phase 3-5: テスト**
-      - [ ] 403エラー解消確認
-      - [ ] APIキー非露出確認
-      - [ ] 全機能動作確認
-    - [ ] **ロールバック計画**
-      - [ ] .envを元に戻す
-      - [ ] 旧APIキーは1週間保持
+    - [x] **Phase 3-5: テスト**
+      - [x] 403エラー解消確認
+      - [x] APIキー非露出確認
+      - [x] 全機能動作確認
   - [ ] ログの機密情報修正（PostController.phpの$request->all()使用箇所）
   - [ ] メンション機能の修復（現在動作していない）
 
