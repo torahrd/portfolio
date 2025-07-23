@@ -54,12 +54,17 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
                 // これによりセッションCookieが発行され、API認証が通るようになります。
                 await fetch("/sanctum/csrf-cookie", { credentials: "include" });
 
+                // XSRF-TOKENを取得してデコード
+                const token = this.getCookie('XSRF-TOKEN');
+                const decodedToken = decodeURIComponent(token);
+
                 // 新しいGoogle Places API プロキシを使用
                 const response = await fetch("/api/places/search-text", {
                     method: "POST",
                         headers: {
                             "Content-Type": "application/json",
                             "X-Requested-With": "XMLHttpRequest",
+                            "X-XSRF-TOKEN": decodedToken
                         },
                         credentials: "include", // これが重要
                     body: JSON.stringify({
@@ -91,6 +96,14 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
             } finally {
                 this.isLoading = false;
             }
+        },
+
+        // Cookie取得ヘルパー関数
+        getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return '';
         },
 
         // フォールバックメッセージの表示
@@ -144,14 +157,18 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
                 // 詳細取得時もSanctum認証を維持
                 await fetch("/sanctum/csrf-cookie", { credentials: "include" });
                 
-                // 新しいGoogle Places API プロキシを使用
+                // XSRF-TOKENを取得してデコード
+                const token = this.getCookie('XSRF-TOKEN');
+                const decodedToken = decodeURIComponent(token);
+                
                 const response = await fetch("/api/places/details", {
                     method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "X-Requested-With": "XMLHttpRequest",
-                        },
-                        credentials: "include",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-Requested-With": "XMLHttpRequest",
+                        "X-XSRF-TOKEN": decodedToken
+                    },
+                    credentials: "include",
                     body: JSON.stringify({
                         place_id: placeId,
                         language: "ja"
@@ -161,12 +178,12 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
                 const data = await response.json();
 
                 if (response.ok && data) {
-                    // 詳細情報で選択された店舗を更新
+                    // 詳細情報で店舗データを更新
                     this.selectedShop = {
                         ...this.selectedShop,
-                        ...this.formatPlaceDetails(data),
+                        ...this.formatPlaceDetails(data)
                     };
-                    this.validateSelection();
+                    this.$dispatch("update-selected-shop", { shop: this.selectedShop });
                 }
             } catch (error) {
                 console.error("店舗詳細取得エラー:", error);
@@ -229,11 +246,17 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
 
             try {
                 await fetch("/sanctum/csrf-cookie", { credentials: "include" });
+                
+                // XSRF-TOKENを取得してデコード
+                const token = this.getCookie('XSRF-TOKEN');
+                const decodedToken = decodeURIComponent(token);
+                
                 const response = await fetch("/api/shops/validate-selection", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         "X-Requested-With": "XMLHttpRequest",
+                        "X-XSRF-TOKEN": decodedToken
                     },
                     credentials: "include",
                     body: JSON.stringify({

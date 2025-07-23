@@ -61,7 +61,7 @@ class GooglePlacesService
           ])->post("{$this->baseUrl}/places:searchText", [
             'textQuery' => $query,
             'languageCode' => $language,
-            'maxResultCount' => 20,
+            'maxResultCount' => 5,
             'locationBias' => [
               'circle' => [
                 'center' => [
