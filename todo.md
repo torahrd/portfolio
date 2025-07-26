@@ -53,15 +53,15 @@
       - [x] 403エラー解消確認
       - [x] APIキー非露出確認
       - [x] 全機能動作確認
-  - [ ] **Phase 16-4-1: CORS設定修正（ローカル）**
-    - [ ] config/cors.phpで本番ドメイン追加
-    - [ ] allowed_originsに'https://taste-retreat.com'設定
-    - [ ] curl動作確認
-  - [ ] **Phase 16-4-2: プライバシーポリシー追加（ローカル）**
-    - [ ] privacy-policy.blade.php作成
-    - [ ] ルート追加（/privacy-policy）
-    - [ ] フッターリンク追加
-    - [ ] 個人情報保護法準拠内容記載
+  - [~] **Phase 16-4-1: CORS設定修正（ローカル）**
+    - [x] config/cors.phpで本番ドメイン追加
+    - [x] allowed_originsに'https://taste-retreat.com'設定
+    - [x] curl動作確認
+  - [~] **Phase 16-4-2: プライバシーポリシー追加（ローカル）**
+    - [x] privacy-policy.blade.php作成
+    - [x] ルート追加（/privacy-policy）
+    - [x] フッターリンク追加（フッターコンポーネント化完了）
+    - [x] 個人情報保護法準拠内容記載
   - [ ] **Phase 16-4-3: 本番環境反映**
     - [ ] git pull + composer install
     - [ ] キャッシュクリア実行
@@ -71,15 +71,15 @@
     - [ ] HSTS設定追加
     - [ ] CSP設定追加  
     - [ ] Apache再起動・確認
-  - [ ] **Phase 16-4-5: ログ機密情報修正（ローカル）**
-    - [ ] PostController.php修正
-    - [ ] $request->all()使用箇所特定
-    - [ ] 機密情報除外ロジック追加
-  - [ ] **Phase 16-4-6: 2要素認証実装（ローカル）**
-    - [ ] TwoFactorAuthenticatableトレイト追加
-    - [ ] Fortify設定完了
-    - [ ] 2FAビュー・ルート作成
-    - [ ] 動作確認
+  - [~] **Phase 16-4-5: ログ機密情報修正（ローカル）**
+    - [x] PostController.php修正
+    - [x] $request->all()使用箇所特定
+    - [x] 機密情報除外ロジック追加
+  - [~] **Phase 16-4-6: 2要素認証実装（ローカル）**
+    - [x] TwoFactorAuthenticatableトレイト追加
+    - [x] Fortify設定完了
+    - [x] 2FAビュー・ルート作成（基本設定完了）
+    - [x] 動作確認
   - [ ] **Phase 16-4-7: バックアップシステム構築**
     - [ ] spatie/laravel-backupインストール
     - [ ] 設定ファイル作成

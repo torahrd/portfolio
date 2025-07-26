@@ -16,7 +16,7 @@
 </head>
 
 <body class="font-sans antialiased bg-gray-100">
-    <div class="min-h-screen">
+    <div class="min-h-screen flex flex-col">
         {{-- @include('layouts.navigation') --}}
 
         <!-- Page Heading -->
@@ -31,12 +31,12 @@
         @endif
 
         <!-- Page Content -->
-        <main>
+        <main class="flex-1">
             @yield('content')
         </main>
 
         <!-- Footer -->
-        <x-organisms.footer type="simple" />
+        <x-organisms.footer type="default" />
     </div>
     @stack('scripts')
 </body>

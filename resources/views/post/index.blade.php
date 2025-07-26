@@ -1,7 +1,9 @@
-<x-app-layout>
-  <div class="min-h-screen bg-neutral-50">
-    <!-- メインコンテンツ -->
-    <main class="container mx-auto px-4 py-6">
+@extends('layouts.app')
+
+@section('content')
+<div class="min-h-screen bg-neutral-50">
+  <!-- メインコンテンツ -->
+  <div class="container mx-auto px-4 py-6">
       <!-- 投稿作成セクション（未ログイン時） -->
       @guest
       <div class="bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl p-6 mb-8 text-white">
@@ -72,7 +74,7 @@
           <span class="text-sm text-neutral-500">読み込み中...</span>
         </div>
       </div>
-    </main>
+    </div>
   </div>
 
   <!-- モバイル用下部ナビゲーション -->
@@ -233,4 +235,4 @@
         });
     }
   </script>
-</x-app-layout>
+@endsection

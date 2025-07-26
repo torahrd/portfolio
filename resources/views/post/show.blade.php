@@ -1,4 +1,6 @@
-<x-app-layout>
+@extends('layouts.app')
+
+@section('content')
   <div class="min-h-screen bg-neutral-50">
     <!-- 戻るボタン -->
     <div class="bg-white border-b border-neutral-200">
@@ -207,4 +209,4 @@
       </a>
     </div>
   </div>
-</x-app-layout>
+@endsection

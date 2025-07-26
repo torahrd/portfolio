@@ -1,4 +1,6 @@
-<x-app-layout>
+@extends('layouts.app')
+
+@section('content')
   <div class="min-h-screen bg-neutral-50">
     <!-- ヒーローイメージセクション -->
     <div class="relative h-64 md:h-96 overflow-hidden">
@@ -234,4 +236,4 @@
   </script>
   @endverbatim
   @endpush
-</x-app-layout>
+@endsection

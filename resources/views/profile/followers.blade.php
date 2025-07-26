@@ -1,4 +1,6 @@
-<x-app-layout>
+@extends('layouts.app')
+
+@section('content')
   <div class="container mx-auto px-4 py-8">
     <div class="max-w-2xl mx-auto">
       <h1 class="text-2xl font-bold mb-6">フォロワー一覧</h1>
@@ -23,4 +25,4 @@
       @endif
     </div>
   </div>
-</x-app-layout>
+@endsection
