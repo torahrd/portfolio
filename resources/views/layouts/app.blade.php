@@ -32,8 +32,11 @@
 
         <!-- Page Content -->
         <main>
-            {{ $slot }}
+            @yield('content')
         </main>
+
+        <!-- Footer -->
+        <x-organisms.footer type="simple" />
     </div>
     @stack('scripts')
 </body>

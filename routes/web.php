@@ -151,3 +151,8 @@ Route::middleware('auth')->group(function () {
 require __DIR__ . '/auth.php';
 
 Route::get('/map', [MapController::class, 'index'])->name('map.index');
+
+// ===== プライバシーポリシー =====
+Route::get('/privacy-policy', function () {
+    return view('privacy-policy');
+})->name('privacy-policy');

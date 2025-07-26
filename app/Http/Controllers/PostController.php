@@ -86,7 +86,7 @@ class PostController extends Controller
     {
         // 到達確認用ログ（バリデーション前）
         Log::info('PostController@store: メソッド開始', [
-            'request_all' => $request->all(),
+            'request_all' => $this->sanitizeRequestData($request->all()),
             'request_post' => $request->input('post'),
             'method' => $request->method(),
             'url' => $request->url(),
@@ -159,6 +159,37 @@ class PostController extends Controller
         }
 
         return redirect()->route('posts.show', $post->id);
+    }
+
+    /**
+     * リクエストデータから機密情報を除外する
+     */
+    private function sanitizeRequestData(array $data): array
+    {
+        $sensitiveKeys = [
+            'password',
+            'password_confirmation',
+            'token',
+            'api_key',
+            'secret',
+            'key',
+            'authorization',
+            'cookie',
+            'session',
+        ];
+
+        $sanitized = [];
+        foreach ($data as $key => $value) {
+            if (in_array(strtolower($key), $sensitiveKeys)) {
+                $sanitized[$key] = '[REDACTED]';
+            } elseif (is_array($value)) {
+                $sanitized[$key] = $this->sanitizeRequestData($value);
+            } else {
+                $sanitized[$key] = $value;
+            }
+        }
+
+        return $sanitized;
     }
 
     /**
@@ -248,7 +279,7 @@ class PostController extends Controller
     {
         // 到達確認用ログ（バリデーション前）
         Log::info('PostController@update: メソッド開始', [
-            'request_all' => $request->all(),
+            'request_all' => $this->sanitizeRequestData($request->all()),
             'request_post' => $request->input('post'),
             'method' => $request->method(),
             'url' => $request->url(),

@@ -2,8 +2,6 @@
 
 ## 現在のタスク
 
-
-
 ### 🔴 緊急タスク
 - [ ] **Phase 16-2: デプロイ後重要修正**
   - [x] 投稿作成画面で店舗名を候補から必ず選択させる仕様変更
@@ -55,6 +53,52 @@
       - [x] 403エラー解消確認
       - [x] APIキー非露出確認
       - [x] 全機能動作確認
+  - [ ] **Phase 16-4-1: CORS設定修正（ローカル）**
+    - [ ] config/cors.phpで本番ドメイン追加
+    - [ ] allowed_originsに'https://taste-retreat.com'設定
+    - [ ] curl動作確認
+  - [ ] **Phase 16-4-2: プライバシーポリシー追加（ローカル）**
+    - [ ] privacy-policy.blade.php作成
+    - [ ] ルート追加（/privacy-policy）
+    - [ ] フッターリンク追加
+    - [ ] 個人情報保護法準拠内容記載
+  - [ ] **Phase 16-4-3: 本番環境反映**
+    - [ ] git pull + composer install
+    - [ ] キャッシュクリア実行
+    - [ ] CORS/プライバシーポリシー確認
+  - [ ] **Phase 16-4-4: 本番セキュリティヘッダー設定**
+    - [ ] bitnami-ssl.confバックアップ
+    - [ ] HSTS設定追加
+    - [ ] CSP設定追加  
+    - [ ] Apache再起動・確認
+  - [ ] **Phase 16-4-5: ログ機密情報修正（ローカル）**
+    - [ ] PostController.php修正
+    - [ ] $request->all()使用箇所特定
+    - [ ] 機密情報除外ロジック追加
+  - [ ] **Phase 16-4-6: 2要素認証実装（ローカル）**
+    - [ ] TwoFactorAuthenticatableトレイト追加
+    - [ ] Fortify設定完了
+    - [ ] 2FAビュー・ルート作成
+    - [ ] 動作確認
+  - [ ] **Phase 16-4-7: バックアップシステム構築**
+    - [ ] spatie/laravel-backupインストール
+    - [ ] 設定ファイル作成
+    - [ ] cron設定
+    - [ ] 動作確認
+  - [ ] **本番環境セキュリティヘッダー追加**
+    - [ ] **Strict-Transport-Security (HSTS) の追加**
+      - [ ] Apache設定ファイルにHSTSヘッダー追加
+      - [ ] 設定値: `max-age=31536000; includeSubDomains`
+      - [ ] 本番環境での設定確認
+    - [ ] **Content Security Policy (CSP) の段階的実装**
+      - [ ] Phase 1: 監視モードでのCSP実装（Report-Only）
+      - [ ] Phase 2: 本格的なCSP実装（ブロックモード）
+      - [ ] 現在のアプリケーションに合わせたCSP設定調整
+      - [ ] Google Maps API、Cloudinary、Google Fonts対応
+    - [ ] **セキュリティヘッダー設定の確認**
+      - [ ] ブラウザ開発者ツールでの確認
+      - [ ] オンラインツールでの確認
+      - [ ] 動作確認（サイトの正常動作確認）
   - [ ] ログの機密情報修正（PostController.phpの$request->all()使用箇所）
   - [ ] メンション機能の修復（現在動作していない）
 

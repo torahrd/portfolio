@@ -19,7 +19,10 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['http://localhost'],
+    'allowed_origins' => [
+        'https://taste-retreat.com',
+        'http://localhost',
+    ],
 
     'allowed_origins_patterns' => [],
 
