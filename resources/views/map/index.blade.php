@@ -1,4 +1,6 @@
-<x-app-layout>
+@extends('layouts.app')
+
+@section('content')
   <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <h1 class="text-2xl font-bold mb-4">店舗マップ</h1>
     <!-- <style>#map{min-height:400px;height:500px;width:100%;}</style> -->
@@ -272,4 +274,4 @@
       });
     });
   </script>
-</x-app-layout>
+@endsection

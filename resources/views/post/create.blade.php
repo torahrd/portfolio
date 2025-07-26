@@ -1,4 +1,6 @@
-<x-app-layout>
+@extends('layouts.app')
+
+@section('content')
   <div class="container mx-auto px-4 py-8">
     <h2 class="text-2xl font-bold mb-6">新規投稿作成</h2>
 
@@ -189,4 +191,4 @@
       </form>
     </div>
   </div>
-</x-app-layout>
+@endsection

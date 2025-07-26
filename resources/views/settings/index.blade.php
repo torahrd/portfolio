@@ -1,4 +1,6 @@
-<x-app-layout>
+@extends('layouts.app')
+
+@section('content')
   <div class="container mx-auto px-4 py-8">
     <div class="max-w-4xl mx-auto">
       <!-- ページヘッダー -->
@@ -173,4 +175,4 @@
       </div>
     </div>
   </div>
-</x-app-layout>
+@endsection
