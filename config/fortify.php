@@ -149,11 +149,8 @@ return [
         // Features::emailVerification(),
         Features::updateProfileInformation(),
         Features::updatePasswords(),
-        Features::twoFactorAuthentication([
-            'confirm' => true,
-            'confirmPassword' => true,
-            // 'window' => 0,
-        ]),
+        // Features::twoFactorAuthentication(), // UX向上のため無効化
+        // Features::confirmPassword(), // 既存のpassword.confirmルートと競合するため無効化
     ],
 
 ];
