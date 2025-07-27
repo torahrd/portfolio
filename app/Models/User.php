@@ -10,6 +10,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
+use App\Notifications\ResetPasswordNotification;
 
 // 既存のuseステートメント
 use App\Models\Post;
@@ -246,5 +247,13 @@ class User extends Authenticatable
 
         $this->favorite_shops()->detach($shopId);
         return true;
+    }
+
+    /**
+     * パスワードリセット通知の送信
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 }

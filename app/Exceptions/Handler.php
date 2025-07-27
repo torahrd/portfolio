@@ -2,7 +2,11 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -25,6 +29,15 @@ class Handler extends ExceptionHandler
     {
         $this->reportable(function (Throwable $e) {
             //
+        });
+
+        // レート制限エラーをユーザーフレンドリーなメッセージに変換
+        $this->renderable(function (TooManyRequestsHttpException $e, Request $request) {
+            if ($request->is('forgot-password') && $request->isMethod('POST')) {
+                return redirect()->back()
+                    ->withInput($request->only('email'))
+                    ->withErrors(['email' => '短時間に多くのリクエストが送信されました。1分後に再度お試しください。']);
+            }
         });
     }
 }
