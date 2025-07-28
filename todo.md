@@ -86,7 +86,16 @@
       - [x] ユーザー層：一般ユーザー向けの適切なセキュリティレベルに調整
       - [x] 代替策：強力なパスワードポリシー、ログイン試行制限、パスワード確認機能
       - [x] config/fortify.phpでFeatures::twoFactorAuthentication()を無効化
-  - [ ] **Phase 16-4-7: バックアップシステム構築**
+  - [x] **Phase 16-4-7: Mailgun設定完了**
+    - [x] symfony/mailgun-mailerパッケージ追加
+    - [x] config/mail.php設定更新（Mailgun設定有効化）
+    - [x] config/services.php設定更新（ドメイン設定）
+    - [x] テスト用artisanコマンド作成（mail:test-mailgun、mail:test-mailgun-sandbox、mail:test-mailgun-sandbox-domain）
+    - [x] パッケージインストール完了
+    - [x] 新しいAPIキー生成・設定完了
+    - [x] メール送信テスト成功（taste-retreat.comドメイン）
+    - [x] 動作確認完了
+  - [ ] **Phase 16-4-8: バックアップシステム構築**
     - [ ] spatie/laravel-backupインストール
     - [ ] 設定ファイル作成
     - [ ] cron設定
