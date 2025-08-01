@@ -9,7 +9,7 @@
   - [x] 投稿一覧画面で新着タブに移動できない問題修正 
   - [ ] 投稿詳細ページで投稿の編集・削除を3点リーダーからボタンに変更
   - [ ] アカウント削除機能の動作確認・修正
-- [ ] **Phase 16-4: セキュリティ対策実装**
+- [ ] **Phase 16-4: セキュリティ対策実装（v0.2計画に基づく）**
   - [x] 通知メッセージのXSS修正（FollowRequestNotification.php、notification-card.blade.php）
   - [x] **Google Places APIセキュリティ対策実装（APIエンドポイント認証追加の一環）**
     - [x] Google Cloud Console設定（デュアルAPIキー作成）
@@ -116,6 +116,96 @@
       - [ ] 動作確認（サイトの正常動作確認）
   - [ ] ログの機密情報修正（PostController.phpの$request->all()使用箇所）
   - [ ] メンション機能の修復（現在動作していない）
+  - [x] **Phase 16-4-9: 基本セキュリティヘッダー実装（2週以内）**
+    - [x] **Strict-Transport-Security**: `max-age=31536000; includeSubDomains`
+    - [x] **X-Content-Type-Options**: `nosniff`
+    - [x] **X-Frame-Options**: `DENY`
+    - [x] **X-XSS-Protection**: `1; mode=block`
+    - [x] **Referrer-Policy**: `strict-origin-when-cross-origin`
+    - [x] ミドルウェア作成: `middleware/AddSecurityHeaders.php`
+    - [x] X-Powered-Byヘッダー削除（AppServiceProvider.php）
+    - [x] 効果: XSS・クリックジャッキング基礎防御
+  - [ ] **Phase 16-4-13: CSP実装（unsafe-evalなし対応）（1週以内）**
+    - [x] **現状の問題分析**
+      - [x] Alpine.jsが`unsafe-eval`を必要とする問題を特定
+      - [x] 既存のAddSecurityHeadersミドルウェアとの競合を確認
+      - [x] spatie/laravel-cspパッケージのバージョン制約を確認
+    - [x] **調査結果に基づく根本問題の特定**
+      - [x] CSPビルドの制約違反を特定（x-model、x-on、x-dataの関数呼び出し）
+      - [x] 検索機能のAPIリクエスト送信失敗の原因を特定
+      - [x] 「変な線」問題の原因を特定（CSPビルドが解釈できないHTML要素）
+    - [ ] **フェーズ1: 緊急復旧（セキュリティ影響なし）**
+      - [x] CSPビルドの一時無効化（@alpinejs/csp → 通常のAlpine.js）
+      - [x] 検索機能の即座復旧
+      - [x] APIリクエスト送信の動作確認
+      - [x] 「変な線」問題の解消確認
+      - [x] 全機能の動作確認（検索・モーダル・コメント）
+    - [ ] **フェーズ2: 段階的CSP対応（セキュリティ強化）**
+      - [ ] 検索コンポーネントのCSP対応
+        - [ ] shop-search.jsのAlpine.data()化
+        - [ ] search-bar.jsのAlpine.data()化
+        - [ ] 投稿作成画面での動作確認
+      - [ ] 他のコンポーネントのCSP対応
+        - [ ] modal.jsのCSP対応
+        - [ ] comment-section.jsのCSP対応
+      - [ ] CSPビルドの段階的再導入
+        - [ ] 各コンポーネントの動作確認
+        - [ ] CSPエラーの監視
+    - [ ] **フェーズ3: 完全CSP対応（セキュリティ最大化）**
+      - [ ] 全コンポーネントのCSP対応完了
+      - [ ] 残存するCSP違反の解消
+      - [ ] 最終検証（全機能動作確認・CSPエラー完全解消）
+    - [ ] **Report-Onlyモードでの段階的実装**
+      - [ ] Content-Security-Policy-Report-Onlyヘッダーの設定
+      - [ ] ブラウザコンソールでの違反監視
+      - [ ] 段階的なCSP設定の調整
+    - [ ] **Alpine.js CSPビルド対応**
+      - [x] @alpinejs/cspパッケージのインストール
+      - [x] app.jsでの初期化設定変更
+      - [ ] 既存コンポーネントのAlpine.data()化（動作確認未完了）
+        - [ ] search-bar.jsのAlpine.data()化
+        - [ ] shop-search.jsのAlpine.data()化
+        - [ ] modal.jsのAlpine.data()化
+        - [ ] comment-section.jsのAlpine.data()化
+      - [ ] Bladeテンプレートの修正（インライン式→外部API）（動作確認未完了）
+        - [ ] x-dataの静的文化（インライン式→Alpine.data()）
+        - [ ] 動的評価の回避（x-on:click="count++" → x-on:click="increment"）
+        - [ ] 条件式の外部化（x-show="!isOpen" → x-show="isClosed"）
+    - [ ] **Google Maps API・Cloudinary対応**
+      - [ ] 必要なドメインの特定と許可設定
+      - [ ] script-src、img-src、connect-srcの最適化
+      - [ ] 動的読み込み対応
+    - [ ] **CSP設定の最適化**
+      - [ ] unsafe-evalの完全削除
+      - [ ] nonceベースの許可設定
+      - [ ] Google Maps API対応の維持
+    - [ ] **動作確認とテスト**
+      - [ ] 検索機能の正常動作確認
+      - [ ] モーダル機能の正常動作確認
+      - [ ] コメント機能の正常動作確認
+      - [ ] CSPエラーの完全解消確認
+    - [ ] **本格CSP実装**
+      - [ ] Report-Onlyからブロックモードへの移行
+      - [ ] 最終的なCSP設定の確定
+      - [ ] 動作確認とエラー解消
+  - [ ] **Phase 16-4-10: 認証セキュリティ強化（3週以内）**
+    - [ ] **強力パスワードポリシー実装**
+      - [ ] 8文字以上、大文字/小文字/数字/記号必須
+      - [ ] 辞書語句TOP10k禁止
+      - [ ] 強度メーター表示、変更時に全端末ログアウト
+    - [ ] **ログイン試行制限実装**
+      - [ ] 5回失敗 ⇒ 15分ロック（アカウント）
+      - [ ] IP単位10回失敗 ⇒ 1時間ロック
+      - [ ] 変則ログインをログに記録＋メール通知
+  - [ ] **Phase 16-4-11: ファイルアップロード対策（1ヶ月以内）**
+    - [ ] 10MB上限、MIME/拡張子ホワイトリスト
+    - [ ] 画像サイズ100×100～4000×4000
+    - [ ] ウイルススキャン＆文字列検査
+    - [ ] 10回/分/ユーザーのレート制限
+  - [ ] **Phase 16-4-12: インシデント対応準備（1.5ヶ月以内）**
+    - [ ] 連絡体制・通知テンプレート
+    - [ ] 個人情報漏洩時の報告手順（3-5日以内）
+    - [ ] データ漏洩対応フローチャート
 
 ### 🟡 重要タスク
 - [ ] **Phase 16-3: UI/UX改善**
@@ -215,6 +305,16 @@
     - [ ] 投稿作成時の地図連携強化
     - [ ] 店舗詳細ページでの地図表示
     - [ ] ユーザープロフィールでの訪問店舗地図表示
+
+- [ ] **将来のセキュリティ強化（ユーザー数増加後）**
+  - [ ] 高度な監視システム導入
+  - [ ] パスワードレス認証（WebAuthn等）
+  - [ ] 行動パターン分析によるボット検出
+  - [ ] API機能別レート制限
+  - [ ] ゼロトラストアーキテクチャ
+  - [ ] AIリアルタイム脅威検出
+  - [ ] デバイス個体管理
+  - [ ] 24/365セキュリティオペレーションセンター
 
 ---
 

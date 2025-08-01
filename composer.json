@@ -12,6 +12,7 @@
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
+        "spatie/laravel-csp": "^2.10",
         "symfony/http-client": "^6.0",
         "symfony/mailgun-mailer": "^6.0"
     },
