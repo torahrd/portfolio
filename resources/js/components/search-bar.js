@@ -1,4 +1,4 @@
-// サジェストバー用Alpine.js関数
+// サジェストバー用Alpine.js関数（CSP対応）
 export function searchBar() {
     return {
         query: "",
@@ -11,6 +11,16 @@ export function searchBar() {
             const element = this.$el;
             this.query = element.dataset.initialValue || "";
             this.suggestions = JSON.parse(element.dataset.suggestions || "[]");
+        },
+
+        // CSP対応: 複雑な条件式をメソッドとして外部化
+        shouldShowSuggestions() {
+            return this.showSuggestions && (this.suggestions.length > 0 || this.isLoading);
+        },
+
+        // CSP対応: 結果なしメッセージの表示条件
+        shouldShowNoResults() {
+            return !this.isLoading && this.suggestions.length === 0 && this.query.length >= 2;
         },
 
         updateSuggestions() {

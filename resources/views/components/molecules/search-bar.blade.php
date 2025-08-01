@@ -6,7 +6,7 @@
 ])
 
 <div class="relative"
-  x-data="searchBar()"
+  x-data="searchBar"
   data-initial-value="{{ $value }}"
   data-suggestions="{{ json_encode($suggestions) }}"
   @click.outside="handleClickOutside($event)">
@@ -47,7 +47,7 @@
   </form>
 
   <!-- 検索候補 -->
-  <div x-show="showSuggestions && (suggestions.length > 0 || isLoading)"
+  <div x-show="shouldShowSuggestions"
     x-transition:enter="transition ease-out duration-200"
     x-transition:enter-start="opacity-0 scale-95"
     x-transition:enter-end="opacity-100 scale-100"
@@ -85,7 +85,7 @@
     </template>
 
     <!-- 結果なし -->
-    <div x-show="!isLoading && suggestions.length === 0 && query.length >= 2"
+    <div x-show="shouldShowNoResults"
       class="px-4 py-3 text-center text-neutral-500">
       <div class="text-sm">該当する店舗が見つかりませんでした</div>
     </div>

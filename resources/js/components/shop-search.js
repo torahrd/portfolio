@@ -1,6 +1,8 @@
-// 店舗検索用Alpine.js関数
-export function shopSearch({ initialShop = null, mode = "post" } = {}) {
+// 店舗検索用Alpine.js関数（CSP対応）
+// CSPビルドでは、すべてのメソッドを明示的に定義する必要があります
+export function shopSearch() {
     return {
+        // データプロパティ
         searchQuery: "",
         searchResults: [],
         selectedShop: null,
@@ -8,18 +10,14 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
         isLoading: false,
         errorMessage: "",
         searchTimeout: null,
-        mode: mode,
+        mode: "post",
         isSelectionValid: false,
 
+        // 初期化メソッド
         init() {
-            if (initialShop) {
-                this.selectedShop = initialShop;
-                this.searchQuery = initialShop.name;
-                this.validateSelection();
-            } else {
-                this.selectedShop = null;
-                this.searchQuery = "";
-            }
+            console.log('shopSearch component initialized');
+            this.selectedShop = null;
+            this.searchQuery = "";
             this.searchResults = [];
             this.showResults = false;
             this.isLoading = false;
@@ -28,6 +26,7 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
 
         // 店舗検索実行
         searchShops() {
+            console.log('searchShops called with query:', this.searchQuery);
             // 入力値が2文字未満の場合は検索しない
             if (this.searchQuery.length < 2) {
                 this.searchResults = [];
@@ -44,29 +43,28 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
 
         // 実際の検索処理
         async performSearch() {
+            console.log('performSearch called');
             this.isLoading = true;
             this.errorMessage = "";
             this.showResults = true;
 
             try {
-                // --- 初心者向け解説 ---
-                // Laravel SanctumのSPA認証では、APIリクエスト前に/sanctum/csrf-cookieを呼ぶ必要があります。
-                // これによりセッションCookieが発行され、API認証が通るようになります。
+                // Laravel SanctumのSPA認証
                 await fetch("/sanctum/csrf-cookie", { credentials: "include" });
 
                 // XSRF-TOKENを取得してデコード
                 const token = this.getCookie('XSRF-TOKEN');
                 const decodedToken = decodeURIComponent(token);
 
-                // 新しいGoogle Places API プロキシを使用
+                // Google Places API プロキシを使用
                 const response = await fetch("/api/places/search-text", {
                     method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "X-Requested-With": "XMLHttpRequest",
-                            "X-XSRF-TOKEN": decodedToken
-                        },
-                        credentials: "include", // これが重要
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-Requested-With": "XMLHttpRequest",
+                        "X-XSRF-TOKEN": decodedToken
+                    },
+                    credentials: "include",
                     body: JSON.stringify({
                         query: this.searchQuery,
                         language: "ja"
@@ -76,13 +74,12 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
                 const data = await response.json();
 
                 if (response.ok) {
-                    // プロキシAPIからの直接レスポンス
                     this.searchResults = data || [];
+                    console.log('Search results:', this.searchResults);
 
                     // 検索結果が0件の場合のメッセージ
                     if (this.searchResults.length === 0) {
-                        this.errorMessage =
-                            "該当する店舗が見つかりませんでした。別のキーワードで検索してください。";
+                        this.errorMessage = "該当する店舗が見つかりませんでした。別のキーワードで検索してください。";
                     }
                 } else {
                     this.errorMessage = data.error || "検索に失敗しました";
@@ -90,8 +87,7 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
                 }
             } catch (error) {
                 console.error("店舗検索エラー:", error);
-                this.errorMessage =
-                    "検索中にエラーが発生しました。しばらく時間をおいてから再試行してください。";
+                this.errorMessage = "検索中にエラーが発生しました。しばらく時間をおいてから再試行してください。";
                 this.searchResults = [];
             } finally {
                 this.isLoading = false;
@@ -108,10 +104,8 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
 
         // フォールバックメッセージの表示
         showFallbackMessage(message) {
-            // 一時的なメッセージ表示（5秒後に自動消去）
             const fallbackDiv = document.createElement("div");
-            fallbackDiv.className =
-                "fixed top-4 right-4 bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded z-40 shadow-lg";
+            fallbackDiv.className = "fixed top-4 right-4 bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded z-40 shadow-lg";
             fallbackDiv.innerHTML = `
                 <div class="flex items-center">
                     <svg class="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -126,7 +120,6 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
 
             document.body.appendChild(fallbackDiv);
 
-            // 5秒後に自動消去
             setTimeout(() => {
                 if (fallbackDiv.parentNode) {
                     fallbackDiv.parentNode.removeChild(fallbackDiv);
@@ -154,10 +147,8 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
         // 店舗詳細情報取得（新規店舗用）
         async fetchShopDetails(placeId) {
             try {
-                // 詳細取得時もSanctum認証を維持
                 await fetch("/sanctum/csrf-cookie", { credentials: "include" });
                 
-                // XSRF-TOKENを取得してデコード
                 const token = this.getCookie('XSRF-TOKEN');
                 const decodedToken = decodeURIComponent(token);
                 
@@ -178,7 +169,6 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
                 const data = await response.json();
 
                 if (response.ok && data) {
-                    // 詳細情報で店舗データを更新
                     this.selectedShop = {
                         ...this.selectedShop,
                         ...this.formatPlaceDetails(data)
@@ -187,7 +177,6 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
                 }
             } catch (error) {
                 console.error("店舗詳細取得エラー:", error);
-                // エラーが発生しても選択は維持
             }
         },
 
@@ -195,16 +184,11 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
         formatPlaceDetails(placeData) {
             return {
                 name: placeData.displayName?.text || this.selectedShop.name,
-                address:
-                    placeData.shortFormattedAddress ||
-                    this.selectedShop.address,
+                address: placeData.shortFormattedAddress || this.selectedShop.address,
                 phone: placeData.nationalPhoneNumber || this.selectedShop.phone,
                 website: placeData.websiteUri || this.selectedShop.website,
-                latitude:
-                    placeData.location?.latitude || this.selectedShop.latitude,
-                longitude:
-                    placeData.location?.longitude ||
-                    this.selectedShop.longitude,
+                latitude: placeData.location?.latitude || this.selectedShop.latitude,
+                longitude: placeData.location?.longitude || this.selectedShop.longitude,
                 opening_hours: placeData.regularOpeningHours || null,
             };
         },
@@ -230,15 +214,10 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
 
         // 店舗選択の検証
         async validateSelection() {
-            console.log(
-                "validateSelection called, selectedShop:",
-                this.selectedShop
-            );
+            console.log("validateSelection called, selectedShop:", this.selectedShop);
 
             if (!this.selectedShop) {
-                console.log(
-                    "No selectedShop, setting isSelectionValid to false"
-                );
+                console.log("No selectedShop, setting isSelectionValid to false");
                 this.isSelectionValid = false;
                 this.$dispatch("update-selection-valid", { valid: false });
                 return;
@@ -247,7 +226,6 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
             try {
                 await fetch("/sanctum/csrf-cookie", { credentials: "include" });
                 
-                // XSRF-TOKENを取得してデコード
                 const token = this.getCookie('XSRF-TOKEN');
                 const decodedToken = decodeURIComponent(token);
                 
@@ -308,9 +286,4 @@ export function shopSearch({ initialShop = null, mode = "post" } = {}) {
             return true;
         },
     };
-}
-
-// window登録（Alpine.jsでx-data="shopSearch()"として使えるように）
-if (typeof window !== "undefined") {
-    window.shopSearch = shopSearch;
 }
