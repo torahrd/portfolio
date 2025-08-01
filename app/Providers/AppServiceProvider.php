@@ -19,6 +19,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // X-Powered-Byヘッダーを削除（セキュリティ対策）
+        if (function_exists('header')) {
+            header_remove('X-Powered-By');
+        }
     }
 }
