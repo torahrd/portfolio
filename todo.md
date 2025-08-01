@@ -125,6 +125,69 @@
     - [x] ミドルウェア作成: `middleware/AddSecurityHeaders.php`
     - [x] X-Powered-Byヘッダー削除（AppServiceProvider.php）
     - [x] 効果: XSS・クリックジャッキング基礎防御
+  - [ ] **Phase 16-4-13: CSP実装（unsafe-evalなし対応）（1週以内）**
+    - [x] **現状の問題分析**
+      - [x] Alpine.jsが`unsafe-eval`を必要とする問題を特定
+      - [x] 既存のAddSecurityHeadersミドルウェアとの競合を確認
+      - [x] spatie/laravel-cspパッケージのバージョン制約を確認
+    - [x] **調査結果に基づく根本問題の特定**
+      - [x] CSPビルドの制約違反を特定（x-model、x-on、x-dataの関数呼び出し）
+      - [x] 検索機能のAPIリクエスト送信失敗の原因を特定
+      - [x] 「変な線」問題の原因を特定（CSPビルドが解釈できないHTML要素）
+    - [ ] **フェーズ1: 緊急復旧（セキュリティ影響なし）**
+      - [x] CSPビルドの一時無効化（@alpinejs/csp → 通常のAlpine.js）
+      - [x] 検索機能の即座復旧
+      - [x] APIリクエスト送信の動作確認
+      - [x] 「変な線」問題の解消確認
+      - [x] 全機能の動作確認（検索・モーダル・コメント）
+    - [ ] **フェーズ2: 段階的CSP対応（セキュリティ強化）**
+      - [ ] 検索コンポーネントのCSP対応
+        - [ ] shop-search.jsのAlpine.data()化
+        - [ ] search-bar.jsのAlpine.data()化
+        - [ ] 投稿作成画面での動作確認
+      - [ ] 他のコンポーネントのCSP対応
+        - [ ] modal.jsのCSP対応
+        - [ ] comment-section.jsのCSP対応
+      - [ ] CSPビルドの段階的再導入
+        - [ ] 各コンポーネントの動作確認
+        - [ ] CSPエラーの監視
+    - [ ] **フェーズ3: 完全CSP対応（セキュリティ最大化）**
+      - [ ] 全コンポーネントのCSP対応完了
+      - [ ] 残存するCSP違反の解消
+      - [ ] 最終検証（全機能動作確認・CSPエラー完全解消）
+    - [ ] **Report-Onlyモードでの段階的実装**
+      - [ ] Content-Security-Policy-Report-Onlyヘッダーの設定
+      - [ ] ブラウザコンソールでの違反監視
+      - [ ] 段階的なCSP設定の調整
+    - [ ] **Alpine.js CSPビルド対応**
+      - [x] @alpinejs/cspパッケージのインストール
+      - [x] app.jsでの初期化設定変更
+      - [ ] 既存コンポーネントのAlpine.data()化（動作確認未完了）
+        - [ ] search-bar.jsのAlpine.data()化
+        - [ ] shop-search.jsのAlpine.data()化
+        - [ ] modal.jsのAlpine.data()化
+        - [ ] comment-section.jsのAlpine.data()化
+      - [ ] Bladeテンプレートの修正（インライン式→外部API）（動作確認未完了）
+        - [ ] x-dataの静的文化（インライン式→Alpine.data()）
+        - [ ] 動的評価の回避（x-on:click="count++" → x-on:click="increment"）
+        - [ ] 条件式の外部化（x-show="!isOpen" → x-show="isClosed"）
+    - [ ] **Google Maps API・Cloudinary対応**
+      - [ ] 必要なドメインの特定と許可設定
+      - [ ] script-src、img-src、connect-srcの最適化
+      - [ ] 動的読み込み対応
+    - [ ] **CSP設定の最適化**
+      - [ ] unsafe-evalの完全削除
+      - [ ] nonceベースの許可設定
+      - [ ] Google Maps API対応の維持
+    - [ ] **動作確認とテスト**
+      - [ ] 検索機能の正常動作確認
+      - [ ] モーダル機能の正常動作確認
+      - [ ] コメント機能の正常動作確認
+      - [ ] CSPエラーの完全解消確認
+    - [ ] **本格CSP実装**
+      - [ ] Report-Onlyからブロックモードへの移行
+      - [ ] 最終的なCSP設定の確定
+      - [ ] 動作確認とエラー解消
   - [ ] **Phase 16-4-10: 認証セキュリティ強化（3週以内）**
     - [ ] **強力パスワードポリシー実装**
       - [ ] 8文字以上、大文字/小文字/数字/記号必須

@@ -1,3 +1,4 @@
+// モーダル用Alpine.js関数
 export function modal(showDefault = false) {
     return {
         show: showDefault,
@@ -38,6 +39,7 @@ export function modal(showDefault = false) {
                 1
             );
         },
+
         init() {
             this.$watch("show", (value) => {
                 if (value) {

@@ -40,6 +40,29 @@ class AddSecurityHeaders
         // リファラー情報の送信ポリシーを制御
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
+        // Cache-Control（開発環境用）
+        // ブラウザキャッシュを無効化して最新のJavaScriptファイルを確実に読み込む
+        if (app()->environment('local')) {
+            $response->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate');
+            $response->headers->set('Pragma', 'no-cache');
+            $response->headers->set('Expires', '0');
+        }
+
+        // Content-Security-Policy-Report-Only
+        // 段階的実装のためReport-Onlyモードで開始（違反を監視、ブロックしない）
+        $cspReportOnlyHeader = "default-src 'self'; " .
+                              "script-src 'self' 'unsafe-inline' https://maps.googleapis.com https://maps.googleapis.com/maps/api/js; " .
+                              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " .
+                              "img-src 'self' data: https://maps.gstatic.com https://*.googleapis.com https://*.cloudinary.com https://res.cloudinary.com; " .
+                              "connect-src 'self' https://*.googleapis.com https://*.cloudinary.com; " .
+                              "font-src https://fonts.gstatic.com; " .
+                              "object-src 'none'; " .
+                              "base-uri 'self'; " .
+                              "form-action 'self'; " .
+                              "media-src 'self'";
+
+        $response->headers->set('Content-Security-Policy-Report-Only', $cspReportOnlyHeader);
+
         return $response;
     }
 } 
