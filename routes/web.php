@@ -22,6 +22,13 @@ use Illuminate\Support\Facades\Route;
 
 // ===== 基本ルート =====
 
+
+
+// shopSearch CSP対応テストルート
+Route::get('/test-shop-search-csp', function () {
+    return view('test-shop-search-csp');
+})->name('test-shop-search-csp');
+
 // ホームルート（認証必要 - 元の設計通り）
 Route::get('/', [PostController::class, 'index'])->middleware(['auth'])->name('home');
 

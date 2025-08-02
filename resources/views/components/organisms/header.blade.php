@@ -19,7 +19,7 @@
       <!-- 検索バー（デスクトップ） -->
       @if($showSearch)
       <div class="hidden md:block flex-1 max-w-2xl mx-8">
-        <x-molecules.search-bar />
+        <x-molecules.search-bar-csp />
       </div>
       @endif
 
@@ -113,7 +113,7 @@
     <!-- モバイル検索バー -->
     @if($showSearch)
     <div class="md:hidden pb-4">
-      <x-molecules.search-bar />
+      <x-molecules.search-bar-csp />
     </div>
     @endif
   </div>

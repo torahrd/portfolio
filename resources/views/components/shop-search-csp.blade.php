@@ -5,10 +5,7 @@
 'mode' => 'post', // 'post' or 'search' など
 ])
 
-<div x-data="shopSearchCsp" 
-     data-mode="{{ $mode }}"
-     @if($initialShop) data-initial-shop="{{ json_encode($initialShop) }}" @endif
-     class="relative">
+<div x-data="shopSearchCsp" class="relative">
   <label for="shop_search" class="block text-sm font-medium text-gray-700 mb-2">{{ $label }}</label>
   <div class="relative">
     <input
@@ -42,7 +39,7 @@
           <div class="text-sm text-gray-600" x-text="getShopAddress()"></div>
           <div class="text-sm text-gray-600" x-show="selectedShop && selectedShop.formatted_phone_number" x-text="getPhoneNumberText()"></div>
         </div>
-        <button type="button" @click="clearSelection" class="text-red-500 hover:text-red-700 text-sm">変更</button>
+        <button type="button" @click="clearSelection()" class="text-red-500 hover:text-red-700 text-sm">変更</button>
       </div>
       <input type="hidden" name="post[shop_id]" :value="getShopId()">
       <input type="hidden" name="post[google_place_id]" :value="getGooglePlaceId()">
@@ -73,4 +70,4 @@
     店舗名を入力すると、Google Places APIからリアルタイムで検索結果が表示されます。
     Google Places APIが利用できない場合は、既存のデータベースから検索結果を表示します。
   </p>
-</div>
+</div> 
