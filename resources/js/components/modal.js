@@ -1,7 +1,10 @@
-// モーダル用Alpine.js関数
-export function modal(showDefault = false) {
+// モーダル用Alpine.js関数（CSP対応版）
+export function modal() {
     return {
-        show: showDefault,
+        show: false,
+        name: '',
+        maxWidth: '2xl',
+        
         focusables() {
             let selector =
                 "a, button, input:not([type='hidden']), textarea, select, details, [tabindex]:not([tabindex='-1'])";
@@ -38,6 +41,45 @@ export function modal(showDefault = false) {
                 Math.max(0, this.focusables().indexOf(document.activeElement)) -
                 1
             );
+        },
+        shouldFocusNext() {
+            this.nextFocusable().focus();
+        },
+        shouldFocusPrev() {
+            this.prevFocusable().focus();
+        },
+        openModal() {
+            this.show = true;
+        },
+        closeModal() {
+            this.show = false;
+        },
+        handleEscape() {
+            this.show = false;
+        },
+        handleTab(event) {
+            event.preventDefault();
+            this.shouldFocusNext();
+        },
+        handleShiftTab(event) {
+            event.preventDefault();
+            this.shouldFocusPrev();
+        },
+        handleModalOpen(event) {
+            if (event.detail === this.name) {
+                this.show = true;
+            }
+        },
+        handleModalClose(event) {
+            if (event.detail === this.name) {
+                this.show = false;
+            }
+        },
+        shouldShowModal() {
+            return this.show;
+        },
+        shouldHideBody() {
+            return this.show;
         },
 
         init() {

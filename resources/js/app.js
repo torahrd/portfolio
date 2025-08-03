@@ -17,6 +17,22 @@ Alpine.data('shopSearchCsp', shopSearchCsp);
 import { searchBar } from "./components/search-bar.js";
 Alpine.data('searchBar', searchBar);
 
+// CSP対応版modalコンポーネントを登録
+import { modal } from "./components/modal.js";
+Alpine.data('modal', modal);
+
+// CSP対応版navigationコンポーネントを登録
+import { navigation } from "./components/navigation.js";
+Alpine.data('navigation', navigation);
+
+// CSP対応版dropdownコンポーネントを登録
+import { dropdown } from "./components/dropdown.js";
+Alpine.data('dropdown', dropdown);
+
+// CSP対応版headerDropdownコンポーネントを登録
+import { headerDropdown } from "./components/header-dropdown.js";
+Alpine.data('headerDropdown', headerDropdown);
+
 Alpine.start();
 
 // 既存のコンポーネントは一時的にコメントアウト
