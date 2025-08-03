@@ -6,7 +6,6 @@ export function commentSection() {
         postId: null,
         csrfToken: null,
         commentsStoreUrl: null,
-        commentsLikeBaseUrl: null,
         commentsDeleteBaseUrl: null,
 
         init() {
@@ -14,7 +13,6 @@ export function commentSection() {
             this.postId = this.$el.dataset.postId;
             this.csrfToken = this.$el.dataset.csrfToken;
             this.commentsStoreUrl = this.$el.dataset.commentsStoreUrl;
-            this.commentsLikeBaseUrl = this.$el.dataset.commentsLikeBaseUrl;
             this.commentsDeleteBaseUrl = this.$el.dataset.commentsDeleteBaseUrl;
         },
 
@@ -77,21 +75,6 @@ export function commentSection() {
                         parent_id: commentId,
                         content: this.replyContent,
                     }),
-                });
-                // ...（省略：現状のロジックをそのまま移植）
-            } catch (e) {
-                // ...
-            }
-        },
-
-        async toggleLike(commentId) {
-            try {
-                const response = await fetch(`${this.commentsLikeBaseUrl}${commentId}/like`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": this.csrfToken,
-                    },
                 });
                 // ...（省略：現状のロジックをそのまま移植）
             } catch (e) {
