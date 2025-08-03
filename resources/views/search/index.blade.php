@@ -11,7 +11,7 @@
 
       <!-- 検索フォーム -->
       <div class="bg-white rounded-xl shadow-card p-6 mb-8">
-        <x-molecules.search-bar :placeholder="'店舗名、料理名、エリアで検索...'" :value="request('q')" :action="route('search')" />
+        <x-molecules.search-bar-csp :placeholder="'店舗名、料理名、エリアで検索...'" :value="request('q')" :action="route('search')" />
       </div>
 
       <!-- 検索結果 -->

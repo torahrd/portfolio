@@ -63,8 +63,8 @@
     </div>
 
     <!-- 検索結果 -->
-    <template x-for="suggestion in suggestions" :key="suggestion.title + '-' + suggestion.subtitle">
-      <div @click="selectSuggestion(suggestion)"
+    <template x-for="(suggestion, index) in suggestions" :key="suggestion.title">
+      <div @click="selectSuggestion" :data-suggestion-index="index"
         class="px-4 py-3 cursor-pointer hover:bg-neutral-50 transition-colors duration-200">
         <div class="flex items-center justify-between">
           <div class="flex-1">
@@ -73,10 +73,10 @@
           </div>
           <div class="flex items-center space-x-2">
             <!-- 投稿数表示 -->
-            <div x-show="suggestion.post_count > 0" class="text-xs bg-primary-100 text-primary-700 px-2 py-1 rounded-full">
+            <div x-show="hasPosts" class="text-xs bg-primary-100 text-primary-700 px-2 py-1 rounded-full">
               <span x-text="suggestion.post_count"></span>件の投稿
             </div>
-            <div x-show="suggestion.post_count === 0" class="text-xs bg-neutral-100 text-neutral-600 px-2 py-1 rounded-full">
+            <div x-show="hasNoPosts" class="text-xs bg-neutral-100 text-neutral-600 px-2 py-1 rounded-full">
               投稿なし
             </div>
           </div>
@@ -90,4 +90,4 @@
       <div class="text-sm">該当する店舗が見つかりませんでした</div>
     </div>
   </div>
-</div>
+</div> 

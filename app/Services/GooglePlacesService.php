@@ -223,6 +223,13 @@ class GooglePlacesService
   {
     return collect($places)->map(function ($place) use ($query) {
       $existingShop = Shop::findByGooglePlaceId($place['id'] ?? '');
+      
+      // 既存の店舗の場合は投稿数を取得
+      $postCount = 0;
+      if ($existingShop) {
+        $postCount = $existingShop->posts()->count();
+      }
+      
       return [
         'id' => $existingShop?->id,
         'name' => $place['displayName']['text'] ?? '',
@@ -232,7 +239,8 @@ class GooglePlacesService
         'google_place_id' => $place['id'] ?? '',
         'is_existing' => $existingShop !== null,
         'match_score' => $this->calculateMatchScore($place['displayName']['text'] ?? '', $query),
-        'data_source' => 'google'
+        'data_source' => 'google',
+        'post_count' => $postCount // 投稿数を追加
       ];
     })->toArray();
   }

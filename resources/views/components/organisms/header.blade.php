@@ -19,7 +19,7 @@
       <!-- 検索バー（デスクトップ） -->
       @if($showSearch)
       <div class="hidden md:block flex-1 max-w-2xl mx-8">
-        <x-molecules.search-bar />
+        <x-molecules.search-bar-csp />
       </div>
       @endif
 
@@ -58,9 +58,9 @@
         </a>
 
         <!-- ユーザーメニュー -->
-        <div class="relative" x-data="{ open: false }">
+        <div class="relative" x-data="headerDropdown">
           <button
-            x-on:click="open = !open"
+            @click="toggleDropdown"
             class="flex items-center space-x-2 p-1 rounded-full hover:bg-neutral-100 transition-colors duration-200">
             <x-atoms.avatar
               :user="auth()->user()"
@@ -72,14 +72,14 @@
 
           <!-- ユーザーメニュードロップダウン -->
           <div
-            x-show="open"
+            x-show="shouldShowDropdown"
             x-transition:enter="transition ease-out duration-200"
             x-transition:enter-start="opacity-0 scale-95"
             x-transition:enter-end="opacity-100 scale-100"
             x-transition:leave="transition ease-in duration-75"
             x-transition:leave-start="opacity-100 scale-100"
             x-transition:leave-end="opacity-0 scale-95"
-            x-on:click.outside="open = false"
+            @click.outside="handleClickOutside"
             class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-neutral-200 py-1 z-40">
             <a href="{{ route('profile.show', auth()->user()) }}" class="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors duration-200">
               プロフィール
@@ -113,7 +113,7 @@
     <!-- モバイル検索バー -->
     @if($showSearch)
     <div class="md:hidden pb-4">
-      <x-molecules.search-bar />
+      <x-molecules.search-bar-csp />
     </div>
     @endif
   </div>
