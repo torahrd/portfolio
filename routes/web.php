@@ -32,6 +32,11 @@ Route::get('/test-shop-search-csp', function () {
 // ホームルート（認証必要 - 元の設計通り）
 Route::get('/', [PostController::class, 'index'])->middleware(['auth'])->name('home');
 
+// ランディングページ（認証不要）
+Route::get('/landing', function () {
+    return view('landing');
+})->name('landing');
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
