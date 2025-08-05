@@ -37,6 +37,11 @@ Route::get('/landing', function () {
     return view('landing');
 })->name('landing');
 
+// ランディングページ（認証不要）
+Route::get('/landing', function () {
+    return view('landing');
+})->name('landing');
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

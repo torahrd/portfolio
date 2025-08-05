@@ -69,7 +69,6 @@
                 <div class="mt-16 flex justify-center">
                     <div class="relative w-80 h-80 md:w-96 md:h-96">
                         <div class="seasonal-circle" id="seasonal-preview">
-                            <!-- 24節気の円グラフ -->
                             <svg viewBox="0 0 400 400" class="w-full h-full transform -rotate-90">
                                 <!-- 背景円 -->
                                 <circle cx="200" cy="200" r="180" fill="none" stroke="#f3f4f6" stroke-width="2"/>
@@ -233,7 +232,7 @@
                                     <!-- 季節の境界線 -->
                                     <g stroke="#d97706" stroke-width="3" opacity="0.6">
                                         <line x1="200" y1="30" x2="200" y2="50"/>  <!-- 春分 -->
-                                        <line x1="370" y1="200" x2="350" y2="200"/> <!-- 夏至 -->
+                                        <line x1="370" y1="200" x2="200" y2="200"/> <!-- 夏至 -->
                                         <line x1="200" y1="370" x2="200" y2="350"/> <!-- 秋分 -->
                                         <line x1="30" y1="200" x2="50" y2="200"/>  <!-- 冬至 -->
                                     </g>
