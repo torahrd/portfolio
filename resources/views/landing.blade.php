@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     
     <title>TasteRetreat - 本当に価値のあるお店を、あなたの手で</title>
+
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Scripts -->
@@ -326,10 +329,12 @@
                     @else
                         <a href="{{ route('home') }}" class="taste-retreat-primary text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-opacity-90 transition-all">ダッシュボード</a>
                     @endguest
+
                 </div>
             </div>
         </div>
     </header>
+
 
     <!-- Hero Section with Problem/Solution Narrative -->
     <section class="section-spacer pt-32 lg:pt-40">
@@ -492,10 +497,12 @@
                                     </h6>
                                     <p class="text-sm text-gray-700 mb-4">この続きを体験し、あなただけの季節の名店リストを完成させましょう</p>
                                     <a href="{{ route('login') }}" class="primary-cta text-white px-8 py-3 rounded-full text-lg font-bold transition-all inline-block">今すぐログイン</a>
+
                                 </div>
                             </div>
                         </div>
                     </div>
+
 
                     <!-- Right: Interactive Map -->
                     <div>
@@ -516,11 +523,13 @@
                             <div class="flex items-center">
                                 <div class="w-4 h-4 bg-red-500 rounded-full mr-2"></div>
                                 <span>新規追加</span>
+
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
         </div>
     </section>
 
@@ -730,9 +739,11 @@
                 <div class="mt-8 pt-8 border-t border-gray-800 text-gray-500 text-sm">
                     © 2025 TasteRetreat. All rights reserved.
                 </div>
+
             </div>
         </div>
     </footer>
+
 
     <!-- Demo JavaScript -->
     <script>
@@ -978,5 +989,6 @@
             // Alpine.js will handle the actual initialization
         }
     </script>
+
 </body>
 </html>
