@@ -60,16 +60,16 @@
           <!-- 投稿アクション -->
           @auth
           @if(auth()->id() === $post->user_id)
-          <div x-data="{ open: false }" class="relative">
-            <button @click="open = !open"
+          <div x-data="dropdown" class="relative">
+            <button @click="toggleDropdown"
               class="p-2 text-neutral-400 hover:text-neutral-600 rounded-full hover:bg-neutral-100 transition-colors duration-200">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
               </svg>
             </button>
 
-            <div x-show="open"
-              @click.outside="open = false"
+            <div x-show="shouldShowDropdown"
+              @click.outside="handleClickOutside"
               x-transition
               class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-neutral-200 py-1 z-40">
               <a href="{{ route('posts.edit', $post) }}"
@@ -134,7 +134,12 @@
       </div>
 
       <!-- コメントセクション -->
-      <div id="comments" class="mt-8">
+      <div id="comments" class="mt-8" 
+           x-data="commentSection" 
+           data-post-id="{{ $post->id }}"
+           data-csrf-token="{{ csrf_token() }}"
+           data-comments-store-url="{{ route('comments.store', $post) }}"
+           data-comments-delete-base-url="/comments/">
         <div class="bg-white rounded-xl shadow-card p-6">
           <h3 class="text-lg font-bold text-neutral-900 mb-6">
             コメント (<span id="comment-count">{{ $post->comments->where('parent_id', null)->count() }}</span>件)

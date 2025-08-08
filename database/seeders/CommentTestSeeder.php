@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\User;
-use App\Models\Post;
 use App\Models\Comment;
+use App\Models\Post;
+use App\Models\User;
 use Faker\Factory as Faker;
+use Illuminate\Database\Seeder;
 
 class CommentTestSeeder extends Seeder
 {
@@ -20,12 +20,13 @@ class CommentTestSeeder extends Seeder
         // テストユーザーを取得
         $users = User::whereIn('email', [
             'tanaka@test.com',
-            'sato@test.com', 
-            'yamada@test.com'
+            'sato@test.com',
+            'yamada@test.com',
         ])->get();
 
         if ($users->isEmpty()) {
             $this->command->error('❌ テストユーザーが見つかりません。先にActionTestSeederを実行してください。');
+
             return;
         }
 
@@ -34,6 +35,7 @@ class CommentTestSeeder extends Seeder
 
         if ($posts->isEmpty()) {
             $this->command->error('❌ 投稿が見つかりません。先にActionTestSeederを実行してください。');
+
             return;
         }
 
@@ -114,26 +116,26 @@ class CommentTestSeeder extends Seeder
     private function getRandomComment($shopName, $faker): string
     {
         $comments = [
-            "このお店、すごく良さそうですね！",
-            "行ってみたいです！",
-            "美味しそう！",
-            "雰囲気が良さそうですね",
-            "また行きたいお店ですね",
-            "素敵な投稿をありがとうございます！",
-            "参考になります！",
-            "今度行ってみます！",
-            "写真も綺麗ですね",
-            "おすすめメニューは何ですか？",
-            "営業時間は何時から何時までですか？",
-            "予約は必要ですか？",
-            "駐車場はありますか？",
-            "子供連れでも大丈夫ですか？",
-            "デートに使えそうですね！",
-            "友達と行きたいです",
-            "家族で行くのに良さそう",
-            "記念日におすすめですか？",
-            "ランチタイムは混みますか？",
-            "ディナータイムは予約必須ですか？"
+            'このお店、すごく良さそうですね！',
+            '行ってみたいです！',
+            '美味しそう！',
+            '雰囲気が良さそうですね',
+            'また行きたいお店ですね',
+            '素敵な投稿をありがとうございます！',
+            '参考になります！',
+            '今度行ってみます！',
+            '写真も綺麗ですね',
+            'おすすめメニューは何ですか？',
+            '営業時間は何時から何時までですか？',
+            '予約は必要ですか？',
+            '駐車場はありますか？',
+            '子供連れでも大丈夫ですか？',
+            'デートに使えそうですね！',
+            '友達と行きたいです',
+            '家族で行くのに良さそう',
+            '記念日におすすめですか？',
+            'ランチタイムは混みますか？',
+            'ディナータイムは予約必須ですか？',
         ];
 
         return $faker->randomElement($comments);
@@ -145,23 +147,23 @@ class CommentTestSeeder extends Seeder
     private function getRandomReply($faker): string
     {
         $replies = [
-            "ありがとうございます！",
-            "ぜひ行ってみてください！",
-            "お気に入りのお店です",
-            "また投稿しますね",
-            "おすすめですよ！",
-            "楽しんでいただければ嬉しいです",
-            "また来てくださいね",
-            "お待ちしています！",
-            "ご来店お待ちしています",
-            "ぜひお試しください",
-            "感想を聞かせてください",
-            "お気に入りになってもらえると嬉しいです",
-            "また違うメニューも試してみてください",
-            "季節限定メニューもおすすめです",
-            "スタッフも親切ですよ"
+            'ありがとうございます！',
+            'ぜひ行ってみてください！',
+            'お気に入りのお店です',
+            'また投稿しますね',
+            'おすすめですよ！',
+            '楽しんでいただければ嬉しいです',
+            'また来てくださいね',
+            'お待ちしています！',
+            'ご来店お待ちしています',
+            'ぜひお試しください',
+            '感想を聞かせてください',
+            'お気に入りになってもらえると嬉しいです',
+            'また違うメニューも試してみてください',
+            '季節限定メニューもおすすめです',
+            'スタッフも親切ですよ',
         ];
 
         return $faker->randomElement($replies);
     }
-} 
+}

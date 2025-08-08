@@ -15,7 +15,7 @@ class ProfileLink extends Model
         'user_id',
         'token',
         'expires_at',
-        'is_active'
+        'is_active',
     ];
 
     protected $casts = [
@@ -43,13 +43,13 @@ class ProfileLink extends Model
         // 作成日時を組み込んだトークン生成
         $timestamp = now()->timestamp;
         $randomValue = Str::random(16);
-        $token = hash('sha256', $user->id . $timestamp . $randomValue);
+        $token = hash('sha256', $user->id.$timestamp.$randomValue);
 
         return self::create([
             'user_id' => $user->id,
             'token' => $token,
             'expires_at' => now()->addDays(3), // 3日間（72時間）の有効期限
-            'is_active' => true
+            'is_active' => true,
         ]);
     }
 

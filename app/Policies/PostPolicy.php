@@ -2,9 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\User;
 use App\Models\Post;
-use Illuminate\Auth\Access\Response;
+use App\Models\User;
 
 class PostPolicy
 {
@@ -23,7 +22,7 @@ class PostPolicy
     public function view(User $user, Post $post): bool
     {
         // 投稿者本人、または公開投稿なら閲覧可能
-        return $user->id === $post->user_id || !$post->private_status;
+        return $user->id === $post->user_id || ! $post->private_status;
     }
 
     /**

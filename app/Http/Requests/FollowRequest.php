@@ -2,9 +2,8 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\ValidationException;
 use App\Models\User;
+use Illuminate\Foundation\Http\FormRequest;
 
 class FollowRequest extends FormRequest
 {
@@ -44,7 +43,7 @@ class FollowRequest extends FormRequest
             }
 
             // ユーザーが存在するかチェック
-            if (!$targetUser) {
+            if (! $targetUser) {
                 $validator->errors()->add(
                     'user',
                     '指定されたユーザーが存在しません'
@@ -59,7 +58,7 @@ class FollowRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'user.exists' => '指定されたユーザーが存在しません'
+            'user.exists' => '指定されたユーザーが存在しません',
         ];
     }
 
@@ -69,7 +68,7 @@ class FollowRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'user' => 'ユーザー'
+            'user' => 'ユーザー',
         ];
     }
 
@@ -80,6 +79,7 @@ class FollowRequest extends FormRequest
     {
         /** @var User $user */
         $user = auth()->user();
+
         return $user;
     }
 
@@ -105,7 +105,7 @@ class FollowRequest extends FormRequest
         }
 
         // 既にフォロー中または申請中ではないかチェック
-        return !$currentUser->isFollowing($targetUser) &&
-            !$currentUser->hasSentFollowRequest($targetUser);
+        return ! $currentUser->isFollowing($targetUser) &&
+            ! $currentUser->hasSentFollowRequest($targetUser);
     }
 }

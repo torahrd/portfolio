@@ -38,7 +38,7 @@
           <!-- コメントアクション -->
           <div class="flex items-center space-x-4 text-xs">
             <button
-              x-on:click="showReplyForm = showReplyForm === {{ $comment->id }} ? null : {{ $comment->id }}"
+              x-on:click="toggleReplyForm({{ $comment->id }})"
               class="text-neutral-500 hover:text-primary-500 transition-colors duration-200">
               返信
             </button>
@@ -53,7 +53,7 @@
           </div>
 
           <!-- 返信フォーム -->
-          <div x-show="showReplyForm === {{ $comment->id }}" class="mt-4">
+          <div x-show="shouldShowReplyForm({{ $comment->id }})" class="mt-4">
             <form x-on:submit.prevent="submitReply({{ $comment->id }})" class="space-y-3">
               <textarea
                 x-model="replyContent"
@@ -64,8 +64,8 @@
                 <x-atoms.button-secondary
                   size="sm"
                   type="button"
-                  x-on:click="showReplyForm = null; replyContent = ''"
-                  :autofocus="showReplyForm === $comment->id">
+                  x-on:click="closeReplyForm()"
+                  :autofocus="shouldShowReplyForm($comment->id)">
                   キャンセル
                 </x-atoms.button-secondary>
                 <x-atoms.button-primary
@@ -131,7 +131,8 @@
           <x-atoms.input-text
             name="comment"
             placeholder="コメントを入力してください..."
-            class="w-full" />
+            class="w-full"
+            x-model="commentContent" />
         </div>
       </div>
 

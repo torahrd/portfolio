@@ -22,21 +22,21 @@ $maxWidthClass = [
 @endphp
 
 <div
-    x-data="modal(@js($show))"
-    x-init="init()"
-    x-on:open-modal.window="$event.detail == '{{ $name }}' ? show = true : null"
-    x-on:close-modal.window="$event.detail == '{{ $name }}' ? show = false : null"
-    x-on:close.stop="show = false"
-    x-on:keydown.escape.window="show = false"
-                    x-on:keydown.tab.prevent="shouldFocusNext"
-    x-on:keydown.shift.tab.prevent="prevFocusable().focus()"
-    x-show="show"
+    x-data="modal"
+    x-init="init(); name = '{{ $name }}'; show = {{ $show ? 'true' : 'false' }}"
+    @open-modal.window="handleModalOpen"
+    @close-modal.window="handleModalClose"
+    @close.stop="closeModal"
+    @keydown.escape.window="handleEscape"
+    @keydown.tab.prevent="handleTab"
+    @keydown.shift.tab.prevent="handleShiftTab"
+    x-show="shouldShowModal"
     class="fixed inset-0 overflow-y-auto px-4 py-6 sm:px-0 z-[99999]"
-    x-effect="document.body.style.overflow = show ? 'hidden' : ''">
+    x-effect="document.body.style.overflow = shouldHideBody ? 'hidden' : ''">
     <div
-        x-show="show"
+        x-show="shouldShowModal"
         class="fixed inset-0 bg-gray-500 bg-opacity-75"
-        x-on:click="show = false"
+        @click="closeModal"
         x-transition:enter="ease-out duration-300"
         x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100"
@@ -46,7 +46,7 @@ $maxWidthClass = [
     </div>
 
     <div
-        x-show="show"
+        x-show="shouldShowModal"
         class="mb-6 bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:w-full {{ $maxWidthClass }} sm:mx-auto relative z-[99998]"
         x-transition:enter="ease-out duration-300"
         x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"

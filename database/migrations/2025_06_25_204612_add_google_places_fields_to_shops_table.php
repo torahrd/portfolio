@@ -41,7 +41,7 @@ return new class extends Migration
                 'latitude',
                 'longitude',
                 'formatted_phone_number',
-                'website'
+                'website',
             ]);
         });
     }

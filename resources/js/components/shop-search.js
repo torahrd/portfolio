@@ -49,6 +49,22 @@ export function shopSearchCsp() {
             return this.selectedShop && !this.isSelectionValid && this.mode === 'post';
         },
 
+        // 投稿ボタンのクラスを返す（CSP対応）
+        getSubmitButtonClass() {
+            if (this.isSelectionValid) {
+                return 'bg-red-500 hover:bg-red-600';
+            }
+            return 'bg-gray-400 cursor-not-allowed';
+        },
+
+        // シンプルな投稿ボタンクラス（バリデーション不要版）
+        getSimpleSubmitButtonClass() {
+            if (this.selectedShop) {
+                return 'bg-red-500 hover:bg-red-600';
+            }
+            return 'bg-gray-400 cursor-not-allowed';
+        },
+
         // 選択済み店舗の表示制御（CSP対応版）
         hasSelectedShop() {
             return this.selectedShop !== null;
@@ -387,11 +403,13 @@ export function shopSearchCsp() {
         },
 
         getShopId() {
-            return this.selectedShop ? this.selectedShop.id : '';
+            // 既存店舗の場合はid、新規店舗の場合は空
+            return this.selectedShop && this.selectedShop.is_existing ? this.selectedShop.id : '';
         },
 
         getGooglePlaceId() {
-            return this.selectedShop ? this.selectedShop.place_id : '';
+            // 新規店舗の場合はgoogle_place_id、既存店舗の場合は空
+            return this.selectedShop && !this.selectedShop.is_existing ? this.selectedShop.google_place_id : '';
         },
 
         getShopNameForForm() {

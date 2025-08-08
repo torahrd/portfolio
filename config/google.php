@@ -1,7 +1,7 @@
 <?php
 
 return [
-  /*
+    /*
     |--------------------------------------------------------------------------
     | Google API Configuration
     |--------------------------------------------------------------------------
@@ -10,9 +10,9 @@ return [
     |
     */
 
-  'api_key' => env('GOOGLE_MAPS_API_KEY'),
+    'api_key' => env('GOOGLE_MAPS_API_KEY'),
 
-  /*
+    /*
     |--------------------------------------------------------------------------
     | Google Places API Configuration
     |--------------------------------------------------------------------------
@@ -22,14 +22,14 @@ return [
     |
     */
 
-  'places' => [
-    'api_key' => env('GOOGLE_MAPS_API_KEY'), // クライアント用（既存）
-    'server_api_key' => env('GOOGLE_PLACES_SERVER_API_KEY'), // サーバー用（新規）
-    'language' => env('GOOGLE_PLACES_LANGUAGE', 'ja'),
-    'region' => env('GOOGLE_PLACES_REGION', 'JP'),
-  ],
+    'places' => [
+        'api_key' => env('GOOGLE_MAPS_API_KEY'), // クライアント用（既存）
+        'server_api_key' => env('GOOGLE_PLACES_SERVER_API_KEY'), // サーバー用（新規）
+        'language' => env('GOOGLE_PLACES_LANGUAGE', 'ja'),
+        'region' => env('GOOGLE_PLACES_REGION', 'JP'),
+    ],
 
-  /*
+    /*
     |--------------------------------------------------------------------------
     | Google Maps API Configuration
     |--------------------------------------------------------------------------
@@ -38,12 +38,12 @@ return [
     |
     */
 
-  'maps' => [
-    'api_key' => env('GOOGLE_MAPS_API_KEY'),
-    'map_id' => env('GOOGLE_MAPS_MAP_ID'),
-  ],
+    'maps' => [
+        'api_key' => env('GOOGLE_MAPS_API_KEY'),
+        'map_id' => env('GOOGLE_MAPS_MAP_ID'),
+    ],
 
-  /*
+    /*
     |--------------------------------------------------------------------------
     | Google Geocoding API Configuration
     |--------------------------------------------------------------------------
@@ -52,9 +52,9 @@ return [
     |
     */
 
-  'geocoding' => [
-    'api_key' => env('GOOGLE_MAPS_API_KEY'),
-    'language' => env('GOOGLE_GEOCODING_LANGUAGE', 'ja'),
-    'region' => env('GOOGLE_GEOCODING_REGION', 'JP'),
-  ],
+    'geocoding' => [
+        'api_key' => env('GOOGLE_MAPS_API_KEY'),
+        'language' => env('GOOGLE_GEOCODING_LANGUAGE', 'ja'),
+        'region' => env('GOOGLE_GEOCODING_REGION', 'JP'),
+    ],
 ];

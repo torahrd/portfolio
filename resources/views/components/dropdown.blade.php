@@ -21,12 +21,12 @@ break;
 }
 @endphp
 
-<div class="relative" x-data="{ open: false }" @click.outside="open = false" @close.stop="open = false">
-    <div @click="open = ! open">
+<div class="relative" x-data="dropdown" @click.outside="handleClickOutside" @close.stop="handleClose">
+    <div @click="toggleDropdown">
         {{ $trigger }}
     </div>
 
-    <div x-show="open"
+    <div x-show="shouldShowDropdown"
         x-transition:enter="transition ease-out duration-200"
         x-transition:enter-start="opacity-0 scale-95"
         x-transition:enter-end="opacity-100 scale-100"
@@ -35,7 +35,7 @@ break;
         x-transition:leave-end="opacity-0 scale-95"
         class="absolute z-40 mt-2 {{ $width }} rounded-md shadow-lg {{ $alignmentClasses }}"
         style="display: none;"
-        @click="open = false">
+        @click="closeDropdown">
         <div class="rounded-md ring-1 ring-black ring-opacity-5 {{ $contentClasses }}">
             {{ $content }}
         </div>

@@ -21,7 +21,7 @@ class ShopStoreRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:100',
-            'address' => 'required|string|max:200'
+            'address' => 'required|string|max:200',
         ];
     }
 
@@ -34,7 +34,7 @@ class ShopStoreRequest extends FormRequest
             'name.required' => '店舗名を入力してください',
             'name.max' => '店舗名は100文字以内で入力してください',
             'address.required' => '住所を入力してください',
-            'address.max' => '住所は200文字以内で入力してください'
+            'address.max' => '住所は200文字以内で入力してください',
         ];
     }
 }

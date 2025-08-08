@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use App\Models\User;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 class TestUserSeeder extends Seeder
@@ -39,12 +38,12 @@ class TestUserSeeder extends Seeder
                 'email' => 'diana@example.com',
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
-            ]
+            ],
         ];
 
         foreach ($testUsers as $userData) {
             // 既に存在する場合はスキップ
-            if (!User::where('email', $userData['email'])->exists()) {
+            if (! User::where('email', $userData['email'])->exists()) {
                 User::create($userData);
                 $this->command->info("✅ Created user: {$userData['name']} ({$userData['email']})");
             } else {

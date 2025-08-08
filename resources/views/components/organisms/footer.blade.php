@@ -47,12 +47,12 @@
                     <h3 class="text-neutral-800 font-semibold mb-4 text-lg">サポート</h3>
                     <div class="grid grid-cols-2 gap-4">
                         <ul class="space-y-3">
-                            <li><a href="#" class="text-sm text-neutral-600 hover:text-neutral-800 transition-colors">よくある質問</a></li>
-                            <li><a href="#" class="text-sm text-neutral-600 hover:text-neutral-800 transition-colors">お問い合わせ</a></li>
+                            <li><a href="{{ route('contact') }}" class="text-sm text-neutral-600 hover:text-neutral-800 transition-colors">よくある質問</a></li>
+                            <li><a href="{{ route('contact') }}" class="text-sm text-neutral-600 hover:text-neutral-800 transition-colors">お問い合わせ</a></li>
                         </ul>
                         <ul class="space-y-3">
                             <li><a href="{{ route('privacy-policy') }}" class="text-sm text-neutral-600 hover:text-neutral-800 transition-colors">プライバシーポリシー</a></li>
-                            <li><a href="#" class="text-sm text-neutral-600 hover:text-neutral-800 transition-colors">利用規約</a></li>
+                            <li><a href="{{ route('terms') }}" class="text-sm text-neutral-600 hover:text-neutral-800 transition-colors">利用規約</a></li>
                         </ul>
                     </div>
                 </div>

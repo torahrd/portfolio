@@ -187,8 +187,8 @@
 
         <button
           type="submit"
-          :disabled="!isSelectionValid"
-          :class="isSelectionValid ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-400 cursor-not-allowed'"
+          :disabled="!selectedShop"
+          :class="getSimpleSubmitButtonClass"
           class="px-6 py-3 text-white rounded-md transition-colors">
           投稿する
         </button>

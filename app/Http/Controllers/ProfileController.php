@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\User;
-use App\Models\ProfileLink;
 use App\Http\Requests\UpdateProfileRequest;
+use App\Models\ProfileLink;
+use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class ProfileController extends Controller
 {
@@ -23,7 +22,7 @@ class ProfileController extends Controller
         if (
             $user->is_private &&
             $currentUser?->id !== $user->id &&
-            !$currentUser?->isFollowing($user)
+            ! $currentUser?->isFollowing($user)
         ) {
             return view('profile.private', compact('user'));
         }
@@ -58,7 +57,7 @@ class ProfileController extends Controller
                 'posts' => $postsHtml,
                 'hasMorePages' => $posts->hasMorePages(),
                 'currentPage' => $posts->currentPage(),
-                'lastPage' => $posts->lastPage()
+                'lastPage' => $posts->lastPage(),
             ]);
         }
 
@@ -81,7 +80,7 @@ class ProfileController extends Controller
             ->where('expires_at', '>', now())
             ->first();
 
-        if (!$profileLink) {
+        if (! $profileLink) {
             abort(404, 'このリンクは無効または期限切れです');
         }
 
@@ -178,7 +177,7 @@ class ProfileController extends Controller
         return response()->json([
             'success' => true,
             'link' => route('profile.show-by-token', $profileLink->token),
-            'expires_at' => $profileLink->expires_at->format('Y年n月j日 H:i')
+            'expires_at' => $profileLink->expires_at->format('Y年n月j日 H:i'),
         ]);
     }
 
@@ -198,7 +197,7 @@ class ProfileController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'プロフィールリンクを無効化しました'
+            'message' => 'プロフィールリンクを無効化しました',
         ]);
     }
 
@@ -208,8 +207,8 @@ class ProfileController extends Controller
     private function handleAvatarUpload($file, User $user): string
     {
         // 既存のローカルファイル名の場合のみ削除
-        if ($user->avatar && !str_starts_with($user->avatar, 'http')) {
-            Storage::disk('public')->delete('avatars/' . $user->avatar);
+        if ($user->avatar && ! str_starts_with($user->avatar, 'http')) {
+            Storage::disk('public')->delete('avatars/'.$user->avatar);
         }
 
         // Cloudinaryへアップロード
@@ -220,9 +219,10 @@ class ProfileController extends Controller
                 'height' => 400,
                 'crop' => 'fill',
                 'gravity' => 'face',
-                'quality' => 'auto:good'
-            ]
+                'quality' => 'auto:good',
+            ],
         ]);
+
         return $uploaded->getSecurePath(); // CloudinaryのURLをそのまま保存
     }
 }

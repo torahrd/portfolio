@@ -1,5 +1,5 @@
 {{--
-  コメント表示用カードコンポーネント
+  コメント表示用カードコンポーネント（CSP対応版）
 
   props:
     - comment: コメントのオブジェクト
@@ -17,7 +17,7 @@ $levelClass = $level > 0 ? 'ml-8' : ''; // インデントを少し深く
 $commentId = $comment->id;
 @endphp
 
-<div id="comment-{{ $commentId }}" class="comment-card {{ $levelClass }}" x-data="{ showReply: false }">
+<div id="comment-{{ $commentId }}" class="comment-card {{ $levelClass }}">
     <div class="flex items-start space-x-4 p-4">
         <!-- アバター -->
         <x-atoms.avatar :user="$comment->user" size="default" :showPrivateIcon="true" />
@@ -48,11 +48,50 @@ $commentId = $comment->id;
             </div>
 
             <!-- アクション: 返信と削除 -->
-            <x-molecules.comment-actions :comment="$comment" :post="$post" showReply="showReply" />
+            <div class="flex items-center space-x-4 text-xs font-medium">
+                @auth
+                <button class="text-neutral-600 hover:text-primary-600" 
+                        @click="toggleReplyForm" 
+                        data-comment-id="{{ $comment->id }}">
+                    返信
+                </button>
+                @endauth
+
+                @auth
+                @if(auth()->id() === $comment->user_id || auth()->id() === $post->user_id)
+                <button @click="deleteComment" 
+                        data-comment-id="{{ $comment->id }}"
+                        class="text-neutral-600 hover:text-red-600">
+                    削除
+                </button>
+                @endif
+                @endauth
+            </div>
 
             <!-- 返信フォーム: 返信ボタンで表示/非表示 -->
             @auth
-            <x-molecules.comment-reply-form :comment="$comment" :post="$post" :level="$level" showReply="showReply" />
+            <div data-comment-id="{{ $comment->id }}" class="mt-4 reply-form" style="display: none;">
+                <form @submit.prevent="submitReply" data-comment-id="{{ $comment->id }}" class="space-y-3">
+                    <textarea
+                        @input="updateReplyContent"
+                        placeholder="返信を入力..."
+                        class="w-full p-3 border border-neutral-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200"
+                        rows="2"></textarea>
+                    <div class="flex items-center justify-end space-x-2">
+                        <x-atoms.button-secondary
+                            size="sm"
+                            type="button"
+                            @click="closeReplyForm">
+                            キャンセル
+                        </x-atoms.button-secondary>
+                        <x-atoms.button-primary
+                            size="sm"
+                            type="submit">
+                            返信
+                        </x-atoms.button-primary>
+                    </div>
+                </form>
+            </div>
             @endauth
 
             <!-- 返信一覧 -->

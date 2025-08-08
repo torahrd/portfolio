@@ -30,25 +30,26 @@ class TestMailgunSandboxDomainCommand extends Command
     {
         $email = $this->argument('email');
         $sandboxDomain = $this->argument('sandbox_domain');
-        
+
         $this->info("Testing Mailgun sandbox email sending to: {$email}");
         $this->info("Using sandbox domain: {$sandboxDomain}");
-        $this->info("⚠️  IMPORTANT: Recipient must be authorized in Mailgun sandbox!");
-        
+        $this->info('⚠️  IMPORTANT: Recipient must be authorized in Mailgun sandbox!');
+
         try {
             Mail::raw('This is a test email from TasteRetreat via Mailgun Sandbox.', function ($message) use ($email, $sandboxDomain) {
                 $message->to($email)
-                        ->subject('TasteRetreat - Mailgun Sandbox Test')
-                        ->from("test@{$sandboxDomain}", 'TasteRetreat Test');
+                    ->subject('TasteRetreat - Mailgun Sandbox Test')
+                    ->from("test@{$sandboxDomain}", 'TasteRetreat Test');
             });
-            
+
             $this->info('✅ Email sent successfully!');
             $this->info('📧 Check your inbox for the test email.');
+
             return Command::SUCCESS;
-            
+
         } catch (\Exception $e) {
-            $this->error('❌ Failed to send email: ' . $e->getMessage());
-            
+            $this->error('❌ Failed to send email: '.$e->getMessage());
+
             // 詳細なエラー情報を提供
             if (str_contains($e->getMessage(), '401') || str_contains($e->getMessage(), 'Forbidden')) {
                 $this->error('💡 401 Forbidden エラーの可能性のある原因:');
@@ -58,8 +59,8 @@ class TestMailgunSandboxDomainCommand extends Command
                 $this->error('   4. サンドボックス制限（最大5人の承認済み受信者のみ）');
                 $this->error('   5. APIキーがこのサンドボックスドメインに紐づいていない');
             }
-            
+
             return Command::FAILURE;
         }
     }
-} 
+}

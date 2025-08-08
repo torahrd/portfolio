@@ -1,4 +1,5 @@
 <?php
+
 // database/migrations/[timestamp]_add_created_by_to_shops_table.php
 // 新しいマイグレーションを作成する場合：
 // php artisan make:migration add_created_by_to_shops_table --table=shops

@@ -1,4 +1,5 @@
 <?php
+
 // app/View/Components/Atoms/Modal.php
 
 namespace App\View\Components\Atoms;

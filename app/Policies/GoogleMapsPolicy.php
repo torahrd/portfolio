@@ -24,4 +24,4 @@ class GoogleMapsPolicy extends Policy
             ->addNonceForDirective(Directive::SCRIPT)
             ->addNonceForDirective(Directive::STYLE);
     }
-} 
+}

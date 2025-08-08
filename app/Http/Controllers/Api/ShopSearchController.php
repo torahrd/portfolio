@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Shop;
-use App\Services\ShopSearchService;
 use App\Services\GooglePlacesService;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Log;
+use App\Services\ShopSearchService;
 use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ShopSearchController extends Controller
 {
     private ShopSearchService $shopSearchService;
+
     private GooglePlacesService $googlePlacesService;
 
     public function __construct(
@@ -43,7 +43,7 @@ class ShopSearchController extends Controller
                 return response()->json([
                     'success' => true,
                     'data' => [],
-                    'count' => 0
+                    'count' => 0,
                 ]);
             }
 
@@ -60,7 +60,7 @@ class ShopSearchController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => $results,
-                'count' => count($results)
+                'count' => count($results),
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // バリデーションエラー時は422で返す
@@ -68,18 +68,18 @@ class ShopSearchController extends Controller
                 'success' => false,
                 'message' => '検索条件が不正です。',
                 'error' => $e->getMessage(),
-                'errors' => $e->errors()
+                'errors' => $e->errors(),
             ], 422);
         } catch (\Exception $e) {
             Log::error('Shop search error', [
                 'query' => $request->input('query'),
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
             return response()->json([
                 'success' => false,
                 'message' => '検索中にエラーが発生しました。',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -103,24 +103,24 @@ class ShopSearchController extends Controller
             if ($details) {
                 return response()->json([
                     'success' => true,
-                    'data' => $details
+                    'data' => $details,
                 ]);
             } else {
                 return response()->json([
                     'success' => false,
-                    'message' => '店舗詳細情報が見つかりませんでした。'
+                    'message' => '店舗詳細情報が見つかりませんでした。',
                 ], 404);
             }
         } catch (Exception $e) {
             Log::error('Place details error', [
                 'place_id' => $request->input('place_id'),
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
             return response()->json([
                 'success' => false,
                 'message' => '店舗詳細情報の取得に失敗しました。',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -143,26 +143,26 @@ class ShopSearchController extends Controller
             if ($isValid) {
                 return response()->json([
                     'success' => true,
-                    'message' => '店舗選択が有効です。'
+                    'message' => '店舗選択が有効です。',
                 ]);
             } else {
                 return response()->json([
                     'success' => false,
                     'message' => '店舗を候補から選択してください。',
                     'errors' => [
-                        'shop_selection' => '店舗を候補から選択してください。'
-                    ]
+                        'shop_selection' => '店舗を候補から選択してください。',
+                    ],
                 ], 422);
             }
         } catch (Exception $e) {
             Log::error('Shop selection validation error', [
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
             return response()->json([
                 'success' => false,
                 'message' => '店舗選択の検証に失敗しました。',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }

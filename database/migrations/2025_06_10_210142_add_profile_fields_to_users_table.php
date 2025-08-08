@@ -38,7 +38,7 @@ class AddProfileFieldsToUsersTable extends Migration
                 'is_private',
                 'followers_count',
                 'following_count',
-                'posts_count'
+                'posts_count',
             ]);
         });
     }
