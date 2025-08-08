@@ -1,4 +1,5 @@
 <?php
+
 // database/seeders/UpdateExistingFollowersSeeder.php
 
 namespace Database\Seeders;
@@ -15,7 +16,7 @@ class UpdateExistingFollowersSeeder extends Seeder
             ->whereNull('status')
             ->update([
                 'status' => 'active',
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
 
         // ユーザーのフォロワー・フォロー数を再計算
@@ -41,7 +42,7 @@ class UpdateExistingFollowersSeeder extends Seeder
                 ->update([
                     'followers_count' => $followersCount,
                     'following_count' => $followingCount,
-                    'posts_count' => $postsCount
+                    'posts_count' => $postsCount,
                 ]);
         }
     }

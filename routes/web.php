@@ -1,17 +1,16 @@
 <?php
 
-use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\PostController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CommentController;
-use App\Http\Controllers\ShopController;
-use App\Http\Controllers\UserSearchController;
 use App\Http\Controllers\FavoriteShopController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\MapController;
-use App\Http\Controllers\SearchController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SearchController;
+use App\Http\Controllers\ShopController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserSearchController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,15 +21,51 @@ use Illuminate\Support\Facades\Route;
 
 // ===== 基本ルート =====
 
-
-
 // shopSearch CSP対応テストルート
 Route::get('/test-shop-search-csp', function () {
     return view('test-shop-search-csp');
 })->name('test-shop-search-csp');
 
+// コメント機能 CSP対応テストルート
+Route::get('/test-comment-csp', function () {
+    $post = \App\Models\Post::first();
+    if (! $post) {
+        // 投稿が存在しない場合はダミー投稿を作成
+        $post = new \App\Models\Post;
+        $post->id = 1;
+        $post->title = 'テスト投稿';
+        $post->content = 'これはコメント機能のCSP対応をテストするための投稿です。';
+    }
+
+    $comments = \App\Models\Comment::where('post_id', $post->id)
+        ->whereNull('parent_id')
+        ->with(['user', 'children.user'])
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+    return view('test-comment-csp', [
+        'post' => $post,
+        'comments' => $comments,
+    ]);
+})->name('test-comment-csp');
+
+// 新しいランディングページ（認証不要）
+Route::get('/', function () {
+    return view('landing-new');
+})->name('landing');
+
+// 旧ランディングページ（比較用）
+Route::get('/old-lp', function () {
+    return view('landing');
+})->name('old-landing');
+
+// テスト用ランディングページ（開発時は/test-lpで一時アクセス）
+Route::get('/test-lp', function () {
+    return view('landing-redesign');
+})->name('test-landing');
+
 // ホームルート（認証必要 - 元の設計通り）
-Route::get('/', [PostController::class, 'index'])->middleware(['auth'])->name('home');
+Route::get('/home', [PostController::class, 'index'])->middleware(['auth'])->name('home');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -155,7 +190,7 @@ Route::middleware('auth')->group(function () {
 
 // ===== 認証関連ルート =====
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
 
 Route::get('/map', [MapController::class, 'index'])->name('map.index');
 
@@ -163,3 +198,13 @@ Route::get('/map', [MapController::class, 'index'])->name('map.index');
 Route::get('/privacy-policy', function () {
     return view('privacy-policy');
 })->name('privacy-policy');
+
+// ===== 利用規約 =====
+Route::get('/terms', function () {
+    return view('terms');
+})->name('terms');
+
+// ===== お問い合わせ =====
+Route::get('/contact', function () {
+    return view('contact');
+})->name('contact');

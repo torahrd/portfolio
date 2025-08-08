@@ -20,8 +20,8 @@ class CommentStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'body' => ['required', 'string', 'max:200'],
-            'parent_id' => ['nullable', 'exists:comments,id']
+            'body' => ['required', 'string', 'max:1000'],
+            'parent_id' => ['nullable', 'exists:comments,id'],
         ];
     }
 
@@ -33,7 +33,7 @@ class CommentStoreRequest extends FormRequest
         return [
             'body.required' => 'コメント内容を入力してください',
             'body.max' => 'コメントは200文字以内で入力してください',
-            'parent_id.exists' => '返信先のコメントが存在しません'
+            'parent_id.exists' => '返信先のコメントが存在しません',
         ];
     }
 
@@ -44,7 +44,7 @@ class CommentStoreRequest extends FormRequest
     {
         return [
             'body' => 'コメント内容',
-            'parent_id' => '返信先'
+            'parent_id' => '返信先',
         ];
     }
 }

@@ -2,24 +2,19 @@
 
 namespace App\Models;
 
+use App\Notifications\ResetPasswordNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
-use Laravel\Fortify\TwoFactorAuthenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
-use App\Notifications\ResetPasswordNotification;
+use Laravel\Fortify\TwoFactorAuthenticatable;
+use Laravel\Sanctum\HasApiTokens;
 
 // 既存のuseステートメント
-use App\Models\Post;
-use App\Models\Comment;
-use App\Models\Folder;
-use App\Models\Shop;
 
 // ★新規追加★
-use App\Models\ProfileLink;
 
 class User extends Authenticatable
 {
@@ -33,7 +28,7 @@ class User extends Authenticatable
         'bio',           // ★新規追加★
         'location',      // ★新規追加★
         'website',       // ★新規追加★
-        'is_private'     // ★新規追加★
+        'is_private',     // ★新規追加★
     ];
 
     protected $hidden = [
@@ -135,7 +130,7 @@ class User extends Authenticatable
     public function getAvatarUrlAttribute(): ?string
     {
         return $this->avatar
-            ? Storage::url('avatars/' . $this->avatar)
+            ? Storage::url('avatars/'.$this->avatar)
             : null;
     }
 
@@ -163,13 +158,13 @@ class User extends Authenticatable
     // ===== 新規追加：フォロー操作メソッド =====
     public function follow(User $user): void
     {
-        if (!$this->isFollowing($user) && !$this->hasSentFollowRequest($user) && $this->id !== $user->id) {
+        if (! $this->isFollowing($user) && ! $this->hasSentFollowRequest($user) && $this->id !== $user->id) {
             $status = $user->is_private ? 'pending' : 'active';
 
             $this->following()->attach($user->id, [
                 'status' => $status,
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
 
             // カウント更新（アクティブフォローのみ）
@@ -203,7 +198,7 @@ class User extends Authenticatable
             ->wherePivot('status', 'pending')
             ->updateExistingPivot($user->id, [
                 'status' => 'active',
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
 
         $this->increment('followers_count');
@@ -222,6 +217,7 @@ class User extends Authenticatable
     public function hasFavoriteShop($shop): bool
     {
         $shopId = is_object($shop) ? $shop->id : $shop;
+
         return $this->favorite_shops()->where('shop_id', $shopId)->exists();
     }
 
@@ -234,6 +230,7 @@ class User extends Authenticatable
         }
 
         $this->favorite_shops()->attach($shopId);
+
         return true;
     }
 
@@ -241,11 +238,12 @@ class User extends Authenticatable
     {
         $shopId = is_object($shop) ? $shop->id : $shop;
 
-        if (!$this->hasFavoriteShop($shopId)) {
+        if (! $this->hasFavoriteShop($shopId)) {
             return false;
         }
 
         $this->favorite_shops()->detach($shopId);
+
         return true;
     }
 

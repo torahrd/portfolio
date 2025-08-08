@@ -2,12 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Shop;
-use App\Models\User;
-use App\Http\Requests\ShopSearchRequest;
-use App\Http\Requests\ShopStoreRequest;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class ShopController extends Controller
@@ -26,7 +22,7 @@ class ShopController extends Controller
                 $query->with('user:id,name')
                     ->orderBy('created_at', 'desc')
                     ->limit(5);
-            }
+            },
         ]);
 
         // ★デバッグ情報を追加★
@@ -53,7 +49,7 @@ class ShopController extends Controller
     public function search(Request $request)
     {
         $request->validate([
-            'q' => 'required|string|min:2|max:100'
+            'q' => 'required|string|min:2|max:100',
         ]);
 
         try {
@@ -73,17 +69,16 @@ class ShopController extends Controller
 
             return response()->json([
                 'success' => true,
-                'shops' => $shops
+                'shops' => $shops,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => '店舗検索に失敗しました',
-                'shops' => []
+                'shops' => [],
             ], 500);
         }
     }
-
 
     /**
      * 新規店舗作成（AJAX対応）
@@ -109,12 +104,12 @@ class ShopController extends Controller
                     'id' => $shop->id,
                     'name' => $shop->name,
                     'address' => $shop->address,
-                ]
+                ],
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => '店舗の作成に失敗しました'
+                'message' => '店舗の作成に失敗しました',
             ], 500);
         }
     }
@@ -144,13 +139,13 @@ class ShopController extends Controller
 
             return response()->json([
                 'success' => true,
-                'shops' => $recentShops
+                'shops' => $recentShops,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => '最近の店舗取得に失敗しました',
-                'shops' => []
+                'shops' => [],
             ], 500);
         }
     }

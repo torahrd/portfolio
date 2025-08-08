@@ -1,4 +1,5 @@
 <?php
+
 // app/View/Components/Molecules/StatItem.php
 
 namespace App\View\Components\Molecules;

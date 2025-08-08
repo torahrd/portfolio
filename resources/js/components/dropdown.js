@@ -1,4 +1,5 @@
 // ドロップダウン用Alpine.js関数（CSP対応版）
+// ドロップダウン用Alpine.js関数（CSP対応版）
 export function dropdown() {
     return {
         open: false,
@@ -11,7 +12,8 @@ export function dropdown() {
             this.open = false;
         },
         
-        shouldShowDropdown() {
+        // CSP対応: getterプロパティとして定義
+        get shouldShowDropdown() {
             return this.open;
         },
         

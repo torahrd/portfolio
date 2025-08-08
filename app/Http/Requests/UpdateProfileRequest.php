@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class UpdateProfileRequest extends FormRequest
 {
@@ -30,9 +29,9 @@ class UpdateProfileRequest extends FormRequest
                 'image',
                 'mimes:jpg,jpeg,png,webp',
                 'max:4096',
-                'dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000'
+                'dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000',
             ],
-            'is_private' => ['boolean']
+            'is_private' => ['boolean'],
         ];
     }
 
@@ -52,7 +51,7 @@ class UpdateProfileRequest extends FormRequest
             'avatar.image' => 'プロフィール画像は画像ファイルである必要があります',
             'avatar.mimes' => 'プロフィール画像はJPEG、PNG、WebP形式のみ対応しています',
             'avatar.max' => 'プロフィール画像は4MB以下にしてください',
-            'avatar.dimensions' => 'プロフィール画像は100x100px以上、2000x2000px以下にしてください'
+            'avatar.dimensions' => 'プロフィール画像は100x100px以上、2000x2000px以下にしてください',
         ];
     }
 
@@ -67,7 +66,7 @@ class UpdateProfileRequest extends FormRequest
             'location' => '場所',
             'website' => 'ウェブサイト',
             'avatar' => 'プロフィール画像',
-            'is_private' => 'プライバシー設定'
+            'is_private' => 'プライバシー設定',
         ];
     }
 
@@ -75,9 +74,10 @@ class UpdateProfileRequest extends FormRequest
     {
         $data = parent::validated($key, $default);
         // is_privateが送信されていなければfalseをセット
-        if (!array_key_exists('is_private', $data)) {
+        if (! array_key_exists('is_private', $data)) {
             $data['is_private'] = false;
         }
+
         return $data;
     }
 }

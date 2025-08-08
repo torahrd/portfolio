@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-use App\Models\User; // ← このuse文が重要
+use App\Models\User;
+use Illuminate\Foundation\Http\FormRequest; // ← このuse文が重要
 
 class ShopFavoriteRequest extends FormRequest
 {
@@ -34,8 +34,8 @@ class ShopFavoriteRequest extends FormRequest
                     if ($this->routeIs('*.store') && $user && $user->hasFavoriteShop($value)) {
                         $fail('この店舗は既にお気に入りに追加されています。');
                     }
-                }
-            ]
+                },
+            ],
         ];
     }
 
@@ -47,7 +47,7 @@ class ShopFavoriteRequest extends FormRequest
         return [
             'shop_id.required' => '店舗IDが必要です',
             'shop_id.integer' => '店舗IDは数値である必要があります',
-            'shop_id.exists' => '指定された店舗が存在しません'
+            'shop_id.exists' => '指定された店舗が存在しません',
         ];
     }
 
@@ -57,7 +57,7 @@ class ShopFavoriteRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'shop_id' => '店舗'
+            'shop_id' => '店舗',
         ];
     }
 
@@ -67,9 +67,9 @@ class ShopFavoriteRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         // ルートパラメータから shop_id を取得する場合
-        if ($this->route('shop') && !$this->has('shop_id')) {
+        if ($this->route('shop') && ! $this->has('shop_id')) {
             $this->merge([
-                'shop_id' => $this->route('shop')->id ?? $this->route('shop')
+                'shop_id' => $this->route('shop')->id ?? $this->route('shop'),
             ]);
         }
     }
@@ -80,6 +80,7 @@ class ShopFavoriteRequest extends FormRequest
     protected function getAuthenticatedUser(): ?User
     {
         $user = auth()->user();
+
         return $user instanceof User ? $user : null;
     }
 
@@ -100,8 +101,8 @@ class ShopFavoriteRequest extends FormRequest
                     if ($user && $this->routeIs('*.store') && $user->hasFavoriteShop($value)) {
                         $fail('この店舗は既にお気に入りに追加されています。');
                     }
-                }
-            ]
+                },
+            ],
         ];
     }
 }

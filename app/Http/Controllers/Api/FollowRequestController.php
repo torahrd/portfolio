@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class FollowRequestController extends Controller
@@ -31,32 +31,32 @@ class FollowRequestController extends Controller
                             'name' => $requester->name,
                             'avatar_url' => $requester->avatar_url,
                             'bio' => $requester->bio,
-                            'is_private' => $requester->is_private
+                            'is_private' => $requester->is_private,
                         ],
                         'created_at' => $requester->pivot->created_at,
-                        'status' => $requester->pivot->status
+                        'status' => $requester->pivot->status,
                     ];
                 });
 
             Log::info('フォロー申請一覧取得', [
                 'user_id' => $user->id,
-                'requests_count' => $requests->count()
+                'requests_count' => $requests->count(),
             ]);
 
             return response()->json([
                 'success' => true,
-                'requests' => $requests
+                'requests' => $requests,
             ]);
         } catch (\Exception $e) {
             Log::error('フォロー申請一覧取得エラー', [
                 'user_id' => auth()->id(),
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'フォロー申請の取得に失敗しました'
+                'message' => 'フォロー申請の取得に失敗しました',
             ], 500);
         }
     }
@@ -74,17 +74,17 @@ class FollowRequestController extends Controller
 
             return response()->json([
                 'success' => true,
-                'count' => $count
+                'count' => $count,
             ]);
         } catch (\Exception $e) {
             Log::error('フォロー申請数取得エラー', [
                 'user_id' => auth()->id(),
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'フォロー申請数の取得に失敗しました'
+                'message' => 'フォロー申請数の取得に失敗しました',
             ], 500);
         }
     }
@@ -98,17 +98,17 @@ class FollowRequestController extends Controller
             // 通知機能実装時に詳細を実装予定
             return response()->json([
                 'success' => true,
-                'message' => '既読機能は実装予定です'
+                'message' => '既読機能は実装予定です',
             ]);
         } catch (\Exception $e) {
             Log::error('フォロー申請既読エラー', [
                 'user_id' => auth()->id(),
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
             return response()->json([
                 'success' => false,
-                'message' => '既読処理に失敗しました'
+                'message' => '既読処理に失敗しました',
             ], 500);
         }
     }

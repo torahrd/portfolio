@@ -23,6 +23,27 @@
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
+    <!-- Google Maps API -->
+    @if(config('services.google.maps_api_key'))
+    <script>
+        // グローバルなinitMap関数を定義
+        window.initMap = function() {
+            // この関数は各ページで必要に応じてオーバーライドされる
+        }
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google.maps_api_key') }}&libraries=places&callback=initMap"></script>
+    @endif
+
+    <!-- Google Analytics 4 -->
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXXXXX'); // 実際の測定IDに置き換えてください
+    </script>
+
     @stack('head')
 </head>
 
@@ -70,7 +91,7 @@
 
         <!-- メインコンテンツ -->
         <main class="flex-1">
-            {{ $slot }}
+            @yield('content')
         </main>
 
         <!-- ゲスト用フッター -->

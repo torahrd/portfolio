@@ -1,6 +1,6 @@
 import "./bootstrap";
 
-// CSPビルドテスト用に一時的に変更
+// CSPビルドに切り替え（セキュリティ強化）
 import Alpine from "@alpinejs/csp";
 
 window.Alpine = Alpine;
@@ -21,6 +21,10 @@ Alpine.data('searchBar', searchBar);
 import { modal } from "./components/modal.js";
 Alpine.data('modal', modal);
 
+// CSP対応版commentCardコンポーネントを登録
+import { commentCard } from "./components/comment-card.js";
+Alpine.data('commentCard', commentCard);
+
 // CSP対応版navigationコンポーネントを登録
 import { navigation } from "./components/navigation.js";
 Alpine.data('navigation', navigation);
@@ -33,11 +37,15 @@ Alpine.data('dropdown', dropdown);
 import { headerDropdown } from "./components/header-dropdown.js";
 Alpine.data('headerDropdown', headerDropdown);
 
-Alpine.start();
+// CSP対応版commentReplyTestコンポーネントを登録
+import commentReplyTest from './components/comment-reply-test';
+Alpine.data('commentReplyTest', commentReplyTest);
 
-// 既存のコンポーネントは一時的にコメントアウト
-// import { commentSection } from "./components/comment-section.js";
-// window.commentSection = commentSection;
+// CSP対応版commentSectionコンポーネントを登録
+import { commentSection } from "./components/comment-section.js";
+Alpine.data('commentSection', commentSection);
+
+Alpine.start();
 
 // import { modal } from "./components/modal.js";
 // window.modal = modal;

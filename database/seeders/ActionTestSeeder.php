@@ -2,12 +2,12 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\User;
 use App\Models\Post;
 use App\Models\Shop;
-use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 use Faker\Factory as Faker;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class ActionTestSeeder extends Seeder
 {
@@ -46,7 +46,7 @@ class ActionTestSeeder extends Seeder
                 'bio' => 'ラーメン大好き！',
                 'location' => '福岡県',
                 'is_private' => false,
-            ]
+            ],
         ];
 
         $createdUsers = [];
@@ -71,7 +71,7 @@ class ActionTestSeeder extends Seeder
                 '寿司処 海鮮',
                 '焼肉 牛角',
                 'イタリアン ベラ・ヴィスタ',
-                '中華料理 龍門'
+                '中華料理 龍門',
             ];
 
             foreach ($shopNames as $shopName) {
@@ -89,7 +89,7 @@ class ActionTestSeeder extends Seeder
         foreach ($createdUsers as $user) {
             for ($i = 0; $i < 2; $i++) {
                 $shop = $shops->random();
-                
+
                 $post = Post::create([
                     'user_id' => $user->id,
                     'shop_id' => $shop->id,
@@ -101,7 +101,7 @@ class ActionTestSeeder extends Seeder
                         '寿司セット',
                         'カルビ',
                         'パスタ',
-                        '麻婆豆腐'
+                        '麻婆豆腐',
                     ]),
                     'interest_menu' => $faker->randomElement([
                         'つけ麺',
@@ -109,7 +109,7 @@ class ActionTestSeeder extends Seeder
                         '刺身盛り合わせ',
                         'タン',
                         'ピザ',
-                        '餃子'
+                        '餃子',
                     ]),
                     'reference_link' => $faker->optional()->url(),
                     'memo' => $faker->realText(200),
@@ -125,9 +125,9 @@ class ActionTestSeeder extends Seeder
         $this->command->info('🎯 動作確認用テストデータ作成完了！');
         $this->command->info('');
         $this->command->info('📝 作成されたデータ:');
-        $this->command->info("   👥 ユーザー: " . count($createdUsers) . "人");
+        $this->command->info('   👥 ユーザー: '.count($createdUsers).'人');
         $this->command->info("   🏪 店舗: {$shops->count()}店");
-        $this->command->info("   📝 投稿: " . (count($createdUsers) * 2) . "件");
+        $this->command->info('   📝 投稿: '.(count($createdUsers) * 2).'件');
         $this->command->info('');
         $this->command->info('🔐 全ユーザーのパスワード: password');
         $this->command->info('');
@@ -136,4 +136,4 @@ class ActionTestSeeder extends Seeder
             $this->command->info("   {$user->name}: {$user->email}");
         }
     }
-} 
+}

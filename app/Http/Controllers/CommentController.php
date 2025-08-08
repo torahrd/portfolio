@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\CommentStoreRequest;
 use App\Models\Comment;
 use App\Models\Post;
-use App\Http\Requests\CommentStoreRequest;
+use Illuminate\Support\Facades\Auth;
 
 class CommentController extends Controller
 {
@@ -24,13 +23,18 @@ class CommentController extends Controller
             $commentComponent = view('components.molecules.comment-card', [
                 'comment' => $comment->load('user'), // ユーザー情報も一緒に読み込む
                 'post' => $post,
-                'level' => $comment->parent_id ? 1 : 0 // 親コメントがあれば階層は1
+                'level' => $comment->parent_id ? 1 : 0, // 親コメントがあれば階層は1
             ])->render();
+
+            // コメント数を取得
+            $commentCount = Comment::where('post_id', $post->id)->count();
 
             // 4. JSONレスポンスを返す
             return response()->json([
                 'html' => $commentComponent, // 生成したHTML
-                'parent_id' => $comment->parent_id // どのコメントへの返信か
+                'message' => 'コメントを投稿しました',
+                'comment_count' => $commentCount,
+                'parent_id' => $comment->parent_id, // どのコメントへの返信か
             ]);
         }
 
@@ -43,11 +47,21 @@ class CommentController extends Controller
     {
         // 自分のコメントまたは投稿の作者のみ削除可能
         if (Auth::id() !== $comment->user_id && Auth::id() !== $comment->post->user_id) {
+            if (request()->expectsJson()) {
+                return response()->json(['message' => '削除権限がありません'], 403);
+            }
             abort(403, '削除権限がありません。');
         }
 
         $postId = $comment->post_id;
         $comment->delete();
+
+        if (request()->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'コメントを削除しました',
+            ]);
+        }
 
         return redirect()->route('posts.show', $postId)
             ->with('success', 'コメントを削除しました。');

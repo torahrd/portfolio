@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 use App\Http\Requests\FollowRequest;
 use App\Models\User;
-use Illuminate\Support\Facades\Log;
 use App\Notifications\FollowRequestNotification;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class FollowController extends Controller
 {
@@ -23,7 +22,7 @@ class FollowController extends Controller
 
             Log::info('フォロー処理開始', [
                 'current_user_id' => $currentUser->id,
-                'target_user_id' => $targetUser->id
+                'target_user_id' => $targetUser->id,
             ]);
 
             // 既にフォロー中の場合はアンフォロー
@@ -32,17 +31,17 @@ class FollowController extends Controller
 
                 Log::info('フォロー解除完了', [
                     'current_user_id' => $currentUser->id,
-                    'target_user_id' => $targetUser->id
+                    'target_user_id' => $targetUser->id,
                 ]);
 
-                $message = $targetUser->name . 'のフォローを解除しました';
+                $message = $targetUser->name.'のフォローを解除しました';
                 if ($request->expectsJson()) {
                     return response()->json([
                         'success' => true,
                         'is_following' => false,
                         'is_pending' => false,
                         'message' => $message,
-                        'followers_count' => $targetUser->fresh()->followers_count
+                        'followers_count' => $targetUser->fresh()->followers_count,
                     ]);
                 } else {
                     return redirect()->back()->with('status', $message);
@@ -55,17 +54,17 @@ class FollowController extends Controller
 
                 Log::info('フォロー申請取り消し完了', [
                     'current_user_id' => $currentUser->id,
-                    'target_user_id' => $targetUser->id
+                    'target_user_id' => $targetUser->id,
                 ]);
 
-                $message = $targetUser->name . 'への申請を取り消しました';
+                $message = $targetUser->name.'への申請を取り消しました';
                 if ($request->expectsJson()) {
                     return response()->json([
                         'success' => true,
                         'is_following' => false,
                         'is_pending' => false,
                         'message' => $message,
-                        'followers_count' => $targetUser->fresh()->followers_count
+                        'followers_count' => $targetUser->fresh()->followers_count,
                     ]);
                 } else {
                     return redirect()->back()->with('status', $message);
@@ -82,13 +81,13 @@ class FollowController extends Controller
 
             $isPending = $targetUser->is_private;
             $message = $isPending
-                ? $targetUser->name . 'にフォロー申請を送信しました'
-                : $targetUser->name . 'をフォローしました';
+                ? $targetUser->name.'にフォロー申請を送信しました'
+                : $targetUser->name.'をフォローしました';
 
             Log::info('フォロー処理完了', [
                 'current_user_id' => $currentUser->id,
                 'target_user_id' => $targetUser->id,
-                'is_pending' => $isPending
+                'is_pending' => $isPending,
             ]);
 
             if ($request->expectsJson()) {
@@ -97,7 +96,7 @@ class FollowController extends Controller
                     'is_following' => true,
                     'is_pending' => $isPending,
                     'message' => $message,
-                    'followers_count' => $targetUser->fresh()->followers_count
+                    'followers_count' => $targetUser->fresh()->followers_count,
                 ]);
             } else {
                 return redirect()->back()->with('status', $message);
@@ -107,13 +106,13 @@ class FollowController extends Controller
                 'current_user_id' => $currentUser->id ?? null,
                 'target_user_id' => $targetUser->id ?? null,
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
 
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'フォロー処理に失敗しました。しばらく時間をおいてから再度お試しください。'
+                    'message' => 'フォロー処理に失敗しました。しばらく時間をおいてから再度お試しください。',
                 ], 500);
             } else {
                 return redirect()->back()->with('error', 'フォロー処理に失敗しました。しばらく時間をおいてから再度お試しください。');
@@ -130,12 +129,12 @@ class FollowController extends Controller
             /** @var User $currentUser */
             $currentUser = auth()->user();
 
-            if (!$currentUser->hasPendingFollowRequest($user)) {
+            if (! $currentUser->hasPendingFollowRequest($user)) {
                 $message = 'フォロー申請が見つかりません';
                 if ($request->expectsJson()) {
                     return response()->json([
                         'success' => false,
-                        'message' => $message
+                        'message' => $message,
                     ], 404);
                 } else {
                     return redirect()->back()->with('error', $message);
@@ -146,14 +145,14 @@ class FollowController extends Controller
 
             Log::info('フォロー申請承認', [
                 'current_user_id' => $currentUser->id,
-                'requester_user_id' => $user->id
+                'requester_user_id' => $user->id,
             ]);
 
-            $message = $user->name . 'のフォロー申請を承認しました';
+            $message = $user->name.'のフォロー申請を承認しました';
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => true,
-                    'message' => $message
+                    'message' => $message,
                 ]);
             } else {
                 return redirect()->back()->with('status', $message);
@@ -162,14 +161,14 @@ class FollowController extends Controller
             Log::error('フォロー申請承認エラー', [
                 'current_user_id' => auth()->id(),
                 'requester_user_id' => $user->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
             $message = '申請の承認に失敗しました';
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => $message
+                    'message' => $message,
                 ], 500);
             } else {
                 return redirect()->back()->with('error', $message);
@@ -186,12 +185,12 @@ class FollowController extends Controller
             /** @var User $currentUser */
             $currentUser = auth()->user();
 
-            if (!$currentUser->hasPendingFollowRequest($user)) {
+            if (! $currentUser->hasPendingFollowRequest($user)) {
                 $message = 'フォロー申請が見つかりません';
                 if ($request->expectsJson()) {
                     return response()->json([
                         'success' => false,
-                        'message' => $message
+                        'message' => $message,
                     ], 404);
                 } else {
                     return redirect()->back()->with('error', $message);
@@ -202,14 +201,14 @@ class FollowController extends Controller
 
             Log::info('フォロー申請拒否', [
                 'current_user_id' => $currentUser->id,
-                'requester_user_id' => $user->id
+                'requester_user_id' => $user->id,
             ]);
 
-            $message = $user->name . 'のフォロー申請を拒否しました';
+            $message = $user->name.'のフォロー申請を拒否しました';
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => true,
-                    'message' => $message
+                    'message' => $message,
                 ]);
             } else {
                 return redirect()->back()->with('status', $message);
@@ -218,14 +217,14 @@ class FollowController extends Controller
             Log::error('フォロー申請拒否エラー', [
                 'current_user_id' => auth()->id(),
                 'requester_user_id' => $user->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
             $message = '申請の拒否に失敗しました';
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => $message
+                    'message' => $message,
                 ], 500);
             } else {
                 return redirect()->back()->with('error', $message);
@@ -245,7 +244,7 @@ class FollowController extends Controller
         if (
             $user->is_private &&
             $currentUser?->id !== $user->id &&
-            !$currentUser?->isFollowing($user)
+            ! $currentUser?->isFollowing($user)
         ) {
             abort(403, 'このユーザーのフォロワーリストは非公開です');
         }
@@ -273,7 +272,7 @@ class FollowController extends Controller
         if (
             $user->is_private &&
             $currentUser?->id !== $user->id &&
-            !$currentUser?->isFollowing($user)
+            ! $currentUser?->isFollowing($user)
         ) {
             abort(403, 'このユーザーのフォローリストは非公開です');
         }

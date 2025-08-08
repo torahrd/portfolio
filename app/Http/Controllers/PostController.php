@@ -2,16 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
+use App\Models\Shop;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use App\Models\Post;
-use App\Models\Folder;
-use App\Models\Shop;
-use App\Models\User;
-use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
-use App\Models\Favorite;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PostController extends Controller
 {
@@ -19,7 +15,7 @@ class PostController extends Controller
     {
         // タブパラメータの取得（デフォルトは新着）
         $tab = $request->query('tab', 'recent');
-        
+
         // 基本クエリの作成
         $query = Post::with([
             'shop:id,name,address',        // 店舗情報（必要な列のみ）
@@ -28,9 +24,9 @@ class PostController extends Controller
                 $query->with('user:id,name')  // コメントのユーザー情報
                     ->orderBy('created_at', 'desc')
                     ->limit(5);              // 最新5件のみ
-            }
+            },
         ])
-        ->withCount(['favorite_users', 'comments']);  // いいね数とコメント数を効率的に取得
+            ->withCount(['favorite_users', 'comments']);  // いいね数とコメント数を効率的に取得
 
         // タブに応じた処理
         if ($tab === 'recent') {
@@ -39,8 +35,8 @@ class PostController extends Controller
         } elseif ($tab === 'popular') {
             // 人気タブ: 投稿をいいね数の多い順で取得（50件）
             $posts = $query->orderBy('favorite_users_count', 'desc')
-                           ->limit(10)
-                           ->get();
+                ->limit(10)
+                ->get();
         } else {
             // 不正なタブパラメータの場合は新着を表示
             $posts = $query->orderBy('created_at', 'desc')->get();
@@ -78,6 +74,7 @@ class PostController extends Controller
         } catch (\Exception $e) {
             // エラーが発生した場合は空の配列を渡す
             $recentShops = collect([]);
+
             return view('post.create', compact('recentShops'));
         }
     }
@@ -116,7 +113,7 @@ class PostController extends Controller
         ]);
 
         // 新規店舗の場合（shop_idが空でgoogle_place_idがある場合）
-        if (empty($shopId) && !empty($googlePlaceId)) {
+        if (empty($shopId) && ! empty($googlePlaceId)) {
             Log::info('投稿store: createShopFromGooglePlaces呼び出し直前', [
                 'google_place_id' => $googlePlaceId,
                 'shop_name' => $shopName,
@@ -133,8 +130,9 @@ class PostController extends Controller
         // shop_idがnullのままならバリデーションエラー
         if (empty($input['shop_id'])) {
             Log::error('投稿store: shop_idがセットできずバリデーションエラー', [
-                'input' => $input
+                'input' => $input,
             ]);
+
             return back()->withErrors(['shop_id' => '店舗情報の取得に失敗しました。もう一度お試しください。'])->withInput();
         }
 
@@ -255,6 +253,7 @@ class PostController extends Controller
                 'created_by' => Auth::user()->id,
             ];
             Log::info('Shop作成データ(fallback)', $fallbackData);
+
             return Shop::create($fallbackData);
         }
     }
@@ -310,7 +309,7 @@ class PostController extends Controller
         ]);
 
         // 新規店舗の場合（shop_idが空でgoogle_place_idがある場合）
-        if (empty($shopId) && !empty($googlePlaceId)) {
+        if (empty($shopId) && ! empty($googlePlaceId)) {
             Log::info('投稿update: createShopFromGooglePlaces呼び出し直前', [
                 'google_place_id' => $googlePlaceId,
                 'shop_name' => $shopName,
@@ -327,8 +326,9 @@ class PostController extends Controller
         // shop_idがnullのままならバリデーションエラー
         if (empty($input['shop_id'])) {
             Log::error('投稿update: shop_idがセットできずバリデーションエラー', [
-                'input' => $input
+                'input' => $input,
             ]);
+
             return back()->withErrors(['shop_id' => '店舗情報の取得に失敗しました。もう一度お試しください。'])->withInput();
         }
 
@@ -355,6 +355,7 @@ class PostController extends Controller
         $this->authorize('delete', $post);
 
         $post->delete();
+
         return redirect('/posts')->with('success', '削除しました');
     }
 
@@ -364,7 +365,7 @@ class PostController extends Controller
     public function favorite(Request $request, Post $post)
     {
         $user = Auth::user();
-        if (!$user) {
+        if (! $user) {
             return response()->json(['success' => false, 'message' => '認証が必要です'], 200);
         }
         if ($post->favorite_users()->where('user_id', $user->id)->exists()) {
@@ -377,6 +378,7 @@ class PostController extends Controller
             'created_at' => now(),
         ]);
         $count = $post->favorite_users()->count();
+
         return response()->json(['success' => true, 'is_favorited' => true, 'favorites_count' => $count], 200);
     }
 
@@ -386,15 +388,16 @@ class PostController extends Controller
     public function unfavorite(Request $request, Post $post)
     {
         $user = Auth::user();
-        if (!$user) {
+        if (! $user) {
             return response()->json(['success' => false, 'message' => '認証が必要です'], 200);
         }
-        if (!$post->favorite_users()->where('user_id', $user->id)->exists()) {
+        if (! $post->favorite_users()->where('user_id', $user->id)->exists()) {
             return response()->json(['success' => false, 'message' => 'まだいいねしていません'], 200);
         }
         // favoritesテーブルから該当レコードを削除
         DB::table('favorites')->where('user_id', $user->id)->where('post_id', $post->id)->delete();
         $count = $post->favorite_users()->count();
+
         return response()->json(['success' => true, 'is_favorited' => false, 'favorites_count' => $count], 200);
     }
 }

@@ -5,9 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-use App\Models\User;
-use App\Models\Post;
-
 class Comment extends Model
 {
     use HasFactory;
@@ -44,7 +41,7 @@ class Comment extends Model
     // 返信かどうかを判定
     public function isReply()
     {
-        return !is_null($this->parent_id);
+        return ! is_null($this->parent_id);
     }
 
     // 最上位のコメントのみ取得（返信ではないコメント）
@@ -65,6 +62,7 @@ class Comment extends Model
     {
         $allReplies = collect();
         $this->collectAllReplies($this->id, $allReplies);
+
         return $allReplies->sortBy('created_at');
     }
 

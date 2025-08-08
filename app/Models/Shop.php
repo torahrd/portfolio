@@ -2,15 +2,11 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Carbon\Carbon;
-
-use App\Models\Business_hours;
-use App\Models\Post;
-use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Shop extends Model
 {
@@ -90,7 +86,10 @@ class Shop extends Model
      */
     public function isFavoritedBy($userId)
     {
-        if (!$userId) return false;
+        if (! $userId) {
+            return false;
+        }
+
         return $this->favorited_by_users()->where('user_id', $userId)->exists();
     }
 
@@ -110,6 +109,7 @@ class Shop extends Model
     public function getAverageBudgetAttribute()
     {
         $avgBudget = $this->posts()->whereNotNull('budget')->avg('budget');
+
         return $avgBudget ? round($avgBudget) : null;
     }
 
@@ -119,7 +119,9 @@ class Shop extends Model
     public function getFormattedAverageBudgetAttribute()
     {
         $avg = $this->average_budget;
-        if (!$avg) return '予算情報なし';
+        if (! $avg) {
+            return '予算情報なし';
+        }
 
         return \App\Helpers\BudgetHelper::formatBudget($avg);
     }
@@ -130,6 +132,7 @@ class Shop extends Model
     public function getTodayBusinessHoursAttribute()
     {
         $today = Carbon::now()->dayOfWeek; // 0=日曜日, 1=月曜日, ...
+
         return $this->business_hours()->where('day', $today)->first();
     }
 
@@ -139,7 +142,9 @@ class Shop extends Model
     public function getIsOpenNowAttribute()
     {
         $todayHours = $this->today_business_hours;
-        if (!$todayHours) return false;
+        if (! $todayHours) {
+            return false;
+        }
 
         $now = Carbon::now()->format('H:i');
         $openTime = Carbon::parse($todayHours->open_time)->format('H:i');
@@ -161,7 +166,9 @@ class Shop extends Model
     public function getOpenStatusAttribute()
     {
         $todayHours = $this->today_business_hours;
-        if (!$todayHours) return '営業時間不明';
+        if (! $todayHours) {
+            return '営業時間不明';
+        }
 
         return $this->is_open_now ? '営業中' : '営業時間外';
     }
@@ -197,8 +204,6 @@ class Shop extends Model
             $q->where('shop_favorites.created_at', '>=', now()->subDays($days));
         });
     }
-
-
 
     /**
      * Google Place IDで店舗を検索するスコープ
@@ -299,7 +304,7 @@ class Shop extends Model
             // 旧仕様も一応サポート
             $periods = $placeData['opening_hours']['periods'];
         }
-        if (!$periods) {
+        if (! $periods) {
             return false;
         }
 
@@ -319,9 +324,10 @@ class Shop extends Model
                 ];
             }
         }
-        if (!empty($businessHours)) {
+        if (! empty($businessHours)) {
             return $this->business_hours()->insert($businessHours);
         }
+
         return false;
     }
 
@@ -348,6 +354,4 @@ class Shop extends Model
     {
         return static::where('google_place_id', $placeId)->first();
     }
-
-
 }
