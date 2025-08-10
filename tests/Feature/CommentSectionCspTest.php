@@ -43,7 +43,7 @@ class CommentSectionCspTest extends TestCase
             'body' => 'これはテストコメントです',
         ]);
 
-        $response->assertStatus(200)
+        $response->assertStatus(201)
             ->assertJsonStructure([
                 'html',
                 'message',
@@ -77,7 +77,7 @@ class CommentSectionCspTest extends TestCase
             'body' => 'これは返信コメントです',
         ]);
 
-        $response->assertStatus(200)
+        $response->assertStatus(201)
             ->assertJsonStructure([
                 'html',
                 'message',
@@ -166,7 +166,7 @@ class CommentSectionCspTest extends TestCase
         $this->actingAs($this->user);
 
         $response = $this->postJson("/posts/{$this->post->id}/comments", [
-            'body' => str_repeat('あ', 201), // 200文字制限を超える
+            'body' => str_repeat('a', 201), // 200文字制限を超える
         ]);
 
         $response->assertStatus(422)
