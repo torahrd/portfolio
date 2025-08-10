@@ -122,6 +122,16 @@ Route::controller(CommentController::class)->middleware(['auth'])->group(functio
     Route::delete('/comments/{comment}', 'destroy')->name('comments.destroy');
 });
 
+// プライバシーポリシー
+Route::get('/privacy-policy', function () {
+    return view('privacy-policy');
+})->name('privacy-policy');
+
+// 利用規約
+Route::get('/terms', function () {
+    return view('terms');
+})->name('terms');
+
 // ===== 店舗機能のルート =====
 
 Route::middleware(['auth'])->group(function () {

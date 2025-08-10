@@ -9,7 +9,7 @@
         
         <div class="bg-white shadow-lg rounded-lg p-6 space-y-6">
             <div class="text-sm text-gray-500 mb-6">
-                <p>最終更新日: 2025年1月7日</p>
+                <p>最終更新日: 2025年8月10日</p>
             </div>
 
             <section>
