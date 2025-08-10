@@ -148,7 +148,11 @@
           <!-- コメント投稿フォーム -->
           @auth
           <div class="mb-6">
-            <form id="comment-form" action="{{ route('comments.store', $post) }}" method="POST" class="space-y-4">
+            <form id="comment-form" 
+                  @submit.prevent="submitComment"
+                  action="{{ route('comments.store', $post) }}" 
+                  method="POST" 
+                  class="space-y-4">
               @csrf
               <div class="flex space-x-3">
                 <x-atoms.avatar
@@ -160,8 +164,9 @@
                     id="comment-body"
                     rows="3"
                     placeholder="コメントを入力してください..."
-                    class="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 resize-none"
-                    required>{{ old('body') }}</textarea>
+                    :value="commentContent"
+                    @input="updateCommentContent"
+                    class="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 resize-none">{{ old('body') }}</textarea>
 
                   <div id="comment-error" class="text-red-600 text-sm mt-1 hidden"></div>
 
