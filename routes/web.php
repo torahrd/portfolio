@@ -3,6 +3,7 @@
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FavoriteShopController;
 use App\Http\Controllers\FollowController;
+use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\MapController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PostController;
@@ -50,9 +51,7 @@ Route::get('/test-comment-csp', function () {
 })->name('test-comment-csp');
 
 // 新しいランディングページ（認証不要）
-Route::get('/', function () {
-    return view('landing-new');
-})->name('landing');
+Route::get('/', [LandingPageController::class, 'index'])->name('landing');
 
 // 旧ランディングページ（比較用）
 Route::get('/old-lp', function () {
