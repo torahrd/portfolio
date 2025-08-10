@@ -1,0 +1,232 @@
+[
+  {
+    "term": "立春",
+    "start": "2025-02-03",
+    "end": "2025-02-17",
+    "summary1": "冬和らぎ、芽吹き始める。",
+    "summary2": "菜の花・若布",
+    "registered": true,
+    "storeName": "鮨 田中",
+    "note": "余韻の残る赤酢。",
+    "links": { "view": "/stores/123", "search": "/search?term=立春" }
+  },
+  {
+    "term": "雨水",
+    "start": "2025-02-18",
+    "end": "2025-03-04",
+    "summary1": "雪解け進み、畑が潤う。",
+    "summary2": "浅利・春大根",
+    "registered": false,
+    "links": { "view": "", "search": "/search?term=雨水" }
+  },
+  {
+    "term": "啓蟄",
+    "start": "2025-03-05",
+    "end": "2025-03-19",
+    "summary1": "土ゆるみ、命が動き出す。",
+    "summary2": "山菜・ふきのとう",
+    "registered": true,
+    "storeName": "割烹 みやこ",
+    "note": "出汁が真っ直ぐ。",
+    "links": { "view": "/stores/456", "search": "/search?term=啓蟄" }
+  },
+  {
+    "term": "春分",
+    "start": "2025-03-20",
+    "end": "2025-04-03",
+    "summary1": "昼夜等しく、春本番。",
+    "summary2": "鯛・筍",
+    "registered": false,
+    "links": { "view": "", "search": "/search?term=春分" }
+  },
+  {
+    "term": "清明",
+    "start": "2025-04-04",
+    "end": "2025-04-18",
+    "summary1": "空澄み、新緑きらめく。",
+    "summary2": "新茶・木の芽",
+    "registered": false,
+    "links": { "view": "", "search": "/search?term=清明" }
+  },
+  {
+    "term": "穀雨",
+    "start": "2025-04-19",
+    "end": "2025-05-04",
+    "summary1": "恵みの雨、苗が育つ。",
+    "summary2": "新玉ねぎ・豆",
+    "registered": true,
+    "storeName": "ビストロ 山川",
+    "note": "素材の声が聞こえる。",
+    "links": { "view": "/stores/789", "search": "/search?term=穀雨" }
+  },
+  {
+    "term": "立夏",
+    "start": "2025-05-05",
+    "end": "2025-05-19",
+    "summary1": "初夏の陽、香り立つ。",
+    "summary2": "新生姜・青梅",
+    "registered": false,
+    "links": { "view": "", "search": "/search?term=立夏" }
+  },
+  {
+    "term": "小満",
+    "start": "2025-05-20",
+    "end": "2025-06-04",
+    "summary1": "命満ち、青さ増す。",
+    "summary2": "空豆・枝豆",
+    "registered": false,
+    "links": { "view": "", "search": "/search?term=小満" }
+  },
+  {
+    "term": "芒種",
+    "start": "2025-06-05",
+    "end": "2025-06-20",
+    "summary1": "田植え進み、穂の支度。",
+    "summary2": "とうもろこし・鱚",
+    "registered": false,
+    "links": { "view": "", "search": "/search?term=芒種" }
+  },
+  {
+    "term": "夏至",
+    "start": "2025-06-21",
+    "end": "2025-07-05",
+    "summary1": "日最長、夏が満ちる。",
+    "summary2": "鱧・夏野菜",
+    "registered": true,
+    "storeName": "天ぷら 銀座",
+    "note": "軽やかな衣、深い味。",
+    "links": { "view": "/stores/321", "search": "/search?term=夏至" }
+  },
+  {
+    "term": "小暑",
+    "start": "2025-07-06",
+    "end": "2025-07-21",
+    "summary1": "暑さ始まり、体を整える。",
+    "summary2": "茄子・鰻",
+    "registered": false,
+    "links": { "view": "", "search": "/search?term=小暑" }
+  },
+  {
+    "term": "大暑",
+    "start": "2025-07-22",
+    "end": "2025-08-06",
+    "summary1": "炎暑きびしく、涼を求む。",
+    "summary2": "素麺・瓜",
+    "registered": false,
+    "links": { "view": "", "search": "/search?term=大暑" }
+  },
+  {
+    "term": "立秋",
+    "start": "2025-08-07",
+    "end": "2025-08-21",
+    "summary1": "夕風涼しく、秋の気配。",
+    "summary2": "無花果・茄子",
+    "registered": false,
+    "links": { "view": "", "search": "/search?term=立秋" }
+  },
+  {
+    "term": "処暑",
+    "start": "2025-08-22",
+    "end": "2025-09-06",
+    "summary1": "暑さ退き、空高まる。",
+    "summary2": "葡萄・とうもろこし",
+    "registered": false,
+    "links": { "view": "", "search": "/search?term=処暑" }
+  },
+  {
+    "term": "白露",
+    "start": "2025-09-07",
+    "end": "2025-09-21",
+    "summary1": "露白み、実り色づく。",
+    "summary2": "新米・秋刀魚",
+    "registered": true,
+    "storeName": "炭火焼 隅田",
+    "note": "炭の香りと脂の調和。",
+    "links": { "view": "/stores/654", "search": "/search?term=白露" }
+  },
+  {
+    "term": "秋分",
+    "start": "2025-09-22",
+    "end": "2025-10-06",
+    "summary1": "昼夜等しく、収穫の頃。",
+    "summary2": "茸・栗",
+    "registered": false,
+    "links": { "view": "", "search": "/search?term=秋分" }
+  },
+  {
+    "term": "寒露",
+    "start": "2025-10-07",
+    "end": "2025-10-22",
+    "summary1": "ひやり冴え、香り深まる。",
+    "summary2": "戻り鰹・銀杏",
+    "registered": false,
+    "links": { "view": "", "search": "/search?term=寒露" }
+  },
+  {
+    "term": "霜降",
+    "start": "2025-10-23",
+    "end": "2025-11-06",
+    "summary1": "霜おり、旨味が締まる。",
+    "summary2": "柿・鰤",
+    "registered": false,
+    "links": { "view": "", "search": "/search?term=霜降" }
+  },
+  {
+    "term": "立冬",
+    "start": "2025-11-07",
+    "end": "2025-11-21",
+    "summary1": "木枯らし、冬の入口。",
+    "summary2": "牡蠣・大根",
+    "registered": true,
+    "storeName": "鍋処 北風",
+    "note": "出汁が骨身に染みる。",
+    "links": { "view": "/stores/987", "search": "/search?term=立冬" }
+  },
+  {
+    "term": "小雪",
+    "start": "2025-11-22",
+    "end": "2025-12-05",
+    "summary1": "初雪舞い、冬支度。",
+    "summary2": "鱈・白子",
+    "registered": false,
+    "links": { "view": "", "search": "/search?term=小雪" }
+  },
+  {
+    "term": "大雪",
+    "start": "2025-12-06",
+    "end": "2025-12-20",
+    "summary1": "雪深まり、温かさ恋しい。",
+    "summary2": "蟹・蕪",
+    "registered": false,
+    "links": { "view": "", "search": "/search?term=大雪" }
+  },
+  {
+    "term": "冬至",
+    "start": "2025-12-21",
+    "end": "2026-01-04",
+    "summary1": "日最短、陽に向かう。",
+    "summary2": "南瓜・柚子",
+    "registered": false,
+    "links": { "view": "", "search": "/search?term=冬至" }
+  },
+  {
+    "term": "小寒",
+    "start": "2026-01-05",
+    "end": "2026-01-19",
+    "summary1": "寒の入り、冴え返る。",
+    "summary2": "葱・鰤",
+    "registered": true,
+    "storeName": "蕎麦 雪月",
+    "note": "透き通る香り、喉越し。",
+    "links": { "view": "/stores/147", "search": "/search?term=小寒" }
+  },
+  {
+    "term": "大寒",
+    "start": "2026-01-20",
+    "end": "2026-02-02",
+    "summary1": "寒極まり、滋養を求む。",
+    "summary2": "鯛・根菜",
+    "registered": false,
+    "links": { "view": "", "search": "/search?term=大寒" }
+  }
+]
