@@ -50,11 +50,22 @@ class AddSecurityHeaders
 
         // Content-Security-Policy-Report-Only
         // 段階的実装のためReport-Onlyモードで開始（違反を監視、ブロックしない）
+        // GA4用のドメインを追加
+        $ga4Domains = config('analytics.enabled') ? [
+            'script' => implode(' ', config('analytics.csp.script_src', [])),
+            'connect' => implode(' ', config('analytics.csp.connect_src', [])),
+            'img' => implode(' ', config('analytics.csp.img_src', [])),
+        ] : [
+            'script' => '',
+            'connect' => '',
+            'img' => '',
+        ];
+
         $cspReportOnlyHeader = "default-src 'self'; ".
-                              "script-src 'self' 'unsafe-inline' https://maps.googleapis.com https://maps.googleapis.com/maps/api/js; ".
+                              "script-src 'self' 'unsafe-inline' https://maps.googleapis.com https://maps.googleapis.com/maps/api/js {$ga4Domains['script']}; ".
                               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; ".
-                              "img-src 'self' data: https://maps.gstatic.com https://*.googleapis.com https://*.cloudinary.com https://res.cloudinary.com; ".
-                              "connect-src 'self' https://*.googleapis.com https://*.cloudinary.com; ".
+                              "img-src 'self' data: https://maps.gstatic.com https://*.googleapis.com https://*.cloudinary.com https://res.cloudinary.com {$ga4Domains['img']}; ".
+                              "connect-src 'self' https://*.googleapis.com https://*.cloudinary.com {$ga4Domains['connect']}; ".
                               'font-src https://fonts.gstatic.com; '.
                               "object-src 'none'; ".
                               "base-uri 'self'; ".

@@ -8,6 +8,29 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
+    @if(config('analytics.enabled'))
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ config('analytics.measurement_id') }}"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        
+        // デフォルトの同意状態（Cookie同意前）
+        gtag('consent', 'default', {
+            'analytics_storage': 'denied',
+            'ad_storage': 'denied',
+            'wait_for_update': 500
+        });
+        
+        gtag('js', new Date());
+        
+        gtag('config', '{{ config('analytics.measurement_id') }}', {
+            'anonymize_ip': {{ config('analytics.tracking.anonymize_ip') ? 'true' : 'false' }},
+            'debug_mode': {{ config('analytics.debug_mode') ? 'true' : 'false' }}
+        });
+    </script>
+    @endif
+
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -38,6 +61,10 @@
         <!-- Footer -->
         <x-organisms.footer type="default" />
     </div>
+    
+    <!-- Cookie同意バナー -->
+    <x-cookie-consent />
+    
     @stack('scripts')
 </body>
 

@@ -9,7 +9,7 @@
         
         <div class="bg-white shadow-lg rounded-lg p-6 space-y-6">
             <div class="text-sm text-gray-500 mb-6">
-                <p>最終更新日: 2025年7月26日</p>
+                <p>最終更新日: 2025年8月10日</p>
             </div>
 
             <section>
@@ -99,6 +99,17 @@
                             <li><strong>提供データ:</strong> アップロード画像、画像メタデータ</li>
                             <li><strong>利用目的:</strong> 画像処理・最適化、高速配信、画像データの安全な保存</li>
                             <li><strong>プライバシーポリシー:</strong> Cloudinary プライバシーポリシー</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-800 mb-2">4.3 Google Analytics</h3>
+                        <ul class="list-disc list-inside text-gray-700 space-y-1 ml-4">
+                            <li><strong>提供データ:</strong> アクセス情報、利用状況データ、Cookieを通じた匿名化された情報</li>
+                            <li><strong>利用目的:</strong> サービス利用状況の分析、サービス改善、利用者行動の理解</li>
+                            <li><strong>プライバシー保護:</strong> IPアドレスの匿名化、Cookie同意に基づく収集</li>
+                            <li><strong>オプトアウト:</strong> ブラウザ設定またはCookie同意バナーから無効化可能</li>
+                            <li><strong>プライバシーポリシー:</strong> Google プライバシーポリシー</li>
                         </ul>
                     </div>
                 </div>
@@ -196,13 +207,14 @@
                 <h2 class="text-xl font-semibold text-gray-800 mb-4">13. 関連するプライバシーポリシー</h2>
                 <ul class="list-disc list-inside text-gray-700 space-y-2 ml-4">
                     <li>Google Maps API プライバシーポリシー</li>
+                    <li>Google Analytics プライバシーポリシー</li>
                     <li>Cloudinary プライバシーポリシー</li>
                 </ul>
             </section>
 
             <div class="text-sm text-gray-500 mt-8 pt-6 border-t border-gray-200">
                 <p>制定日: 2025年7月26日</p>
-                <p>最終更新日: 2025年7月26日</p>
+                <p>最終更新日: 2025年8月10日</p>
             </div>
         </div>
     </div>
