@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="TasteRetreatは、あなたの食体験を磨く小さな額縁です。">
     <title>TasteRetreat - 行きたい、また行きたい——ただそれだけを、そっと記す。</title>
+
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     
     @vite(['resources/css/app.css'])
     
@@ -307,6 +311,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- ヘッダー -->
     <header>
@@ -340,7 +345,9 @@
             <div class="hero-buttons">
                 <a href="{{ route('login') }}" class="btn btn-primary">ログインして始める</a>
                 <a href="#how" class="btn btn-outline">詳細を見る</a>
+
             </div>
+
         </div>
     </section>
     
@@ -494,11 +501,13 @@
                     <a href="#" style="color: white; text-decoration: none;">利用規約</a>
                     <a href="#" style="color: white; text-decoration: none;">お問い合わせ</a>
                 </div>
+
                 <p style="opacity: 0.7; font-size: 14px;">© 2025 TasteRetreat. All rights reserved.</p>
             </div>
         </div>
     </footer>
     
+
     <script>
         // スムーススクロール
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -516,5 +525,6 @@
             });
         });
     </script>
+
 </body>
 </html>

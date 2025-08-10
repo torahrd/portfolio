@@ -8,6 +8,7 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/js/app.js',
                 'resources/js/app-csp-test.js',
+                'resources/js/landing.js',
             ],
             refresh: true,
         }),
