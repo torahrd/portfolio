@@ -358,14 +358,14 @@
         <div class="hero-content">
             <h1 class="hero-title">
                 行きたい、また行きたい——<br>
-                ただそれだけを、そっと記す。
+                2つの「行きたい」を、一つに記す。
             </h1>
             <p class="hero-subtitle">
-                TasteRetreatは、あなたの食体験を磨く小さな額縁です。
+                TasteRetreatは、あなたの食体験を導く小さな羅針盤です。
             </p>
             <div class="hero-buttons">
                 <a href="{{ route('login') }}" class="btn btn-primary">ログインして始める</a>
-                <a href="#how" class="btn btn-outline">詳細を見る</a>
+                <a href="#how" class="btn btn-outline">概要を見る</a>
 
             </div>
 
