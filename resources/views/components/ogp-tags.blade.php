@@ -2,7 +2,7 @@
 @props([
     'title' => 'TasteRetreat - 自分だけの名店リストを作る',
     'description' => '行きたい店、また行きたい店をひとつに記録。24季節に重ねたリストで、あなたの特別な食体験を整理。',
-    'image' => asset('images/ogp-placeholder.svg'),
+    'image' => asset('images/ogp-main.png'),
     'url' => url()->current(),
     'type' => 'website',
 ])

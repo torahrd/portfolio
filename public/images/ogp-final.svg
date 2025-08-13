@@ -1,0 +1,73 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景（LPと同じ#FAFAFA） -->
+  <rect width="1200" height="630" fill="#FAFAFA"/>
+  
+  <!-- 装飾的な円（24節気を想起、非常に薄く） -->
+  <circle cx="600" cy="315" r="280" fill="none" stroke="#4A9B8E" stroke-width="1" opacity="0.08"/>
+  <circle cx="600" cy="315" r="200" fill="none" stroke="#4A9B8E" stroke-width="0.5" opacity="0.05"/>
+  
+  <!-- メインタイトル -->
+  <text x="600" y="140" text-anchor="middle" font-family="'Zen Kaku Gothic New', sans-serif" font-size="56" font-weight="bold" fill="#333333">
+    TasteRetreat
+  </text>
+  
+  <!-- サブタイトル -->
+  <text x="600" y="195" text-anchor="middle" font-family="'Zen Kaku Gothic New', sans-serif" font-size="28" font-weight="500" fill="#4A9B8E">
+    自分だけの名店リストを作る
+  </text>
+  
+  <!-- 3つのアイコンセクション -->
+  <g transform="translate(0, 280)">
+    
+    <!-- 記す - ピンアイコン -->
+    <g transform="translate(350, 0)">
+      <path d="M 0,-25 C -15,-25 -25,-15 -25,0 C -25,15 -12,28 0,40 C 12,28 25,15 25,0 C 25,-15 15,-25 0,-25 Z" 
+            fill="#4A9B8E"/>
+      <circle cx="0" cy="0" r="10" fill="#FAFAFA"/>
+      
+      <text x="0" y="65" text-anchor="middle" font-family="'Zen Kaku Gothic New', sans-serif" font-size="20" font-weight="500" fill="#666666">
+        記す
+      </text>
+    </g>
+    
+    <!-- 見返す - スマホアイコン -->
+    <g transform="translate(600, 0)">
+      <rect x="-16" y="-28" width="32" height="56" rx="6" fill="#4A9B8E"/>
+      <rect x="-13" y="-22" width="26" height="40" fill="#FAFAFA"/>
+      <circle cx="0" cy="24" r="4" fill="#FAFAFA"/>
+      
+      <text x="0" y="65" text-anchor="middle" font-family="'Zen Kaku Gothic New', sans-serif" font-size="20" font-weight="500" fill="#666666">
+        見返す
+      </text>
+    </g>
+    
+    <!-- 選び直す - リフレッシュアイコン -->
+    <g transform="translate(850, 0)">
+      <g transform="scale(1.3)">
+        <path d="M -8,-20 C -20,-20 -28,-12 -28,0 C -28,12 -20,20 -8,20" 
+              fill="none" stroke="#4A9B8E" stroke-width="3" stroke-linecap="round"/>
+        <path d="M 8,20 C 20,20 28,12 28,0 C 28,-12 20,-20 8,-20" 
+              fill="none" stroke="#4A9B8E" stroke-width="3" stroke-linecap="round"/>
+        <path d="M 6,-20 L 12,-20 L 9,-14 Z" fill="#4A9B8E"/>
+        <path d="M -6,20 L -12,20 L -9,14 Z" fill="#4A9B8E"/>
+      </g>
+      
+      <text x="0" y="65" text-anchor="middle" font-family="'Zen Kaku Gothic New', sans-serif" font-size="20" font-weight="500" fill="#666666">
+        選び直す
+      </text>
+    </g>
+  </g>
+  
+  <!-- メインキャッチコピー（折衷案） -->
+  <text x="600" y="430" text-anchor="middle" font-family="'Zen Kaku Gothic New', sans-serif" font-size="24" fill="#333333">
+    行きたい店、また行きたい店をひとつに記録
+  </text>
+  <text x="600" y="465" text-anchor="middle" font-family="'Zen Kaku Gothic New', sans-serif" font-size="24" fill="#333333">
+    24の季節に重ねて、あなたの特別な食体験を整理
+  </text>
+  
+  <!-- URL -->
+  <text x="600" y="560" text-anchor="middle" font-family="'Zen Kaku Gothic New', sans-serif" font-size="16" fill="#999999">
+    taste-retreat.com
+  </text>
+</svg>
