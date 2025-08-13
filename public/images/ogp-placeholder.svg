@@ -1,0 +1,50 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景 -->
+  <rect width="1200" height="630" fill="#FAFAFA"/>
+  
+  <!-- 24節気の円（背景装飾） -->
+  <circle cx="600" cy="315" r="200" fill="none" stroke="#4A9B8E" stroke-width="1" opacity="0.2"/>
+  <circle cx="600" cy="315" r="100" fill="none" stroke="#4A9B8E" stroke-width="1" opacity="0.2"/>
+  
+  <!-- メインテキスト -->
+  <text x="600" y="200" text-anchor="middle" font-family="'Zen Kaku Gothic New', sans-serif" font-size="48" font-weight="bold" fill="#333333">
+    TasteRetreat
+  </text>
+  
+  <!-- サブタイトル -->
+  <text x="600" y="260" text-anchor="middle" font-family="'Zen Kaku Gothic New', sans-serif" font-size="28" fill="#666666">
+    自分だけの名店リストを作る
+  </text>
+  
+  <!-- 3つのアイコンと説明 -->
+  <g transform="translate(350, 350)">
+    <!-- 記す -->
+    <text x="0" y="0" font-size="48">📍</text>
+    <text x="0" y="40" text-anchor="middle" font-family="'Zen Kaku Gothic New', sans-serif" font-size="16" fill="#666666">記す</text>
+  </g>
+  
+  <g transform="translate(600, 350)">
+    <!-- 見返す -->
+    <text x="0" y="0" text-anchor="middle" font-size="48">📱</text>
+    <text x="0" y="40" text-anchor="middle" font-family="'Zen Kaku Gothic New', sans-serif" font-size="16" fill="#666666">見返す</text>
+  </g>
+  
+  <g transform="translate(850, 350)">
+    <!-- 選び直す -->
+    <text x="0" y="0" text-anchor="middle" font-size="48">📚</text>
+    <text x="0" y="40" text-anchor="middle" font-family="'Zen Kaku Gothic New', sans-serif" font-size="16" fill="#666666">選び直す</text>
+  </g>
+  
+  <!-- 下部の説明文 -->
+  <text x="600" y="480" text-anchor="middle" font-family="'Zen Kaku Gothic New', sans-serif" font-size="18" fill="#666666">
+    行きたい店、また行きたい店をひとつに記録
+  </text>
+  <text x="600" y="510" text-anchor="middle" font-family="'Zen Kaku Gothic New', sans-serif" font-size="18" fill="#666666">
+    24季節に重ねたリストで、あなたの特別な食体験を整理
+  </text>
+  
+  <!-- URL -->
+  <text x="600" y="570" text-anchor="middle" font-family="'Zen Kaku Gothic New', sans-serif" font-size="14" fill="#999999">
+    taste-retreat.com
+  </text>
+</svg>

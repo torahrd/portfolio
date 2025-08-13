@@ -4,8 +4,10 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="TasteRetreatは、あなたの食体験を磨く小さな額縁です。">
     <title>TasteRetreat - 行きたい、また行きたい——ただそれだけを、そっと記す。</title>
+    
+    {{-- OGPタグ --}}
+    <x-ogp-tags />
 
     
     <!-- Fonts -->

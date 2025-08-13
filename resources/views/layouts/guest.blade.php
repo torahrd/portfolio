@@ -6,8 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ $title ?? 'TasteRetreat' }} - 美味しいの発見と共有</title>
-    <meta name="description" content="TasteRetreatで美味しいお店を発見し、グルメ体験を共有しましょう。">
+    <title>{{ $title ?? 'TasteRetreat' }}</title>
+    
+    {{-- OGPタグ --}}
+    <x-ogp-tags 
+        :title="$ogpTitle ?? ($title ?? 'TasteRetreat')"
+        :description="$ogpDescription ?? '行きたい店、また行きたい店をひとつに記録。24季節に重ねたリストで、あなたの特別な食体験を整理。'"
+    />
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
