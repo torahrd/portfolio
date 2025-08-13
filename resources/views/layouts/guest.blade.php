@@ -6,8 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ $title ?? 'TasteRetreat' }} - 美味しいの発見と共有</title>
-    <meta name="description" content="TasteRetreatで美味しいお店を発見し、グルメ体験を共有しましょう。">
+    <title>{{ $title ?? 'TasteRetreat' }}</title>
+    
+    {{-- OGPタグ --}}
+    <x-ogp-tags 
+        :title="$ogpTitle ?? ($title ?? 'TasteRetreat')"
+        :description="$ogpDescription ?? '行きたい店、また行きたい店をひとつに記録。24季節に重ねたリストで、あなたの特別な食体験を整理。'"
+    />
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -24,13 +29,6 @@
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         
-        // デフォルトの同意状態（Cookie同意前）
-        // 一時的にコメントアウト - Cookie同意機能が動作していないため
-        // gtag('consent', 'default', {
-        //     'analytics_storage': 'denied',
-        //     'ad_storage': 'denied',
-        //     'wait_for_update': 500
-        // });
         
         gtag('js', new Date());
         
@@ -58,15 +56,6 @@
     <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google.maps_api_key') }}&libraries=places&callback=initMap"></script>
     @endif
 
-    <!-- Google Analytics 4 -->
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-XXXXXXXXXX'); // 実際の測定IDに置き換えてください
-    </script>
 
     @stack('head')
 </head>
@@ -122,9 +111,10 @@
         <x-organisms.footer type="default" />
     </div>
 
+    {{-- GA4カスタムイベント --}}
+    <x-ga4-events />
+    
     @stack('scripts')
-    <!-- Cookie同意バナー -->
-    <x-cookie-consent />
 </body>
 
 </html>

@@ -6,7 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ $title ?? config('app.name', 'TasteRetreat') }}</title>
+    
+    {{-- OGPタグ --}}
+    <x-ogp-tags 
+        :title="$ogpTitle ?? 'TasteRetreat'"
+        :description="$ogpDescription ?? '行きたい店、また行きたい店をひとつに記録。24季節に重ねたリストで、あなたの特別な食体験を整理。'"
+    />
 
     @if(config('analytics.enabled'))
     <!-- Google tag (gtag.js) -->
@@ -15,13 +21,6 @@
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         
-        // デフォルトの同意状態（Cookie同意前）
-        // 一時的にコメントアウト - Cookie同意機能が動作していないため
-        // gtag('consent', 'default', {
-        //     'analytics_storage': 'denied',
-        //     'ad_storage': 'denied',
-        //     'wait_for_update': 500
-        // });
         
         gtag('js', new Date());
         
@@ -63,8 +62,8 @@
         <x-organisms.footer type="default" />
     </div>
     
-    <!-- Cookie同意バナー -->
-    <x-cookie-consent />
+    {{-- GA4カスタムイベント --}}
+    <x-ga4-events />
     
     @stack('scripts')
 </body>

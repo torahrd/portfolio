@@ -28,6 +28,11 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+        
+        // GA4ログインイベントをセッションに保存
+        if (config('analytics.enabled')) {
+            session(['ga4_event' => 'login', 'ga4_params' => ['method' => 'email']]);
+        }
 
         return redirect()->intended(RouteServiceProvider::HOME);
     }
