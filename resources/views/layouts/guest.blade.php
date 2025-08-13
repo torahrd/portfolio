@@ -111,6 +111,9 @@
         <x-organisms.footer type="default" />
     </div>
 
+    {{-- GA4カスタムイベント --}}
+    <x-ga4-events />
+    
     @stack('scripts')
 </body>
 
