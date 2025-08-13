@@ -15,13 +15,6 @@
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         
-        // デフォルトの同意状態（Cookie同意前）
-        // 一時的にコメントアウト - Cookie同意機能が動作していないため
-        // gtag('consent', 'default', {
-        //     'analytics_storage': 'denied',
-        //     'ad_storage': 'denied',
-        //     'wait_for_update': 500
-        // });
         
         gtag('js', new Date());
         
@@ -62,9 +55,6 @@
         <!-- Footer -->
         <x-organisms.footer type="default" />
     </div>
-    
-    <!-- Cookie同意バナー -->
-    <x-cookie-consent />
     
     @stack('scripts')
 </body>

@@ -24,13 +24,6 @@
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         
-        // デフォルトの同意状態（Cookie同意前）
-        // 一時的にコメントアウト - Cookie同意機能が動作していないため
-        // gtag('consent', 'default', {
-        //     'analytics_storage': 'denied',
-        //     'ad_storage': 'denied',
-        //     'wait_for_update': 500
-        // });
         
         gtag('js', new Date());
         
@@ -58,15 +51,6 @@
     <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google.maps_api_key') }}&libraries=places&callback=initMap"></script>
     @endif
 
-    <!-- Google Analytics 4 -->
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-XXXXXXXXXX'); // 実際の測定IDに置き換えてください
-    </script>
 
     @stack('head')
 </head>
@@ -123,8 +107,6 @@
     </div>
 
     @stack('scripts')
-    <!-- Cookie同意バナー -->
-    <x-cookie-consent />
 </body>
 
 </html>

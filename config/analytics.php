@@ -34,12 +34,6 @@ return [
         ],
     ],
 
-    // Cookie同意設定
-    'cookie_consent' => [
-        'enabled' => true,
-        'cookie_name' => 'taste_retreat_cookie_consent',
-        'cookie_lifetime' => 365, // 日数
-    ],
 
     // トラッキング設定
     'tracking' => [
