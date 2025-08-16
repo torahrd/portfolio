@@ -45,7 +45,7 @@ class RegisteredUserController extends Controller
         event(new Registered($user));
 
         Auth::login($user);
-        
+
         // GA4新規登録イベントをセッションに保存
         if (config('analytics.enabled')) {
             session(['ga4_event' => 'sign_up', 'ga4_params' => ['method' => 'email']]);

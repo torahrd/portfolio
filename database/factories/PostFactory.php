@@ -27,7 +27,7 @@ class PostFactory extends Factory
             'memo' => $this->faker->text(200), // 短いテキストに変更
             'image_url' => $this->faker->optional()->imageUrl(640, 480, 'food'),
             'visit_status' => $this->faker->randomElement([0, 1]), // 0: want_to_visit, 1: visited
-            'private_status' => $this->faker->randomElement([0, 1, 2]), // 0: public, 1: followers_only, 2: private
+            'private_status' => $this->faker->boolean(), // false: public, true: private
         ];
     }
 }
