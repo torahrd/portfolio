@@ -34,7 +34,6 @@ return [
         ],
     ],
 
-
     // トラッキング設定
     'tracking' => [
         // IPアドレスの匿名化
@@ -52,16 +51,16 @@ return [
         'create_post' => 'create_post',
         'add_to_favorites' => 'add_to_favorites',
         'remove_from_favorites' => 'remove_from_favorites',
-        
+
         // 24節気関連
         'shop_limit_reached' => 'shop_limit_reached',
         'seasonal_activity' => 'seasonal_activity',
-        
+
         // ユーザー行動
         'scroll_depth' => 'scroll_depth',
         'form_submit' => 'form_submit',
         'search' => 'search',
-        
+
         // ソーシャル機能
         'follow_user' => 'follow_user',
         'unfollow_user' => 'unfollow_user',

@@ -26,7 +26,13 @@ class PostController extends Controller
                     ->limit(5);              // 最新5件のみ
             },
         ])
-            ->withCount(['favorite_users', 'comments']);  // いいね数とコメント数を効率的に取得
+            ->withCount(['favorite_users', 'comments'])  // いいね数とコメント数を効率的に取得
+            ->where(function ($query) {
+                // 公開投稿または自分の投稿のみを表示
+                $query->where('private_status', false) // 公開投稿
+                    ->orWhereNull('private_status') // null も公開投稿
+                    ->orWhere('user_id', Auth::id()); // 自分の投稿
+            });
 
         // タブに応じた処理
         if ($tab === 'recent') {
@@ -260,6 +266,9 @@ class PostController extends Controller
 
     public function show(Post $post)
     {
+        // プライベート投稿の認可チェックを追加
+        $this->authorize('view', $post);
+
         // いいね数とコメント数を効率的に取得
         $post->loadCount(['favorite_users', 'comments']);
 
@@ -268,6 +277,9 @@ class PostController extends Controller
 
     public function edit(Post $post, Shop $shop)
     {
+        // 投稿編集の認可チェックを追加
+        $this->authorize('update', $post);
+
         $user = Auth::user();
         $shops = $shop->get();
 
