@@ -119,9 +119,39 @@ class CommentSectionCspTest extends TestCase
     }
 
     /**
-     * 他人のコメントは削除できないことをテスト
+     * 投稿作者がコメント削除できることをテスト
      */
-    public function test_user_cannot_delete_others_comment(): void
+    public function test_post_owner_can_delete_comments(): void
+    {
+        // 投稿作者としてログイン
+        $this->actingAs($this->user);
+
+        // 他のユーザーのコメントを作成
+        $otherUser = User::factory()->create();
+        $comment = Comment::factory()->create([
+            'post_id' => $this->post->id,
+            'user_id' => $otherUser->id,
+            'body' => '他人のコメント',
+        ]);
+
+        // 投稿作者として削除（成功するはず）
+        $response = $this->deleteJson("/comments/{$comment->id}");
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+                'message' => 'コメントを削除しました',
+            ]);
+
+        $this->assertDatabaseMissing('comments', [
+            'id' => $comment->id,
+        ]);
+    }
+
+    /**
+     * 第三者はコメント削除できないことをテスト
+     */
+    public function test_third_party_cannot_delete_comments(): void
     {
         // 第三者のユーザーとして削除を試みる
         $thirdUser = User::factory()->create();

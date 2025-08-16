@@ -20,7 +20,7 @@ class CommentStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'body' => ['required', 'string', 'max:1000'],
+            'body' => ['required', 'string', 'max:200'],
             'parent_id' => ['nullable', 'exists:comments,id'],
         ];
     }
