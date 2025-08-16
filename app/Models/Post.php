@@ -23,6 +23,12 @@ class Post extends Model
         'image_url',
     ];
 
+    protected $casts = [
+        'visit_status' => 'boolean',
+        'private_status' => 'boolean',
+        'visit_time' => 'datetime',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);

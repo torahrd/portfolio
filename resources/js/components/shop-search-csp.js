@@ -10,11 +10,37 @@ export function shopSearchCsp() {
         errorMessage: '',
         mode: 'post',
         isSelectionValid: false,
+        
+        // CSP対応: 直接プロパティとして定義
+        shopName: '',
+        shopAddress: '',
+        phoneNumberText: '',
+        shopId: '',
+        googlePlaceId: '',
+        shopNameForForm: '',
+        shopAddressForForm: '',
+        hasPhoneNumber: false,
 
         // 初期化
         init() {
             console.log('shopSearchCsp initialized');
             this.mode = this.$el.getAttribute('data-mode') || 'post';
+            
+            // 初期店舗データがある場合は設定
+            const initialShopData = this.$el.getAttribute('data-initial-shop');
+            if (initialShopData) {
+                try {
+                    this.selectedShop = JSON.parse(initialShopData);
+                    this.searchQuery = this.selectedShop.name;
+                    
+                    // CSP対応: プロパティを更新
+                    this.updateShopProperties();
+                    this.validateSelection();
+                    console.log('Initial shop loaded:', this.selectedShop);
+                } catch (error) {
+                    console.error('Error parsing initial shop data:', error);
+                }
+            }
         },
 
         // 検索結果表示制御
@@ -136,11 +162,20 @@ export function shopSearchCsp() {
             }
         },
 
-        // 店舗選択
-        selectShop(shop) {
+        // 店舗選択（CSP対応: $eventから取得）
+        selectShop() {
+            // クリックされた要素からshopデータを取得（CSP対応）
+            const shopIndex = this.$event.currentTarget.dataset.shopIndex;
+            const shop = this.searchResults[shopIndex];
+            
+            if (!shop) return;
+            
             this.selectedShop = shop;
             this.searchQuery = shop.name;
             this.showResults = false;
+            
+            // CSP対応: 各プロパティを直接更新
+            this.updateShopProperties();
             this.validateSelection();
         },
 
@@ -149,6 +184,37 @@ export function shopSearchCsp() {
             this.selectedShop = null;
             this.searchQuery = '';
             this.isSelectionValid = false;
+            
+            // CSP対応: プロパティをクリア
+            this.clearShopProperties();
+        },
+
+        // 店舗プロパティ更新
+        updateShopProperties() {
+            if (this.selectedShop) {
+                this.shopName = this.selectedShop.name || '';
+                this.shopAddress = this.selectedShop.address || '';
+                this.shopId = this.selectedShop.id || '';
+                this.googlePlaceId = this.selectedShop.google_place_id || '';
+                this.shopNameForForm = this.selectedShop.name || '';
+                this.shopAddressForForm = this.selectedShop.address || '';
+                this.hasPhoneNumber = !!(this.selectedShop.formatted_phone_number);
+                this.phoneNumberText = this.selectedShop.formatted_phone_number 
+                    ? `📞 ${this.selectedShop.formatted_phone_number}` 
+                    : '';
+            }
+        },
+
+        // 店舗プロパティクリア
+        clearShopProperties() {
+            this.shopName = '';
+            this.shopAddress = '';
+            this.shopId = '';
+            this.googlePlaceId = '';
+            this.shopNameForForm = '';
+            this.shopAddressForForm = '';
+            this.hasPhoneNumber = false;
+            this.phoneNumberText = '';
         },
 
         // 選択バリデーション
@@ -165,35 +231,5 @@ export function shopSearchCsp() {
             this.isSelectionValid = hasName && hasAddress;
         },
 
-        // フォーム用データ取得メソッド
-        getShopName() {
-            return this.selectedShop ? this.selectedShop.name : '';
-        },
-
-        getShopAddress() {
-            return this.selectedShop ? this.selectedShop.address : '';
-        },
-
-        getPhoneNumberText() {
-            return this.selectedShop && this.selectedShop.formatted_phone_number 
-                ? `📞 ${this.selectedShop.formatted_phone_number}` 
-                : '';
-        },
-
-        getShopId() {
-            return this.selectedShop ? this.selectedShop.id : '';
-        },
-
-        getGooglePlaceId() {
-            return this.selectedShop ? this.selectedShop.google_place_id : '';
-        },
-
-        getShopNameForForm() {
-            return this.selectedShop ? this.selectedShop.name : '';
-        },
-
-        getShopAddressForForm() {
-            return this.selectedShop ? this.selectedShop.address : '';
-        }
     };
 } 

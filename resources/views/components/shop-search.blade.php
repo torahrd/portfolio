@@ -27,7 +27,7 @@
   <!-- 検索結果表示エリア -->
   <div x-show="shouldShowResults" class="absolute left-0 right-0 z-40 w-full bg-white border border-gray-200 rounded-md mt-1 shadow-lg max-h-60 overflow-y-auto">
     <template x-for="(shop, index) in searchResults" :key="index">
-      <div @click="selectShop(shop)" class="px-4 py-2 cursor-pointer hover:bg-blue-50 border-b border-gray-100 last:border-b-0">
+      <div @click="selectShop" :data-shop-index="index" class="px-4 py-2 cursor-pointer hover:bg-blue-50 border-b border-gray-100 last:border-b-0">
         <div class="font-medium text-gray-900" x-text="shop.name"></div>
         <div class="text-sm text-gray-600" x-text="shop.address"></div>
       </div>
@@ -38,16 +38,16 @@
     <div class="mt-4 p-4 bg-blue-50 rounded-md">
       <div class="flex items-center justify-between">
         <div>
-          <div class="font-medium text-gray-900" x-text="getShopName()"></div>
-          <div class="text-sm text-gray-600" x-text="getShopAddress()"></div>
-          <div class="text-sm text-gray-600" x-show="selectedShop && selectedShop.formatted_phone_number" x-text="getPhoneNumberText()"></div>
+          <div class="font-medium text-gray-900" x-text="shopName"></div>
+          <div class="text-sm text-gray-600" x-text="shopAddress"></div>
+          <div class="text-sm text-gray-600" x-show="hasPhoneNumber" x-text="phoneNumberText"></div>
         </div>
         <button type="button" @click="clearSelection" class="text-red-500 hover:text-red-700 text-sm">変更</button>
       </div>
-      <input type="hidden" name="post[shop_id]" :value="getShopId()">
-      <input type="hidden" name="post[google_place_id]" :value="getGooglePlaceId()">
-      <input type="hidden" name="post[shop_name]" :value="getShopNameForForm()">
-      <input type="hidden" name="post[shop_address]" :value="getShopAddressForForm()">
+      <input type="hidden" name="post[shop_id]" :value="shopId">
+      <input type="hidden" name="post[google_place_id]" :value="googlePlaceId">
+      <input type="hidden" name="post[shop_name]" :value="shopNameForForm">
+      <input type="hidden" name="post[shop_address]" :value="shopAddressForForm">
     </div>
   </template>
   <!-- バリデーションUI（選択済みかつバリデーションOK時のみ） -->
