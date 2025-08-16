@@ -10,7 +10,7 @@ import { testCounter } from "./components/test-counter.js";
 Alpine.data('testCounter', testCounter);
 
 // CSP対応版shopSearchコンポーネントを登録
-import { shopSearchCsp } from "./components/shop-search.js";
+import { shopSearchCsp } from "./components/shop-search-csp.js";
 Alpine.data('shopSearchCsp', shopSearchCsp);
 
 // CSP対応版searchBarコンポーネントを登録

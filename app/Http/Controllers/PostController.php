@@ -95,11 +95,18 @@ class PostController extends Controller
             'url' => $request->url(),
         ]);
 
-        // 画像バリデーション追加
+        // 店舗選択チェック（1つのエラーメッセージのみ）
+        if (empty($request->input('post.shop_id')) && empty($request->input('post.google_place_id'))) {
+            return back()->withErrors(['shop' => '店舗を選択してください。'])->withInput();
+        }
+
+        // 画像バリデーション
         $request->validate([
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:4096',
-            'post.shop_id' => 'required_without:post.google_place_id',
-            'post.google_place_id' => 'required_without:post.shop_id',
+        ], [
+            'image.image' => '画像ファイルを選択してください。',
+            'image.mimes' => '画像はjpeg、png、jpg、gif、svg、webp形式でアップロードしてください。',
+            'image.max' => '画像サイズは4MB以下にしてください。',
         ]);
 
         $input = $request['post'];
@@ -297,11 +304,18 @@ class PostController extends Controller
             'post_id' => $post->id,
         ]);
 
-        // 画像バリデーション追加
+        // 店舗選択チェック（1つのエラーメッセージのみ）
+        if (empty($request->input('post.shop_id')) && empty($request->input('post.google_place_id'))) {
+            return back()->withErrors(['shop' => '店舗を選択してください。'])->withInput();
+        }
+
+        // 画像バリデーション
         $request->validate([
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:4096',
-            'post.shop_id' => 'required_without:post.google_place_id',
-            'post.google_place_id' => 'required_without:post.shop_id',
+        ], [
+            'image.image' => '画像ファイルを選択してください。',
+            'image.mimes' => '画像はjpeg、png、jpg、gif、svg、webp形式でアップロードしてください。',
+            'image.max' => '画像サイズは4MB以下にしてください。',
         ]);
 
         $input = $request['post'];
@@ -335,10 +349,20 @@ class PostController extends Controller
                 $input['shop_id'] = $shop->id;
             }
         }
-        // shop_idがnullのままならバリデーションエラー
+
+        // 編集時：shop_idもgoogle_place_idも送信されてない場合は既存のshop_idを保持
+        if (empty($input['shop_id']) && empty($googlePlaceId)) {
+            $input['shop_id'] = $post->shop_id;
+            Log::info('投稿update: 既存shop_idを保持', [
+                'shop_id' => $input['shop_id'],
+            ]);
+        }
+
+        // それでもshop_idがnullの場合のみエラー（データベース上でshop_idがnullの場合など）
         if (empty($input['shop_id'])) {
             Log::error('投稿update: shop_idがセットできずバリデーションエラー', [
                 'input' => $input,
+                'existing_shop_id' => $post->shop_id,
             ]);
 
             return back()->withErrors(['shop_id' => '店舗情報の取得に失敗しました。もう一度お試しください。'])->withInput();

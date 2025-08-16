@@ -66,7 +66,7 @@ class PrivatePostAuthorizationTest extends TestCase
         $this->actingAs($this->otherUser);
         $response = $this->get("/posts/{$privatePost->id}");
         $response->assertStatus(403);
-        
+
         // 403エラーページが表示される
         $response->assertSee('403');
     }
@@ -125,20 +125,20 @@ class PrivatePostAuthorizationTest extends TestCase
 
         // 第三者として投稿一覧を確認（HTTPレスポンステスト）
         $this->actingAs($this->otherUser);
-        
+
         // まずデータベースレベルで期待通りのデータが作成されているか確認
         $visiblePosts = Post::where(function ($query) {
             $query->where('private_status', false)
                 ->orWhereNull('private_status')
                 ->orWhere('user_id', auth()->id());
         })->get();
-        
+
         // データベースレベルで期待通りのフィルタリングが動作することを確認
         $this->assertTrue($visiblePosts->contains($publicPost), 'Public post should be visible in query');
         $this->assertFalse($visiblePosts->contains($privatePost), 'Private post should not be visible in query');
-        
+
         $response = $this->get('/posts');
-        
+
         $response->assertStatus(200);
         // 公開投稿の店舗名は表示される
         $response->assertSee($publicPost->shop->name);
@@ -148,7 +148,7 @@ class PrivatePostAuthorizationTest extends TestCase
         // 投稿作成者として投稿一覧を確認
         $this->actingAs($this->postOwner);
         $response = $this->get('/posts');
-        
+
         $response->assertStatus(200);
         // 投稿者には両方の店舗名が表示される
         $response->assertSee($publicPost->shop->name);
