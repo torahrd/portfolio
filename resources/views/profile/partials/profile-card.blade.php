@@ -1,4 +1,4 @@
-<div class="bg-white rounded-xl shadow p-6 h-full flex flex-col items-center text-center" style="min-height: calc(100vh - 8rem);">
+<div class="bg-white rounded-xl shadow p-6 h-full flex flex-col items-center text-center min-h-[calc(100vh-8rem)]">
   <x-atoms.avatar :user="$user" size="large" />
   <h1 class="text-2xl font-bold text-gray-900 mt-4 mb-2">{{ $user->name }}</h1>
   <div class="flex justify-center space-x-6 my-4">

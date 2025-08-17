@@ -10,7 +10,7 @@
       <div class="flex flex-col lg:flex-row gap-8">
         <!-- PC用: 左カラム -->
         <aside class="lg:w-1/3 w-full hidden lg:block">
-          <div class="sticky top-16" style="min-height: calc(100vh - 6rem);">
+          <div class="sticky top-16 min-h-[calc(100vh-6rem)]">
             @include('profile.partials.profile-card', ['user' => $user, 'context' => 'desktop'])
           </div>
         </aside>

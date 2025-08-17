@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+/* コンポーネントCSSのインポート */
+@import 'components/avatar.css';
+@import 'components/landing.css';
+
 /* 共通スタイル */
 @layer components {
     /* シャドウ設定 */

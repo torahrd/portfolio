@@ -19,11 +19,11 @@ if ($level <= 4) {
       <span>{{ $comment->created_at->format('Y/m/d H:i') }}</span>
 
       @if($replyToUser)
-      <span style="color: #666;">→ {{ $replyToUser }}さんへの返信</span>
+      <span class="text-gray-600">→ {{ $replyToUser }}さんへの返信</span>
       @endif
 
       @if(Auth::check() && (Auth::id() === $comment->user_id || Auth::id() === $post->user_id))
-      <form action="{{ route('comments.destroy', $comment->id) }}" method="POST" style="display: inline; float: right;" class="comment-delete-form">
+      <form action="{{ route('comments.destroy', $comment->id) }}" method="POST" class="inline-block float-right comment-delete-form">
         @csrf
         @method('DELETE')
         <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('削除しますか？')">削除</button>
@@ -40,11 +40,11 @@ if ($level <= 4) {
     <!-- 返信フォーム -->
     @auth
     <div id="reply-form-<?php echo $comment->id; ?>" class="reply-form">
-      <form action="{{ route('comments.store', $post->id) }}" method="POST" style="margin-top: 10px;">
+      <form action="{{ route('comments.store', $post->id) }}" method="POST" class="mt-2">
         @csrf
         <input type="hidden" name="parent_id" value="<?php echo $comment->id; ?>">
         <textarea name="body" rows="2" placeholder="<?php echo $comment->user->name; ?>さんに返信...&#10;💡 @でスレッド参加者を検索" required></textarea>
-        <div style="margin-top: 5px;">
+        <div class="mt-1">
           <button type="submit" class="btn btn-primary btn-small">返信投稿</button>
           <button type="button" onclick="toggleReplyForm(<?php echo $comment->id; ?>)" class="btn btn-secondary btn-small" autofocus>キャンセル</button>
         </div>

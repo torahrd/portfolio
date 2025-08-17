@@ -1,0 +1,57 @@
+/* セクション背景 */
+.section-how {
+  background: white;
+}
+
+.section-seasons {
+  background: #f8f9fa;
+}
+
+/* フッター */
+.footer-main {
+  background: #2C3E50;
+  color: white;
+  padding: 40px 0;
+}
+
+.footer-content {
+  text-align: center;
+}
+
+.footer-title {
+  margin-bottom: 20px;
+}
+
+.footer-links {
+  display: flex;
+  gap: 32px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.footer-link {
+  color: white;
+  text-decoration: none;
+}
+
+.footer-copyright {
+  opacity: 0.7;
+  font-size: 14px;
+}
+
+/* その他 */
+.text-center {
+  text-align: center;
+}
+
+.mt-40 {
+  margin-top: 40px;
+}
+
+.example-box {
+  margin-top: 20px;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  font-size: 14px;
+}
