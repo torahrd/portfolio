@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@push('scripts')
+  @vite(['resources/js/map-index.js'])
+@endpush
+
 @section('content')
   <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <h1 class="text-2xl font-bold mb-4">店舗マップ</h1>
@@ -8,10 +12,8 @@
     <!-- 今後: 検索ボックス・表示切替UIなど -->
   </div>
 
-  <!-- Google Maps JS API 読み込み（APIキーは.env管理を推奨） -->
+  <!-- Google Maps JS API 読み込み（APIキーは.env管理） -->
   <script src="https://maps.googleapis.com/maps/api/js?key={{ config('google.maps.api_key') }}&libraries=places"></script>
-  <!-- MarkerClustererライブラリ（重なり対策） -->
-  <script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       // レトロスタイルの定義（Google公式サンプル）
@@ -256,8 +258,8 @@
           });
 
           // マーカークラスタリングを有効化
-          if (markers.length > 0 && window.markerClusterer) {
-            new window.markerClusterer.MarkerClusterer({
+          if (markers.length > 0 && window.MarkerClusterer) {
+            new window.MarkerClusterer({
               map,
               markers
             });
