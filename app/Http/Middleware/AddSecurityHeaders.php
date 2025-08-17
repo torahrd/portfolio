@@ -76,8 +76,10 @@ class AddSecurityHeaders
 
         // CSP設定（unsafe-eval、unsafe-inline削除済み）
         $connectSources = "'self' https://*.googleapis.com https://*.cloudinary.com {$ga4Domains['connect']}";
-        $scriptSources = "'self' https://maps.googleapis.com https://maps.googleapis.com/maps/api/js {$ga4Domains['script']}";
-        $styleSources = "'self' https://fonts.googleapis.com";
+        // Bootstrap、jQueryを追加（プロフィール編集画面用にunsafe-inline一時追加）
+        $scriptSources = "'self' 'unsafe-inline' https://maps.googleapis.com https://maps.googleapis.com/maps/api/js https://cdn.jsdelivr.net https://code.jquery.com {$ga4Domains['script']}";
+        // Bootstrap、Font Awesomeを追加（プロフィール編集画面用にunsafe-inline一時追加）
+        $styleSources = "'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com";
 
         // 開発環境ではViteサーバーを許可（複数ポート対応）
         if (app()->environment('local')) {
