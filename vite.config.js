@@ -9,6 +9,7 @@ export default defineConfig({
                 'resources/js/app.js',
                 'resources/js/app-csp-test.js',
                 'resources/js/landing.js',
+                'resources/js/map-index.js',
             ],
             refresh: true,
         }),
