@@ -23,7 +23,7 @@ if ($level <= 4) {
       @endif
 
       @if(Auth::check() && (Auth::id() === $comment->user_id || Auth::id() === $post->user_id))
-      <form action="{{ route('comments.destroy', $comment->id) }}" method="POST" style="display: inline; float: right;">
+      <form action="{{ route('comments.destroy', $comment->id) }}" method="POST" style="display: inline; float: right;" class="comment-delete-form">
         @csrf
         @method('DELETE')
         <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('削除しますか？')">削除</button>
