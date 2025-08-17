@@ -59,11 +59,15 @@ $commentId = $comment->id;
 
                 @auth
                 @if(auth()->id() === $comment->user_id || auth()->id() === $post->user_id)
-                <button @click="deleteComment" 
-                        data-comment-id="{{ $comment->id }}"
-                        class="text-neutral-600 hover:text-red-600">
-                    削除
-                </button>
+                <form action="{{ route('comments.destroy', $comment->id) }}" method="POST" style="display: inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" 
+                            class="text-neutral-600 hover:text-red-600"
+                            onclick="return confirm('このコメントを削除しますか？')">
+                        削除
+                    </button>
+                </form>
                 @endif
                 @endauth
             </div>
