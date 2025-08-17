@@ -83,21 +83,21 @@
     <!-- メインコンテンツ -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- タブナビゲーション -->
-      <div x-data="{ activeTab: 'info' }" class="mb-8">
+      <div x-data="shopTabs" class="mb-8">
         <div class="border-b border-neutral-200">
           <nav class="-mb-px flex space-x-8">
-            <button @click="activeTab = 'info'"
-              :class="activeTab === 'info' ? 'border-primary-500 text-primary-600' : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'"
+            <button @click="setInfoTab"
+              :class="infoTabClass"
               class="py-3 px-1 border-b-2 font-medium text-sm transition-colors duration-200">
               基本情報
             </button>
-            <button @click="activeTab = 'posts'"
-              :class="activeTab === 'posts' ? 'border-primary-500 text-primary-600' : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'"
+            <button @click="setPostsTab"
+              :class="postsTabClass"
               class="py-3 px-1 border-b-2 font-medium text-sm transition-colors duration-200">
               投稿 ({{ $shop->recent_posts->count() }})
             </button>
-            <button @click="activeTab = 'photos'"
-              :class="activeTab === 'photos' ? 'border-primary-500 text-primary-600' : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'"
+            <button @click="setPhotosTab"
+              :class="photosTabClass"
               class="py-3 px-1 border-b-2 font-medium text-sm transition-colors duration-200">
               写真
             </button>
@@ -107,7 +107,7 @@
         <!-- タブコンテンツ -->
         <div class="mt-6">
           <!-- 基本情報タブ -->
-          <div x-show="activeTab === 'info'" x-transition>
+          <div x-show="isInfoActive" x-transition>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <!-- 店舗情報カード -->
               <x-molecules.shop-info-card :shop="$shop" :show-actions="false" />
@@ -118,7 +118,7 @@
           </div>
 
           <!-- 投稿タブ -->
-          <div x-show="activeTab === 'posts'" x-transition>
+          <div x-show="isPostsActive" x-transition>
             @if($shop->recent_posts->count() > 0)
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               @foreach($shop->recent_posts as $post)
@@ -162,7 +162,7 @@
           </div>
 
           <!-- 写真タブ -->
-          <div x-show="activeTab === 'photos'" x-transition>
+          <div x-show="isPhotosActive" x-transition>
             <x-molecules.shop-gallery :posts="$shop->recent_posts" />
           </div>
         </div>

@@ -45,6 +45,10 @@ Alpine.data('commentReplyTest', commentReplyTest);
 import { commentSection } from "./components/comment-section.js";
 Alpine.data('commentSection', commentSection);
 
+// CSP対応版shopTabsコンポーネントを登録
+import { shopTabs } from "./components/shop-tabs.js";
+Alpine.data('shopTabs', shopTabs);
+
 Alpine.start();
 
 // import { modal } from "./components/modal.js";
