@@ -11,10 +11,44 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- アプリケーションCSS -->
+    @vite(['resources/css/app.css'])
     <!-- カスタムCSS -->
     <style>
         label[for="avatar"]:hover {
             opacity: 1 !important;
+        }
+        /* Bootstrap position-absoluteクラスを上書き */
+        .avatar-camera-btn {
+            position: absolute !important;
+            bottom: 10px !important;
+            right: 10px !important;
+            background: #fff !important;
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 50% !important;
+            padding: 0 !important;
+            border: 1px solid rgba(13,110,253,0.5) !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
+            cursor: pointer !important;
+            opacity: 0.85 !important;
+            transition: opacity 0.2s !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+        .avatar-container {
+            width: 128px !important;
+            height: 128px !important;
+            position: relative !important;
+            display: inline-block !important;
+        }
+        .avatar-image {
+            width: 128px !important;
+            height: 128px !important;
+            object-fit: cover !important;
+            background: #f3f4f6 !important;
+            border: 1px solid rgba(108,117,125,0.4) !important;
         }
     </style>
 </head>
@@ -41,23 +75,21 @@
 
                             <!-- プロフィール画像 -->
                             <div class="mb-4 text-center">
-                                <div class="position-relative d-inline-block" style="width: 128px; height: 128px;">
+                                <div class="avatar-container mx-auto">
                                     @if($user->avatar)
                                     <img id="profilePreview" src="{{ $user->avatar }}"
                                         alt="プロフィール画像"
-                                        class="rounded-circle shadow-sm object-fit-cover"
-                                        style="width: 128px; height: 128px; object-fit: cover; background: #f3f4f6; border: 1px solid rgba(108,117,125,0.4);" />
+                                        class="rounded-circle shadow-sm avatar-image" />
                                     @else
-                                    <div id="profilePreview" class="rounded-circle d-flex align-items-center justify-content-center shadow-sm bg-light text-secondary"
-                                        style="width: 128px; height: 128px; font-size: 2.5rem; background: #f3f4f6; border: 1px solid rgba(108,117,125,0.4);">
+                                    <div id="profilePreview" class="rounded-circle d-flex align-items-center justify-content-center shadow-sm bg-light text-secondary avatar-image text-5xl">
                                         <i class="fas fa-user"></i>
                                     </div>
                                     @endif
-                                    <label for="avatar" class="position-absolute d-flex align-items-center justify-content-center" style="bottom: 10px; right: 10px; background: #fff; width: 36px; height: 36px; border-radius: 50%; padding: 0; border: 1px solid rgba(13,110,253,0.5); box-shadow: 0 1px 3px rgba(0,0,0,0.06); cursor: pointer; opacity: 0.85; transition: opacity 0.2s;">
-                                        <i class="fas fa-camera text-primary" style="font-size: 1rem;"></i>
+                                    <label for="avatar" class="avatar-camera-btn">
+                                        <i class="fas fa-camera text-primary avatar-camera-icon"></i>
                                         <span class="visually-hidden">画像を変更</span>
                                     </label>
-                                    <input type="file" id="avatar" name="avatar" accept="image/*" style="display: none;">
+                                    <input type="file" id="avatar" name="avatar" accept="image/*" class="avatar-file-input">
                                 </div>
                                 @error('avatar')
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -181,7 +213,7 @@
                             $preview.attr('src', e.target.result);
                         } else {
                             // divをimgに差し替え
-                            $preview.replaceWith('<img id="profilePreview" src="' + e.target.result + '" alt="プロフィール画像" class="rounded-circle border border-2 border-secondary shadow-sm object-fit-cover" style="width: 128px; height: 128px; object-fit: cover; background: #f3f4f6;" />');
+                            $preview.replaceWith('<img id="profilePreview" src="' + e.target.result + '" alt="プロフィール画像" class="rounded-circle border border-2 border-secondary shadow-sm avatar-image" />');
                         }
                     };
                     reader.readAsDataURL(file);

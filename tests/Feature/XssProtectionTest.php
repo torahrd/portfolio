@@ -14,7 +14,9 @@ class XssProtectionTest extends TestCase
     use DatabaseTransactions;
 
     protected $user;
+
     protected $post;
+
     protected $shop;
 
     protected function setUp(): void
@@ -47,11 +49,11 @@ class XssProtectionTest extends TestCase
         // scriptタグが除去されていることを確認
         $this->assertStringNotContainsString('<script>', $processedBody);
         $this->assertStringNotContainsString('</script>', $processedBody);
-        
+
         // iframeタグが除去されていることを確認
         $this->assertStringNotContainsString('<iframe', $processedBody);
         $this->assertStringNotContainsString('</iframe>', $processedBody);
-        
+
         // 通常のテキストは残っていることを確認
         $this->assertStringContainsString('これは普通のテキスト', $processedBody);
     }
@@ -109,7 +111,7 @@ class XssProtectionTest extends TestCase
         // divタグとonclick属性が除去されていることを確認
         $this->assertStringNotContainsString('<div', $processedBody);
         $this->assertStringNotContainsString('onclick=', $processedBody);
-        
+
         // テキスト内容は残っていることを確認
         $this->assertStringContainsString('クリックしてください', $processedBody);
     }
@@ -132,7 +134,7 @@ class XssProtectionTest extends TestCase
         $this->assertStringNotContainsString('onerror=', $processedBody);
         $this->assertStringNotContainsString('<svg', $processedBody);
         $this->assertStringNotContainsString('onload=', $processedBody);
-        
+
         // 安全なテキストは残っていることを確認
         $this->assertStringContainsString('普通のテキスト', $processedBody);
     }

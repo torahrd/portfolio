@@ -369,7 +369,7 @@
     </section>
     
     <!-- 2. 使い方セクション -->
-    <section id="how" style="background: white;">
+    <section id="how" class="section-how">
         <div class="container">
             <h2 class="section-title">使い方</h2>
             <div class="grid grid-cols-3">
@@ -389,7 +389,7 @@
                     <p class="card-description">
                         訪れたお店を振り返り、メモを追記しましょう。
                     </p>
-                    <div style="margin-top: 20px; padding: 12px; background: var(--bg-light); border-radius: 8px; font-size: 14px;">
+                    <div class="example-box">
                         例: "Local Cafe"
                     </div>
                 </div>
@@ -407,7 +407,7 @@
     </section>
     
     <!-- 3. 24の季節セクション -->
-    <section id="seasons" style="background: var(--bg-light);">
+    <section id="seasons" class="section-seasons">
         <div class="container">
             <h2 class="section-title">24の季節 × あなただけの名店</h2>
             <p class="section-subtitle">
@@ -502,24 +502,24 @@
                 </svg>
             </div>
             
-            <div style="text-align: center; margin-top: 40px;">
+            <div class="text-center mt-40">
                 <a href="#" class="btn btn-primary">お店を探す</a>
             </div>
         </div>
     </section>
     
     <!-- フッター -->
-    <footer style="background: #2C3E50; color: white; padding: 40px 0;">
+    <footer class="footer-main">
         <div class="container">
-            <div style="text-align: center;">
-                <h3 style="margin-bottom: 20px;">TasteRetreat</h3>
-                <div style="display: flex; gap: 32px; justify-content: center; margin-bottom: 20px;">
-                    <a href="#" style="color: white; text-decoration: none;">プライバシー</a>
-                    <a href="#" style="color: white; text-decoration: none;">利用規約</a>
-                    <a href="#" style="color: white; text-decoration: none;">お問い合わせ</a>
+            <div class="footer-content">
+                <h3 class="footer-title">TasteRetreat</h3>
+                <div class="footer-links">
+                    <a href="#" class="footer-link">プライバシー</a>
+                    <a href="#" class="footer-link">利用規約</a>
+                    <a href="#" class="footer-link">お問い合わせ</a>
                 </div>
 
-                <p style="opacity: 0.7; font-size: 14px;">© 2025 TasteRetreat. All rights reserved.</p>
+                <p class="footer-copyright">© 2025 TasteRetreat. All rights reserved.</p>
             </div>
         </div>
     </footer>

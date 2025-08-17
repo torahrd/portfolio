@@ -42,14 +42,14 @@ class AddSecurityHeaders
 
         // Permissions-Policy
         // ブラウザのAPIと機能の使用を制限（セキュリティとプライバシー向上）
-        $response->headers->set('Permissions-Policy', 
-            'accelerometer=(), ' .
-            'camera=(), ' .
-            'geolocation=(self), ' .  // 位置情報は自サイトのみ（将来の地図機能用）
-            'gyroscope=(), ' .
-            'magnetometer=(), ' .
-            'microphone=(), ' .
-            'payment=(), ' .
+        $response->headers->set('Permissions-Policy',
+            'accelerometer=(), '.
+            'camera=(), '.
+            'geolocation=(self), '.  // 位置情報は自サイトのみ（将来の地図機能用）
+            'gyroscope=(), '.
+            'magnetometer=(), '.
+            'microphone=(), '.
+            'payment=(), '.
             'usb=()'
         );
 
@@ -74,23 +74,23 @@ class AddSecurityHeaders
             'img' => '',
         ];
 
-        // CSP設定（unsafe-eval削除済み）
+        // CSP設定（unsafe-eval、unsafe-inline削除済み）
         $connectSources = "'self' https://*.googleapis.com https://*.cloudinary.com {$ga4Domains['connect']}";
-        $scriptSources = "'self' 'unsafe-inline' https://maps.googleapis.com https://maps.googleapis.com/maps/api/js {$ga4Domains['script']}";
-        $styleSources = "'self' 'unsafe-inline' https://fonts.googleapis.com";
-        
+        $scriptSources = "'self' https://maps.googleapis.com https://maps.googleapis.com/maps/api/js {$ga4Domains['script']}";
+        $styleSources = "'self' https://fonts.googleapis.com";
+
         // 開発環境ではViteサーバーを許可（複数ポート対応）
         if (app()->environment('local')) {
             // WebSocket接続用（一般的なViteポート範囲）
-            $connectSources .= " ws://localhost:5173 ws://localhost:5174 ws://localhost:5175";
-            $connectSources .= " wss://localhost:5173 wss://localhost:5174 wss://localhost:5175";
-            $connectSources .= " ws://127.0.0.1:5173 ws://127.0.0.1:5174 ws://127.0.0.1:5175";
-            
+            $connectSources .= ' ws://localhost:5173 ws://localhost:5174 ws://localhost:5175';
+            $connectSources .= ' wss://localhost:5173 wss://localhost:5174 wss://localhost:5175';
+            $connectSources .= ' ws://127.0.0.1:5173 ws://127.0.0.1:5174 ws://127.0.0.1:5175';
+
             // スクリプトとスタイル用
-            $scriptSources .= " http://localhost:5173 http://localhost:5174 http://localhost:5175";
-            $styleSources .= " http://localhost:5173 http://localhost:5174 http://localhost:5175";
+            $scriptSources .= ' http://localhost:5173 http://localhost:5174 http://localhost:5175';
+            $styleSources .= ' http://localhost:5173 http://localhost:5174 http://localhost:5175';
         }
-        
+
         $cspReportOnlyHeader = "default-src 'self'; ".
                               "script-src {$scriptSources}; ".
                               "style-src {$styleSources}; ".
