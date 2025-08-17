@@ -182,28 +182,32 @@
 
 **完了日**: 2025-08-17
 
-### 1.5 簡易XSS対策【次のタスク】
-**現状**: {!! $comment->body_with_mentions !!}で生HTML出力
-**影響**: XSS脆弱性の可能性
-**作業時間**: 30分
+### 1.5 簡易XSS対策 ✅ 完了
+**現状**: {!! $comment->body_with_mentions !!}で生HTML出力 → 修正済み
+**影響**: XSS脆弱性の可能性 → 解消
+**作業時間**: 1時間
 **TDD方式で実装**
 
-#### 🔴 Red（テスト作成）
-- [ ] tests/Feature/XssProtectionTest.php作成
-  - [ ] 危険なHTMLタグが除去されるテスト
-  - [ ] 安全なタグは残るテスト
+#### 🔴 Red（テスト作成）✅
+- [x] tests/Feature/XssProtectionTest.php作成
+  - [x] 危険なHTMLタグが除去されるテスト
+  - [x] メンション機能が動作するテスト
+  - [x] XSS攻撃パターンのテスト（5種類）
 
-#### 🟢 Green（最小実装）
-- [ ] Comment::getBodyWithMentionsAttributeでstrip_tags実装
-- [ ] 許可タグを<a><strong><em>に限定
+#### 🟢 Green（最小実装）✅
+- [x] Comment::getBodyWithMentionsAttributeでstrip_tags実装
+- [x] htmlspecialchars()でHTMLエンティティ化
+- [x] メンション部分のみspan要素でラップ
 
-#### 🟡 Refactor（品質改善）
-- [ ] 他の生HTML出力箇所の確認
-- [ ] ドキュメント更新
+#### 🟡 Refactor（品質改善）✅
+- [x] 他の生HTML出力箇所の確認
+- [x] ブラウザでの動作確認完了
+- [x] RefreshDatabase違反の修正（7ファイル）
 
-#### ⚪ Commit（記録）
-- [ ] _docs/dev-log/2025-08-15_xss-protection.md作成
-- [ ] git commit & push（feature/xss-protectionブランチ）
+#### ⚪ Commit（記録）✅
+- [x] MCPメモリに記録（refresh-database-violation-fix-2025-08-17）
+- [x] git commit & push（feature/xss-protectionブランチ）
+**完了日**: 2025-08-17
 
 ### 1.6 本番環境セキュリティ設定反映
 **現状**: ローカルで設定済み、本番未反映
@@ -434,4 +438,4 @@
 
 ---
 
-最終更新: 2025-08-16
+最終更新: 2025-08-17
