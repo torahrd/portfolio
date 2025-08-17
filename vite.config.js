@@ -14,4 +14,12 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    server: {
+        host: 'localhost',  // IPv4のlocalhostを明示的に指定
+        port: 5173,
+        strictPort: false,
+        hmr: {
+            host: 'localhost'  // HMRもIPv4を使用
+        }
+    }
 });
