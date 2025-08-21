@@ -106,7 +106,7 @@
   - [ ] DOM更新の確認テスト
 
 #### ⚪ Commit（記録）✅ 完了
-- [x] _docs/dev-log/2025-01-16_16-30_comment-async-csp.md作成
+- [x] MCPメモリに実装ログ記録（comment-async-csp-2025-01-16）
 - [x] テスト実行確認（php artisan test）
 - [ ] git commit & push（実施中）
 
@@ -348,8 +348,47 @@
 - [x] feature/unsafe-inline-removalブランチ作成・プッシュ
 - [x] GitHub PR URL: https://github.com/torahrd/portfolio/pull/new/feature/unsafe-inline-removal
 
-### 1.11 セキュリティ対策完了評価
-**現状**: Phase 1のセキュリティ対策大部分完了
+### 1.11 本番環境CSPエラー修正 ✅ 完了
+**現状**: プロフィール編集画面でCDNリソースがブロックされていた
+**対応**: Apache設定（bitnami-ssl.conf）のCSPヘッダーを修正
+**完了日**: 2025-08-20
+
+#### 実施内容
+- [x] Apache設定ファイルのCSPヘッダー確認
+- [x] script-src、style-src、font-srcに必要なCDNドメイン追加
+  - [x] cdn.jsdelivr.net（Bootstrap）
+  - [x] code.jquery.com（jQuery）
+  - [x] cdnjs.cloudflare.com（Font Awesome）
+- [x] MCPメモリに設定記録（apache-csp-configuration-bitnami-2025-08）
+- [x] 動作確認完了
+
+### 1.12 SRI（Subresource Integrity）実装 ✅ 完了
+**現状**: CDNリソースに整合性チェックがない → 実装完了
+**影響**: セキュリティスコア向上（Mozilla Observatory: B/75点）
+**作業時間**: 1時間
+**完了日**: 2025-08-21
+**TDD方式で実装**
+
+#### 🔴 Red（テスト作成）✅
+- [x] tests/Feature/SriImplementationTest.php作成
+  - [x] CDNリソースにintegrity属性があるテスト
+  - [x] crossorigin属性も設定されているテスト
+
+#### 🟢 Green（最小実装）✅
+- [x] profile/edit.blade.php - Bootstrap CSS/JS、jQuery、Font Awesome
+- [x] layouts/guest.blade.php - Alpine.js
+- [x] integrity属性とcrossorigin="anonymous"属性を追加
+
+#### 🟡 Refactor（品質改善）✅
+- [x] Laravel Pintでコード整形
+- [x] テスト実行確認（2件パス）
+
+#### ⚪ Commit（記録）✅
+- [x] feature/unsafe-inline-removalブランチにコミット
+- [x] 本番環境への反映待ち
+
+### 1.13 セキュリティ対策完了評価
+**現状**: Phase 1のセキュリティ対策完了
 **作業時間**: 30分
 
 #### タスク詳細
@@ -422,7 +461,7 @@ DB::transaction(function () use ($post) {
 });
 ```
 
-### 2.4 メンション機能の修復
+### 2.5 メンション機能の修復
 **現状**: 動作していない
 
 #### タスク詳細
@@ -431,7 +470,7 @@ DB::transaction(function () use ($post) {
 - [ ] テスト作成
 - [ ] 動作確認
 
-### 2.5 ランディングページ完成
+### 2.6 ランディングページ完成
 **現状**: 基本実装済み、デザイン調整が必要
 
 #### タスク詳細
@@ -443,19 +482,10 @@ DB::transaction(function () use ($post) {
 
 ## 🟡 Phase 2: UI/UX改善とリリース準備（2週間）
 
-### 2.6 Google Mapsピン表示問題の修正 ✅ 対処済み
+### 2.7 Google Mapsピン表示問題の修正 ✅ 対処済み
 **現状**: ピンの代わりに画像エラーアイコンが表示 → 解決済み
 **影響**: 地図の視認性低下 → 解消
 **作業時間**: 20分
-
-### 2.7 メンション機能の修復【保留】
-**現状**: 動作していない（XSS対策を優先）
-
-#### タスク詳細
-- [ ] 現状の問題分析
-- [ ] XSS対策を含めた実装
-- [ ] テスト作成
-- [ ] 動作確認
 
 ### 2.8 ランディングページデザイン改善
 **現状**: 設計書完成済み、実装未着手
@@ -493,6 +523,19 @@ DB::transaction(function () use ($post) {
 - [ ] フィルター機能
 - [ ] ソート機能
 - [ ] 検索履歴
+
+### 3.5 CSP unsafe-inline完全削除【将来対応】
+**現状**: プロフィール編集画面でBootstrap/jQueryの関係で残存
+**影響**: セキュリティスコア-20点
+**作業時間**: 4-6時間
+
+#### タスク詳細
+- [ ] profile/edit.blade.phpのインラインstyle/scriptタグを外部化
+- [ ] またはCSP nonceの実装
+- [ ] Bootstrap依存の解消検討
+- [ ] 全画面での動作確認
+
+**注**: 機能実装を優先し、サービス成長後に対応
 
 ---
 
