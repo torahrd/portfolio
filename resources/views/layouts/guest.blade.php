@@ -43,7 +43,9 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <!-- Alpine.js -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+            integrity="sha384-Dz4S7p4fiqIAslLB5RBVJuwELHZDkTYFNvLLLRVR7cGca9hgdvKXrL9lCa8IYbXy"
+            crossorigin="anonymous"></script>
 
     <!-- Google Maps API -->
     @if(config('services.google.maps_api_key'))
