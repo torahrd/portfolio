@@ -43,8 +43,8 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <!-- Alpine.js -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
-            integrity="sha384-Dz4S7p4fiqIAslLB5RBVJuwELHZDkTYFNvLLLRVR7cGca9hgdvKXrL9lCa8IYbXy"
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"
+            integrity="sha384-l8f0VcPi/M1iHPv8egOnY/15TDwqgbOR1anMIJWvU6nLRgZVLTLSaNqi/TOoT5Fh"
             crossorigin="anonymous"></script>
 
     <!-- Google Maps API -->
