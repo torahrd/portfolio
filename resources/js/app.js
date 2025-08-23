@@ -58,7 +58,8 @@ Alpine.start();
 // window.shopSearch = shopSearch;
 
 // Import post-reply functionality
-import "./post-reply.js";
+// 二重送信問題のため一時的に無効化 - Alpine.jsのcommentSectionと競合
+// import "./post-reply.js";
 
 // Import post-like functionality
 import "./post-like.js";
